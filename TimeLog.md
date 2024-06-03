@@ -8,3 +8,4 @@
  | 27/05/24 | Creating Prototype              | 4.0       |           |           |           |           |
  | 30/05/24 | Work on D1                      |           |           |           |           | 1.0       |
  | 03/06/24 | Brainstorming and Android Studio| 1.0       | 1.0       | 1.0       | 1.0       | 1.0       | 
+ | 03/06/24 | Learning Kotlin                 | 1.0       |           |           |           |           |
