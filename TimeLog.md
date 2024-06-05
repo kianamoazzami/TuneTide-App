@@ -12,5 +12,5 @@
  | 03/06/24 | Learning Kotlin                 | 1.0       |           |           |           |           |
  | 04/06/24 | Editing Prototype               |           |           |           |           | 4.0       |
  | 05/06/24 | UML/DB Diagrams                 | 1.5       |           |           |           |           |
- | 05/06/24 | Learning Kotlin                 | 3         |           |           |           |           |
- | 05/06/24 | Project Setup / Admin           | 1         |           |           |           |           |
+ | 05/06/24 | Learning Kotlin                 | 3.0       |           |           |           |           |
+ | 05/06/24 | Project Setup / Admin           | 1.0       |           |           |           |           |
