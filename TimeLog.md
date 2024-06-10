@@ -16,4 +16,4 @@
  | 05/06/24 | Learning Kotlin                 | 3.0       |           |           |           |           |
  | 05/06/24 | Project Setup / Admin           | 1.0       |           |           |           |           |
  | 10/06/24 | Work on D2 and project planning | 2.0       | 2.0       | 2.0       | 2.0       | 2.0       |
- | 10/06/24 | Setting up App Architectu       | 3.0       |           |           |           |           |
+ | 10/06/24 | Setting up App Architecture     | 3.0       |           |           |           |           |
