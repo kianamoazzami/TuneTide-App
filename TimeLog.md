@@ -10,6 +10,7 @@
  | 30/05/24 | Work on D1                      |           |           |           |           | 1.0       |
  | 03/06/24 | Brainstorming and Android Studio| 1.0       | 1.0       | 1.0       | 1.0       | 1.0       | 
  | 03/06/24 | Learning Kotlin                 | 1.0       |           |           |           |           |
+ | 04/06/24 | Learning Kotlin                 |           |           |           |           | 1.0       |
  | 04/06/24 | Editing Prototype               |           |           |           |           | 4.0       |
  | 05/06/24 | UML/DB Diagrams                 | 1.5       |           |           |           |           |
  | 05/06/24 | Learning Kotlin                 | 3.0       |           |           |           |           |
