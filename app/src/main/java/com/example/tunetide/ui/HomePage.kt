@@ -28,7 +28,7 @@ fun HomePage() {
         TopAppBar(
             title = {
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Text("tunetide", color = Color.White, textAlign = TextAlign.Center)
+                    Text("tunetide", color = Color(0xFF544FA3), textAlign = TextAlign.Center)
                 }
             },
             backgroundColor = PurpleBackground,
