@@ -6,27 +6,20 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
-// These will be updated when we add elements to UI.
-private val DarkColorPalette = darkColors(
-    primary = PurpleBackground,
-    primaryVariant = PurpleAccent,
-    secondary = PurpleDark
-)
-
 private val LightColorPalette = lightColors(
     primary = PurpleBackground,
     primaryVariant = PurpleAccent,
-    secondary = PurpleDark
-
-    /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
+    secondary = PurpleDark,
+    background = PurpleBackground,
+    surface = Greyish,
+    onPrimary = PurpleBackground,
+    onSecondary = PurpleDark,
+    onBackground = PurpleBackground,
+    onSurface = Black,
 )
+
+// TODO: Add dark mode
+private val DarkColorPalette = LightColorPalette
 
 @Composable
 fun TuneTideTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {

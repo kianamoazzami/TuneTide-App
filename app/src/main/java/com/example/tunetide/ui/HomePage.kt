@@ -27,7 +27,7 @@ fun HomePage() {
     ) {
         TopAppBar(
             title = { Text("tunetide", color = Color.White) },
-            backgroundColor = PurpleAccent,
+            backgroundColor = PurpleBackground,
             actions = {
                 IconButton(onClick = { /* add navigation action*/ }) {
                     Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)

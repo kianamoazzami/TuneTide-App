@@ -34,6 +34,6 @@ fun Greeting(name: String) {
 @Composable
 fun DefaultPreview() {
     TuneTideTheme {
-        Greeting("Android")
+        HomePage()
     }
 }
