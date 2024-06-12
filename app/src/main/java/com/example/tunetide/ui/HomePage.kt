@@ -26,7 +26,11 @@ fun HomePage() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopAppBar(
-            title = { Text("tunetide", color = Color.White) },
+            title = {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Text("tunetide", color = Color.White, textAlign = TextAlign.Center)
+                }
+            },
             backgroundColor = PurpleBackground,
             actions = {
                 IconButton(onClick = { /* add navigation action*/ }) {
@@ -34,6 +38,7 @@ fun HomePage() {
                 }
             }
         )
+
 
         Text(
             text = "Chill Work (Long)",
