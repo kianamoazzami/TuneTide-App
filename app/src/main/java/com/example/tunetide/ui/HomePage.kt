@@ -1,5 +1,6 @@
 package com.example.tunetide.ui
 
+import android.widget.ImageButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -9,11 +10,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tunetide.ui.theme.*
 import com.example.tunetide.ui.HomePage
+import res.drawable.*
+import com.example.tunetide.R
+import androidx.compose.ui.res.painterResource
 
 @Composable
 fun HomePage() {
@@ -29,8 +34,9 @@ fun HomePage() {
             backgroundColor = PurpleBackground,
             contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
-            IconButton(onClick = { /* add navigation action */ }) {
-                Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)
+            IconButton(onClick = { /* TODO: add navigation action */ }) {
+                Icon(painter = painterResource(id = R.drawable.settings),
+                    contentDescription = "Settings", tint = PurpleAccent)
             }
             Spacer(modifier = Modifier.weight(1f))
             Text(
@@ -40,6 +46,10 @@ fun HomePage() {
                 modifier = Modifier.weight(6f)
             )
             Spacer(modifier = Modifier.weight(1f))
+            IconButton(onClick = { /* TODO: add navigation action */ }) {
+                Icon(painter = painterResource(id = R.drawable.queue),
+                    contentDescription = "Queue", tint = PurpleAccent)
+            }
         }
 
         Text(
