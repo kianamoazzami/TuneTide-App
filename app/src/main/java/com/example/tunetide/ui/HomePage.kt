@@ -26,19 +26,21 @@ fun HomePage() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopAppBar(
-            title = {
-                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Text("tunetide", color = Color(0xFF544FA3), textAlign = TextAlign.Center)
-                }
-            },
             backgroundColor = PurpleBackground,
-            actions = {
-                IconButton(onClick = { /* add navigation action*/ }) {
-                    Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)
-                }
+            contentPadding = PaddingValues(horizontal = 16.dp)
+        ) {
+            IconButton(onClick = { /* add navigation action */ }) {
+                Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color.White)
             }
-        )
-
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "tunetide",
+                color = Color(0xFF544FA3),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(6f)
+            )
+            Spacer(modifier = Modifier.weight(1f))
+        }
 
         Text(
             text = "Chill Work (Long)",
@@ -83,9 +85,8 @@ fun HomePage() {
             BottomNavigationItem(
                 icon = { Icon(Icons.Default.List, contentDescription = "List") },
                 selected = false,
-                onClick = { /* add navigation action*/ }
+                onClick = { /* add navigation action */ }
             )
-
         }
     }
 }
