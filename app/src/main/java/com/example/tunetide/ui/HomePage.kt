@@ -62,9 +62,9 @@ fun HomePage() {
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Completed", color = textColorCode)
-            Text("Interval 3 of 4", color = textColorCode)
-            Text("Remaining", color = textColorCode)
+            Text("Completed", color = TextColorCode)
+            Text("Interval 3 of 4", color = TextColorCode)
+            Text("Remaining", color = TextColorCode)
         }
 
         // Please add the music player UI below
