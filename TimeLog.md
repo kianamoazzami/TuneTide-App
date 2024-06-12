@@ -21,3 +21,4 @@
  | 11/06/24 | Working on MP3 database         |           |           |           |           | 2.0       |
  | 10/06/24 | Research Spotify Connection     |           |           | 1.0       |           |           |
  | 12/06/24 | Collaborate on Front End        |           | 2.0       |           | 2.0       |           |
+ | 12/06/24 | Finish making MP3 database      |           |           |           |           | 2.0       |
