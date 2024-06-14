@@ -47,8 +47,8 @@ fun HomePage() {
                 text = "tunetide",
                 color = Color(0xFF544FA3),
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold, // Make the text bold
-                fontSize = 24.sp, // Increase the font size
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
                 modifier = Modifier.weight(6f)
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -60,14 +60,21 @@ fun HomePage() {
             }
         }
 
-        Text(
-            text = "Chill Work (Long)",
-            color = TextColorCode,
-            fontSize = 20.sp,
+        // Replace Chill Work (Long) with tide flow and style it
+        Row(
             modifier = Modifier
-                .background(FlowPink)
-                .padding(8.dp)
-        )
+                .fillMaxWidth()
+                .padding(bottom = 4.dp), // Reduce padding to minimize space
+            horizontalArrangement = Arrangement.Start // Move to the left
+        ) {
+            Text(
+                text = "tide flow",
+                color = Color.White.copy(alpha = 0.4f), // Adjusted color with 40% opacity
+                fontSize = 24.sp, // Smaller font size
+                fontWeight = FontWeight.Normal, // Unbold
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
 
         // Dark purple container with rounded corners
         Box(
