@@ -1,6 +1,6 @@
 # Group 4 
 # Team Members
-Nour Tayem (ntayem) - 20845166
+Nour Tayem (ntayem) - 20845166 (Github user Nour2468)
 
 Katherine Kononyuk (kkononyu) - 20889614 (Github user kkononyuk)
 
