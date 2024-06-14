@@ -18,8 +18,8 @@
  | 05/06/24 | Project Setup / Admin           | 1.0       |           |           |           |           |
  | 10/06/24 | Work on D2 and project planning | 2.0       | 2.0       | 2.0       | 2.0       | 2.0       |
  | 10/06/24 | Setting up App Architecture     | 3.0       |           |           |           |           |
- | 11/06/24 | Working on MP3 database         |           |           |           |           | 2.0       |
  | 10/06/24 | Research Spotify Connection     |           |           | 1.0       |           |           |
+ | 11/06/24 | Working on MP3 database         |           |           |           |           | 2.0       |
  | 12/06/24 | Collaborate on Front End        |           | 5.0       |           | 5.0       |           |
  | 12/06/24 | Finish making MP3 database      |           |           |           |           | 2.0       |
  | 14/06/24 | Collaborate on front end        |           | 2.0       |           | 2.0       |           |
