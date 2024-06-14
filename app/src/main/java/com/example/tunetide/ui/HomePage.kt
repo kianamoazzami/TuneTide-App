@@ -125,26 +125,40 @@ fun HomePage() {
             )
         }
 
-        BottomNavigation {
-            // TODO: Make background bar go behind the buttons
-           // Image(painter = painterResource(id = R.drawable.bottom_bar_blank), contentDescription = "Bottom Bar", contentScale = ContentScale.FillBounds)
-            IconButton(onClick = { /* add navigation action */ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.calendar),
-                    contentDescription = "Calendar", tint = PurpleAccent
-                )
-            }
-            IconButton(onClick = { /* add navigation action */ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.home),
-                    contentDescription = "Home", tint = PurpleAccent
-                )
-            }
-            IconButton(onClick = { /* add navigation action */ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.timer),
-                    contentDescription = "Timer", tint = PurpleAccent
-                )
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.bottom_bar_blank),
+                contentDescription = "Bottom Bar",
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                IconButton(onClick = { /* add navigation action */ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.calendar),
+                        contentDescription = "Calendar", tint = PurpleAccent
+                    )
+                }
+                IconButton(onClick = { /* add navigation action */ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.home),
+                        contentDescription = "Home", tint = PurpleAccent
+                    )
+                }
+                IconButton(onClick = { /* add navigation action */ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.timer),
+                        contentDescription = "Timer", tint = PurpleAccent
+                    )
+                }
             }
         }
     }
