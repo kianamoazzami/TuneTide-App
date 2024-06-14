@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,20 +35,26 @@ fun HomePage() {
             contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
             IconButton(onClick = { /* add navigation action */ }) {
-                Icon(painter = painterResource(id = R.drawable.settings),
-                    contentDescription = "Settings", tint = PurpleAccent)
+                Icon(
+                    painter = painterResource(id = R.drawable.settings),
+                    contentDescription = "Settings", tint = PurpleAccent
+                )
             }
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = "tunetide",
                 color = Color(0xFF544FA3),
                 textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold, // Make the text bold
+                fontSize = 24.sp, // Increase the font size
                 modifier = Modifier.weight(6f)
             )
             Spacer(modifier = Modifier.weight(1f))
             IconButton(onClick = { /* add navigation action */ }) {
-                Icon(painter = painterResource(id = R.drawable.queue),
-                    contentDescription = "Queue", tint = PurpleAccent)
+                Icon(
+                    painter = painterResource(id = R.drawable.queue),
+                    contentDescription = "Queue", tint = PurpleAccent
+                )
             }
         }
 
