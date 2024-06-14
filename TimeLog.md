@@ -23,3 +23,4 @@
  | 12/06/24 | Collaborate on Front End        |           | 5.0       |           | 5.0       |           |
  | 12/06/24 | Finish making MP3 database      |           |           |           |           | 2.0       |
  | 14/06/24 | Collaborate on front end        |           | 2.0       |           | 2.0       |           |
+ | 14/06/24 | Backend Work and Event Handling | 3.0       |           |           |           |           |
