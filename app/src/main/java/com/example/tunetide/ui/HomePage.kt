@@ -1,6 +1,7 @@
 package com.example.tunetide.ui
 
 import android.widget.ImageButton
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -117,16 +119,26 @@ fun HomePage() {
         }
 
         BottomNavigation {
-            BottomNavigationItem(
-                icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                selected = true,
-                onClick = { /* add navigation action */ }
-            )
-            BottomNavigationItem(
-                icon = { Icon(Icons.Default.List, contentDescription = "List") },
-                selected = false,
-                onClick = { /* add navigation action */ }
-            )
+            // TODO: Make background bar go behind the buttons
+            // Image(painter = painterResource(id = R.drawable.bottom_bar_blank), contentDescription = "Bottom Bar", contentScale = ContentScale.FillBounds)
+            IconButton(onClick = { /* add navigation action */ }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.calendar),
+                    contentDescription = "Calendar", tint = PurpleAccent
+                )
+            }
+            IconButton(onClick = { /* add navigation action */ }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.home),
+                    contentDescription = "Home", tint = PurpleAccent
+                )
+            }
+            IconButton(onClick = { /* add navigation action */ }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.timer),
+                    contentDescription = "Timer", tint = PurpleAccent
+                )
+            }
         }
     }
 }
