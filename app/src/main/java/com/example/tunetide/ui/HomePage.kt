@@ -127,7 +127,7 @@ fun HomePage() {
 
         BottomNavigation {
             // TODO: Make background bar go behind the buttons
-            // Image(painter = painterResource(id = R.drawable.bottom_bar_blank), contentDescription = "Bottom Bar", contentScale = ContentScale.FillBounds)
+           // Image(painter = painterResource(id = R.drawable.bottom_bar_blank), contentDescription = "Bottom Bar", contentScale = ContentScale.FillBounds)
             IconButton(onClick = { /* add navigation action */ }) {
                 Icon(
                     painter = painterResource(id = R.drawable.calendar),
