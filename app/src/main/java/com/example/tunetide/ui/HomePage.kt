@@ -39,7 +39,8 @@ fun HomePage() {
             IconButton(onClick = { /* add navigation action */ }) {
                 Icon(
                     painter = painterResource(id = R.drawable.settings),
-                    contentDescription = "Settings", tint = PurpleAccent
+                    contentDescription = "Settings", tint = PurpleAccent,
+                    modifier = Modifier.size(30.dp)
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -55,7 +56,8 @@ fun HomePage() {
             IconButton(onClick = { /* add navigation action */ }) {
                 Icon(
                     painter = painterResource(id = R.drawable.queue),
-                    contentDescription = "Queue", tint = PurpleAccent
+                    contentDescription = "Queue", tint = PurpleAccent,
+                    modifier = Modifier.size(30.dp)
                 )
             }
         }
@@ -144,19 +146,22 @@ fun HomePage() {
                 IconButton(onClick = { /* add navigation action */ }) {
                     Icon(
                         painter = painterResource(id = R.drawable.calendar),
-                        contentDescription = "Calendar", tint = PurpleAccent
+                        contentDescription = "Calendar", tint = PurpleBackground,
+                        modifier = Modifier.size(30.dp)
                     )
                 }
                 IconButton(onClick = { /* add navigation action */ }) {
                     Icon(
                         painter = painterResource(id = R.drawable.home),
-                        contentDescription = "Home", tint = PurpleAccent
+                        contentDescription = "Home", tint = PurpleAccent,
+                        modifier = Modifier.size(30.dp)
                     )
                 }
                 IconButton(onClick = { /* add navigation action */ }) {
                     Icon(
                         painter = painterResource(id = R.drawable.timer),
-                        contentDescription = "Timer", tint = PurpleAccent
+                        contentDescription = "Timer", tint = PurpleBackground,
+                        modifier = Modifier.size(30.dp)
                     )
                 }
             }
