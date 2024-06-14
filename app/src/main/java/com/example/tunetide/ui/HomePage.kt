@@ -3,6 +3,7 @@ package com.example.tunetide.ui
 import android.widget.ImageButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -15,8 +16,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tunetide.ui.theme.*
-import com.example.tunetide.ui.HomePage
-import res.drawable.*
 import com.example.tunetide.R
 import androidx.compose.ui.res.painterResource
 
@@ -34,7 +33,7 @@ fun HomePage() {
             backgroundColor = PurpleBackground,
             contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
-            IconButton(onClick = { /* TODO: add navigation action */ }) {
+            IconButton(onClick = { /* add navigation action */ }) {
                 Icon(painter = painterResource(id = R.drawable.settings),
                     contentDescription = "Settings", tint = PurpleAccent)
             }
@@ -46,7 +45,7 @@ fun HomePage() {
                 modifier = Modifier.weight(6f)
             )
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { /* TODO: add navigation action */ }) {
+            IconButton(onClick = { /* add navigation action */ }) {
                 Icon(painter = painterResource(id = R.drawable.queue),
                     contentDescription = "Queue", tint = PurpleAccent)
             }
@@ -61,30 +60,54 @@ fun HomePage() {
                 .padding(8.dp)
         )
 
+        // Dark purple container with rounded corners
         Box(
             modifier = Modifier
-                .size(200.dp)
-                .background(FlowPink2),
+                .width(344.dp)
+                .height(277.dp)
+                .background(Color(0xFF2B217F), shape = RoundedCornerShape(16.dp)),
             contentAlignment = Alignment.Center
         ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "12:36",
+                    color = Color.White,
+                    fontSize = 48.sp,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                ) {
+                    Text("Completed", color = Color.White)
+                    Text("Interval 3 of 4", color = Color.White)
+                    Text("Remaining", color = Color.White)
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Light purple container with rounded corners
+        Box(
+            modifier = Modifier
+                .width(344.dp)
+                .height(212.dp)
+                .background(Color(0xFFE6E5F2), shape = RoundedCornerShape(16.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            // Placeholder for music player UI
             Text(
-                text = "12:36",
-                color = FlowText,
-                fontSize = 48.sp,
+                text = "Music Player UI",
+                color = Color.Gray,
+                fontSize = 16.sp,
                 textAlign = TextAlign.Center
             )
         }
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Completed", color = TextColorCode)
-            Text("Interval 3 of 4", color = TextColorCode)
-            Text("Remaining", color = TextColorCode)
-        }
-
-        // Please add the music player UI below
 
         BottomNavigation {
             BottomNavigationItem(
