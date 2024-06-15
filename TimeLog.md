@@ -24,3 +24,4 @@
  | 12/06/24 | Finish making MP3 database      |           |           |           |           | 2.0       |
  | 14/06/24 | Collaborate on front end        |           | 2.0       |           | 2.0       |           |
  | 14/06/24 | Backend Work and Event Handling | 3.0       |           |           |           |           |
+ | 14/06/24 | Figuring out media player UI    |           |           |           |           | 1.0       |
