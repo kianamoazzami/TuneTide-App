@@ -25,8 +25,8 @@ import android.util.Log
 // Spotify Credentials.. define somewhere else once I understand kotlin and app dev lol
 // maybe should be in onCreate?
 
-private val clientId = "TuneTide" // ERICA TODO after spotify application
-private val redirectUri = "http://localhost:8080"
+private val clientId = "cb2af3cb9add453d8a18f97e2aae117f" // ERICA TODO after spotify application
+private val redirectUri = "http://localhost/"
 private var spotifyAppRemote: SpotifyAppRemote? = null
 
 class MainActivity : ComponentActivity() {
@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
                 HomePage()
             }
         }
-
 
     }
 
