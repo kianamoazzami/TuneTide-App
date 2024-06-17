@@ -88,24 +88,100 @@ class HomePage {
                     .background(Color(0xFF2B217F), shape = RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxSize().padding(16.dp)
                 ) {
-                    Text(
-                        text = "12:36",
-                        color = Color.White,
-                        fontSize = 48.sp,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                    // Timer on the left
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.weight(1f)
                     ) {
-                        Text("Completed", color = Color.White)
-                        Text("Interval 3 of 4", color = Color.White)
-                        Text("Remaining", color = Color.White)
+                        Text(
+                            text = "12:36",
+                            color = Color.White,
+                            fontSize = 48.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    // Adding the new container on the right
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(180.dp) // Adjusted height for better fit
+                            .background(Color(0xFF544FA3), shape = RoundedCornerShape(8.dp)),
+                        contentAlignment = Alignment.TopStart
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp)
+                        ) {
+                            // Completed Box
+                            Box(
+                                modifier = Modifier
+                                    .height(30.dp) // Adjusted height for better fit
+                                    .background(Color(0xC0BFE0).copy(alpha = 0.75f), shape = RoundedCornerShape(4.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp)
+                                ) {
+                                    Text("completed", color = Color(0xFF2B217F), fontSize = 12.sp)
+                                    Text("2", color = Color(0xFF2B217F), fontSize = 12.sp)
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            // Interval Box
+                            Box(
+                                modifier = Modifier
+                                    .height(100.dp) // Adjusted height for better fit
+                                    .background(Color(0xFFE6E5F2).copy(alpha = 0.75f), shape = RoundedCornerShape(4.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    modifier = Modifier.fillMaxSize().padding(8.dp)
+                                ) {
+                                    Text("interval 3 of 4", color = Color(0x241673).copy(alpha = 0.5f), fontSize = 12.sp)
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text("flow", color = Color.Magenta, fontSize = 12.sp)
+                                        Text("12:36", color = Color.Black, fontSize = 12.sp)
+                                    }
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text("break", color = Color.Magenta, fontSize = 12.sp)
+                                        Text("5:00", color = Color.Black, fontSize = 12.sp)
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            // Remaining Box
+                            Box(
+                                modifier = Modifier
+                                    .height(30.dp) // Adjusted height for better fit
+                                    .background(Color(0xC0BFE0), shape = RoundedCornerShape(4.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp)
+                                ) {
+                                    Text("remaining", color = Color(0xFF2B217F), fontSize = 12.sp)
+                                    Text("1", color = Color(0xFF2B217F), fontSize = 12.sp)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -170,5 +246,4 @@ class HomePage {
             }
         }
     }
-
 }
