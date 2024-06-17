@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.tunetide.ui.theme.TuneTideTheme
+import com.example.tunetide.ui.HomePage
 
 // Spotify SDK imports
 import com.spotify.android.appremote.api.ConnectionParams;
@@ -35,14 +36,7 @@ class MainActivity : ComponentActivity() {
         // setContentView(R.layout.activity_main)
         setContent {
             TuneTideTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    // Redirect to main ViewModel for App (Home)
-                    TuneTideApp()
-                }
+                HomePage()
             }
         }
 
@@ -79,5 +73,13 @@ class MainActivity : ComponentActivity() {
     override fun onStop() {
         super.onStop()
         // Aaand we will finish off here.
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    TuneTideTheme {
+        HomePage()
     }
 }
