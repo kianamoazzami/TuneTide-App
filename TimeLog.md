@@ -27,4 +27,4 @@
  | 14/06/24 | Figuring out media player UI    |           |           |           |           | 1.0       |
  | 14/06/24 | Adding and Playing MP3 in DB    |           |           |           |           | 4.0       |
  | 06/16/24 | Review PR/Add Spotify API module|           |           | 3.0       |           |           |
- | 06/17/24 | Discussion and work toward D3   | 2.0       | 2.5       | 2.0       | 2.5       | 2.0       |
+ | 06/17/24 | Discussion and work toward D3   | 2.0       | 2.5       | 2.0       | 3.0       | 2.0       |
