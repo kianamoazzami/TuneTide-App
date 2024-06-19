@@ -195,7 +195,10 @@ class HomePage() {
                                         Spacer(modifier = Modifier.height(8.dp))
                                         Row(
                                             horizontalArrangement = Arrangement.SpaceBetween,
-                                            modifier = Modifier.fillMaxWidth()
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .background(Color(0xFFE0BFDF), shape = RoundedCornerShape(4.dp))
+                                                .padding(horizontal = 8.dp)
                                         ) {
                                             Text(
                                                 "flow",
@@ -211,7 +214,10 @@ class HomePage() {
                                         Spacer(modifier = Modifier.height(8.dp))
                                         Row(
                                             horizontalArrangement = Arrangement.SpaceBetween,
-                                            modifier = Modifier.fillMaxWidth()
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .background(Color(0xFFBFCEE0), shape = RoundedCornerShape(4.dp))
+                                                .padding(horizontal = 8.dp)
                                         ) {
                                             Text(
                                                 "break",
