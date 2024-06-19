@@ -26,8 +26,6 @@ fun timeFormat(timeMillis: Long): String {
     return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
 }
 
-var timerState = "play"
-
 class HomePage() {
     /* SAMPLE VALUE FOR TIMER */
     var timerValue: Long = 30000
@@ -36,7 +34,7 @@ class HomePage() {
     fun layout() {
 
         var currentTimeMillis by remember { mutableStateOf(timerValue) }
-        var isRunning by remember { mutableStateOf(true) }
+        var isRunning by remember { mutableStateOf(false) }
 
         val timerText = remember { mutableStateOf(timeFormat(timerValue)) }
 
@@ -48,7 +46,6 @@ class HomePage() {
             }
             if (currentTimeMillis <= 0) {
                 isRunning = false
-                timerState = "pause"
             }
         }
 
@@ -109,11 +106,9 @@ class HomePage() {
                         horizontalAlignment = Alignment.End
                     ) {
                         IconButton(onClick = {
-                            if (timerState == "play") {
-                                timerState = "pause"
+                            if (isRunning) {
                                 isRunning = false
-                            } else if (timerState == "pause") {
-                                timerState = "play"
+                            } else{
                                 isRunning = true
                             }
                         }) {
