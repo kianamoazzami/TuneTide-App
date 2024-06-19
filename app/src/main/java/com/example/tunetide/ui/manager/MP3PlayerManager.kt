@@ -2,17 +2,24 @@ package com.example.tunetide.ui.manager
 
 import android.content.Context
 import android.media.MediaPlayer
+import android.net.Uri
 import androidx.compose.runtime.*
 import com.example.tunetide.R
 
-class MP3PlayerManager (var context: Context){
+class MP3PlayerManager(var context: Context) {
     private lateinit var mediaPlayer: MediaPlayer
-    private var currentTrack = R.raw.flowmusic
+    private var currentTrack = R.raw.flowmusic // resID
     var isPlaying by mutableStateOf(false)
         private set
 
     init {
-        mediaPlayer = MediaPlayer.create(context, currentTrack)
+        mediaPlayer = MediaPlayer()
+        mediaPlayer.setOnPreparedListener {
+            if (isPlaying) {
+                mediaPlayer.start()
+            }
+        }
+        switchTrack(currentTrack)
     }
 
     fun togglePlayPause() {
@@ -26,15 +33,17 @@ class MP3PlayerManager (var context: Context){
 
     fun switchTrack(trackResId: Int) {
         currentTrack = trackResId
+
         mediaPlayer.reset()
-        mediaPlayer = MediaPlayer.create(context, currentTrack)
-        if (isPlaying) {
-            mediaPlayer.start()
-        }
+        mediaPlayer.setDataSource(context, getUri(currentTrack))
+        mediaPlayer.prepareAsync()
     }
 
     fun onDestroy() {
-        mediaPlayer.release();
+        mediaPlayer.release()
     }
 
+    private fun getUri(resId: Int): Uri {
+        return Uri.parse("android.resource://${context.packageName}/$resId")
+    }
 }
