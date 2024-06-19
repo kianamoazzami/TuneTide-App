@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tunetide.R
 import com.example.tunetide.ui.theme.HighlightGreen
-import com.example.tunetide.ui.theme.PurpleAccent
 import com.example.tunetide.ui.theme.PurpleBackground
 import kotlinx.coroutines.delay
 import java.util.Locale
@@ -29,7 +28,6 @@ fun timeFormat(timeMillis: Long): String {
 var timerState = "play"
 
 class HomePage() {
-    // TODO: SAMPLE VALUE!!!! Will change to integrate with backend.
     var timerValue: Long = 30000
 
     @Composable
@@ -111,8 +109,7 @@ class HomePage() {
                             if (timerState == "play") {
                                 timerState = "pause"
                                 isRunning = false
-                            }
-                            else if (timerState == "pause") {
+                            } else if (timerState == "pause") {
                                 timerState = "play"
                                 isRunning = true
                             }
@@ -123,8 +120,7 @@ class HomePage() {
                                     contentDescription = "Pause Button", tint = HighlightGreen,
                                     modifier = Modifier.size(30.dp)
                                 )
-                            }
-                            else if (timerState == "pause") {
+                            } else if (timerState == "pause") {
                                 Icon(
                                     painter = painterResource(id = R.drawable.playbutton),
                                     contentDescription = "Play Button", tint = HighlightGreen,
@@ -132,6 +128,7 @@ class HomePage() {
                                 )
                             }
                         }
+
                         Box(
                             modifier = Modifier
                                 .weight(1f)
@@ -148,7 +145,7 @@ class HomePage() {
                                     modifier = Modifier
                                         .height(30.dp)
                                         .background(
-                                            Color(0xC0BFE0).copy(alpha = 0.75f),
+                                            Color(0xFFC0BFE0).copy(alpha = 0.75f),
                                             shape = RoundedCornerShape(4.dp)
                                         ),
                                     contentAlignment = Alignment.Center
@@ -159,7 +156,11 @@ class HomePage() {
                                             .fillMaxSize()
                                             .padding(horizontal = 8.dp)
                                     ) {
-                                        Text("completed", color = Color(0xFF2B217F), fontSize = 12.sp)
+                                        Text(
+                                            "completed",
+                                            color = Color(0xFF2B217F),
+                                            fontSize = 12.sp
+                                        )
                                         Text("2", color = Color(0xFF2B217F), fontSize = 12.sp)
                                     }
                                 }
@@ -178,22 +179,42 @@ class HomePage() {
                                             .fillMaxSize()
                                             .padding(8.dp)
                                     ) {
-                                        Text("interval 3 of 4", color = Color(0x241673).copy(alpha = 0.5f), fontSize = 12.sp)
+                                        Text(
+                                            "interval 3 of 4",
+                                            color = Color(0xFF241673).copy(alpha = 0.5f),
+                                            fontSize = 12.sp
+                                        )
                                         Spacer(modifier = Modifier.height(8.dp))
                                         Row(
                                             horizontalArrangement = Arrangement.SpaceBetween,
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            Text("flow", color = Color.Magenta, fontSize = 12.sp)
-                                            Text("12:36", color = Color.Black, fontSize = 12.sp)
+                                            Text(
+                                                "flow",
+                                                color = Color(0xFFBF5FFF),
+                                                fontSize = 12.sp
+                                            )
+                                            Text(
+                                                "12:36",
+                                                color = Color(0xFFB2A9A9),
+                                                fontSize = 12.sp
+                                            )
                                         }
                                         Spacer(modifier = Modifier.height(8.dp))
                                         Row(
                                             horizontalArrangement = Arrangement.SpaceBetween,
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            Text("break", color = Color.Magenta, fontSize = 12.sp)
-                                            Text("5:00", color = Color.Black, fontSize = 12.sp)
+                                            Text(
+                                                "break",
+                                                color = Color(0xFFBF5FFF),
+                                                fontSize = 12.sp
+                                            )
+                                            Text(
+                                                "5:00",
+                                                color = Color(0xFFB2A9A9),
+                                                fontSize = 12.sp
+                                            )
                                         }
                                     }
                                 }
@@ -201,7 +222,10 @@ class HomePage() {
                                 Box(
                                     modifier = Modifier
                                         .height(30.dp)
-                                        .background(Color(0xC0BFE0), shape = RoundedCornerShape(4.dp)),
+                                        .background(
+                                            Color(0xFFC0BFE0),
+                                            shape = RoundedCornerShape(4.dp)
+                                        ),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Row(
@@ -210,7 +234,11 @@ class HomePage() {
                                             .fillMaxSize()
                                             .padding(horizontal = 8.dp)
                                     ) {
-                                        Text("remaining", color = Color(0xFF2B217F), fontSize = 12.sp)
+                                        Text(
+                                            "remaining",
+                                            color = Color(0xFF2B217F),
+                                            fontSize = 12.sp
+                                        )
                                         Text("1", color = Color(0xFF2B217F), fontSize = 12.sp)
                                     }
                                 }
