@@ -8,10 +8,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tunetide.R
+import com.example.tunetide.ui.theme.HighlightGreen
+import com.example.tunetide.ui.theme.PurpleAccent
 import com.example.tunetide.ui.theme.PurpleBackground
 import kotlinx.coroutines.delay
 import java.util.Locale
@@ -22,7 +26,10 @@ fun timeFormat(timeMillis: Long): String {
     return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
 }
 
+var timerState = "play"
+
 class HomePage() {
+    // TODO: SAMPLE VALUE!!!! Will change to integrate with backend.
     var timerValue: Long = 30000
 
     @Composable
@@ -96,86 +103,116 @@ class HomePage() {
                         )
                     }
                     Spacer(modifier = Modifier.width(16.dp))
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(180.dp)
-                            .background(Color(0xFF544FA3), shape = RoundedCornerShape(8.dp)),
-                        contentAlignment = Alignment.TopStart
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.End
                     ) {
-                        Column(
+                        IconButton(onClick = {
+                            if (timerState == "play") {
+                                timerState = "pause"
+                                isRunning = false
+                            }
+                            else if (timerState == "pause") {
+                                timerState = "play"
+                                isRunning = true
+                            }
+                        }) {
+                            if (timerState == "play") {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.pausebutton),
+                                    contentDescription = "Pause Button", tint = HighlightGreen,
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
+                            else if (timerState == "pause") {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.playbutton),
+                                    contentDescription = "Play Button", tint = HighlightGreen,
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
+                        }
+                        Box(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(8.dp)
+                                .weight(1f)
+                                .height(180.dp)
+                                .background(Color(0xFF544FA3), shape = RoundedCornerShape(8.dp)),
+                            contentAlignment = Alignment.TopStart
                         ) {
-                            Box(
+                            Column(
                                 modifier = Modifier
-                                    .height(30.dp)
-                                    .background(
-                                        Color(0xC0BFE0).copy(alpha = 0.75f),
-                                        shape = RoundedCornerShape(4.dp)
-                                    ),
-                                contentAlignment = Alignment.Center
+                                    .fillMaxSize()
+                                    .padding(8.dp)
                             ) {
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                Box(
                                     modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(horizontal = 8.dp)
+                                        .height(30.dp)
+                                        .background(
+                                            Color(0xC0BFE0).copy(alpha = 0.75f),
+                                            shape = RoundedCornerShape(4.dp)
+                                        ),
+                                    contentAlignment = Alignment.Center
                                 ) {
-                                    Text("completed", color = Color(0xFF2B217F), fontSize = 12.sp)
-                                    Text("2", color = Color(0xFF2B217F), fontSize = 12.sp)
-                                }
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Box(
-                                modifier = Modifier
-                                    .height(100.dp)
-                                    .background(
-                                        Color(0xFFE6E5F2).copy(alpha = 0.75f),
-                                        shape = RoundedCornerShape(4.dp)
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(8.dp)
-                                ) {
-                                    Text("interval 3 of 4", color = Color(0x241673).copy(alpha = 0.5f), fontSize = 12.sp)
-                                    Spacer(modifier = Modifier.height(8.dp))
                                     Row(
                                         horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(horizontal = 8.dp)
                                     ) {
-                                        Text("flow", color = Color.Magenta, fontSize = 12.sp)
-                                        Text("12:36", color = Color.Black, fontSize = 12.sp)
-                                    }
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Text("break", color = Color.Magenta, fontSize = 12.sp)
-                                        Text("5:00", color = Color.Black, fontSize = 12.sp)
+                                        Text("completed", color = Color(0xFF2B217F), fontSize = 12.sp)
+                                        Text("2", color = Color(0xFF2B217F), fontSize = 12.sp)
                                     }
                                 }
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Box(
-                                modifier = Modifier
-                                    .height(30.dp)
-                                    .background(Color(0xC0BFE0), shape = RoundedCornerShape(4.dp)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Box(
                                     modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(horizontal = 8.dp)
+                                        .height(100.dp)
+                                        .background(
+                                            Color(0xFFE6E5F2).copy(alpha = 0.75f),
+                                            shape = RoundedCornerShape(4.dp)
+                                        ),
+                                    contentAlignment = Alignment.Center
                                 ) {
-                                    Text("remaining", color = Color(0xFF2B217F), fontSize = 12.sp)
-                                    Text("1", color = Color(0xFF2B217F), fontSize = 12.sp)
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(8.dp)
+                                    ) {
+                                        Text("interval 3 of 4", color = Color(0x241673).copy(alpha = 0.5f), fontSize = 12.sp)
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Text("flow", color = Color.Magenta, fontSize = 12.sp)
+                                            Text("12:36", color = Color.Black, fontSize = 12.sp)
+                                        }
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            Text("break", color = Color.Magenta, fontSize = 12.sp)
+                                            Text("5:00", color = Color.Black, fontSize = 12.sp)
+                                        }
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .height(30.dp)
+                                        .background(Color(0xC0BFE0), shape = RoundedCornerShape(4.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(horizontal = 8.dp)
+                                    ) {
+                                        Text("remaining", color = Color(0xFF2B217F), fontSize = 12.sp)
+                                        Text("1", color = Color(0xFF2B217F), fontSize = 12.sp)
+                                    }
                                 }
                             }
                         }
