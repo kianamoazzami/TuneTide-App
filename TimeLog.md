@@ -29,3 +29,5 @@
  | 06/16/24 | Review PR/Add Spotify API module|           |           | 3.0       |           |           |
  | 06/17/24 | Discussion and work toward D3   | 2.0       | 2.5       | 2.0       | 3.0       | 2.0       |
  | 06/17/24 | Set up of android emulator      |           |           | 0.5       |           |           |
+ | 06/18/24 | Adding MediaPlayer to HomePage  |           |           |           |           | 2.5       |
+
