@@ -1,5 +1,6 @@
 package com.example.tunetide.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,6 +29,7 @@ fun timeFormat(timeMillis: Long): String {
 var timerState = "play"
 
 class HomePage() {
+    /* SAMPLE VALUE FOR TIMER */
     var timerValue: Long = 30000
 
     @Composable
@@ -46,6 +48,7 @@ class HomePage() {
             }
             if (currentTimeMillis <= 0) {
                 isRunning = false
+                timerState = "pause"
             }
         }
 
@@ -114,16 +117,16 @@ class HomePage() {
                                 isRunning = true
                             }
                         }) {
-                            if (timerState == "play") {
-                                Icon(
+                            if (isRunning) {
+                                Image(
                                     painter = painterResource(id = R.drawable.pausebutton),
-                                    contentDescription = "Pause Button", tint = HighlightGreen,
+                                    contentDescription = "Pause Button",
                                     modifier = Modifier.size(30.dp)
                                 )
-                            } else if (timerState == "pause") {
-                                Icon(
+                            } else {
+                                Image(
                                     painter = painterResource(id = R.drawable.playbutton),
-                                    contentDescription = "Play Button", tint = HighlightGreen,
+                                    contentDescription = "Play Button",
                                     modifier = Modifier.size(30.dp)
                                 )
                             }
