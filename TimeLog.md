@@ -31,4 +31,5 @@
  | 06/17/24 | Set up of android emulator      |           |           | 0.5       |           |           |
  | 06/18/24 | Adding MediaPlayer to HomePage  |           |           |           |           | 2.5       |
  | 06/19/24 | Working on the UI HomePage      |           | 2.0       |           | 2.0       |           |
+ | 06/19/24 | Working on the UI HomePage      |           |           |           |           | 3.0       |
 
