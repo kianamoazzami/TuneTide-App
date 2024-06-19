@@ -112,7 +112,7 @@ class HomePage() {
                                 modifier = Modifier
                                     .height(30.dp)
                                     .background(
-                                        Color(0xC0BFE0).copy(alpha = 0.75f),
+                                        Color(0xFFC0BFE0).copy(alpha = 0.75f),
                                         shape = RoundedCornerShape(4.dp)
                                     ),
                                 contentAlignment = Alignment.Center
@@ -142,22 +142,22 @@ class HomePage() {
                                         .fillMaxSize()
                                         .padding(8.dp)
                                 ) {
-                                    Text("interval 3 of 4", color = Color(0x241673).copy(alpha = 0.5f), fontSize = 12.sp)
+                                    Text("interval 3 of 4", color = Color(0xFF241673).copy(alpha = 0.5f), fontSize = 12.sp)
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Row(
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        Text("flow", color = Color.Magenta, fontSize = 12.sp)
-                                        Text("12:36", color = Color.Black, fontSize = 12.sp)
+                                        Text("flow", color = Color(0xFFBF5FFF), fontSize = 12.sp)
+                                        Text("12:36", color = Color(0xFFB2A9A9), fontSize = 12.sp)
                                     }
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Row(
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        Text("break", color = Color.Magenta, fontSize = 12.sp)
-                                        Text("5:00", color = Color.Black, fontSize = 12.sp)
+                                        Text("break", color = Color(0xFFBF5FFF), fontSize = 12.sp)
+                                        Text("5:00", color = Color(0xFFB2A9A9), fontSize = 12.sp)
                                     }
                                 }
                             }
@@ -165,7 +165,7 @@ class HomePage() {
                             Box(
                                 modifier = Modifier
                                     .height(30.dp)
-                                    .background(Color(0xC0BFE0), shape = RoundedCornerShape(4.dp)),
+                                    .background(Color(0xFFC0BFE0), shape = RoundedCornerShape(4.dp)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Row(
