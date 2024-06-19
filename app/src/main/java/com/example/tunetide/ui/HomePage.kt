@@ -36,7 +36,7 @@ class HomePage() {
     fun layout() {
 
         var currentTimeMillis by remember { mutableStateOf(timerValue) }
-        var isRunning by remember { mutableStateOf(true) }  // Automatically start the timer
+        var isRunning by remember { mutableStateOf(true) }
 
         val timerText = remember { mutableStateOf(timeFormat(timerValue)) }
 
@@ -147,6 +147,7 @@ class HomePage() {
                                 Box(
                                     modifier = Modifier
                                         .height(30.dp)
+                                        .fillMaxWidth()
                                         .background(
                                             Color(0xFFC0BFE0).copy(alpha = 0.75f),
                                             shape = RoundedCornerShape(4.dp)
@@ -154,7 +155,8 @@ class HomePage() {
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Row(
-                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .padding(horizontal = 8.dp)
@@ -162,9 +164,17 @@ class HomePage() {
                                         Text(
                                             "completed",
                                             color = Color(0xFF2B217F),
-                                            fontSize = 12.sp
+                                            fontSize = 12.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.weight(1f)
                                         )
-                                        Text("2", color = Color(0xFF2B217F), fontSize = 12.sp)
+                                        Text(
+                                            "2",
+                                            color = Color(0xFF2B217F),
+                                            fontSize = 12.sp,
+                                            textAlign = TextAlign.End,
+                                            modifier = Modifier.weight(1f)
+                                        )
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -225,6 +235,7 @@ class HomePage() {
                                 Box(
                                     modifier = Modifier
                                         .height(30.dp)
+                                        .fillMaxWidth()
                                         .background(
                                             Color(0xFFC0BFE0),
                                             shape = RoundedCornerShape(4.dp)
@@ -232,7 +243,8 @@ class HomePage() {
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Row(
-                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .padding(horizontal = 8.dp)
@@ -240,9 +252,17 @@ class HomePage() {
                                         Text(
                                             "remaining",
                                             color = Color(0xFF2B217F),
-                                            fontSize = 12.sp
+                                            fontSize = 12.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.weight(1f)
                                         )
-                                        Text("1", color = Color(0xFF2B217F), fontSize = 12.sp)
+                                        Text(
+                                            "1",
+                                            color = Color(0xFF2B217F),
+                                            fontSize = 12.sp,
+                                            textAlign = TextAlign.End,
+                                            modifier = Modifier.weight(1f)
+                                        )
                                     }
                                 }
                             }
