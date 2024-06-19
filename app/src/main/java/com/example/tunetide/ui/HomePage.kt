@@ -206,7 +206,7 @@ class HomePage() {
                                             )
                                             Text(
                                                 "12:36",
-                                                color = Color(0xFFB2A9A9),
+                                                color = Color(0xFF821A93),
                                                 fontSize = 12.sp
                                             )
                                         }
@@ -217,7 +217,7 @@ class HomePage() {
                                         ) {
                                             Text(
                                                 "break",
-                                                color = Color(0xFFBF5FFF),
+                                                color = Color(0xFF4F5F71),
                                                 fontSize = 12.sp
                                             )
                                             Text(
