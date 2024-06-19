@@ -1,18 +1,15 @@
 package com.example.tunetide.ui
 
-import android.widget.ImageButton
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -22,7 +19,8 @@ import com.example.tunetide.ui.theme.*
 import com.example.tunetide.R
 import androidx.compose.ui.res.painterResource
 
-class HomePage {
+class HomePage (var context: Context){
+    private var mp3Player: MP3Player = MP3Player(context)
 
     @Composable
     fun layout() {
@@ -121,12 +119,7 @@ class HomePage {
                 contentAlignment = Alignment.Center
             ) {
                 // Placeholder for music player UI
-                Text(
-                    text = "Music Player UI",
-                    color = Color.Gray,
-                    fontSize = 16.sp,
-                    textAlign = TextAlign.Center
-                )
+                mp3Player.layout()
             }
 
             Box(
@@ -169,6 +162,10 @@ class HomePage {
                 }
             }
         }
+    }
+
+    fun onDestroy() {
+        mp3Player.onDestroy()
     }
 
 }
