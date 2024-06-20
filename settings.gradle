@@ -14,4 +14,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "TuneTide"
 include ':app'
-include ':SpotifySDK'
