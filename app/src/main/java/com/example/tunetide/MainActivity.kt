@@ -25,7 +25,7 @@ import android.util.Log
 // Spotify Credentials.. define somewhere else once I understand kotlin and app dev lol
 // maybe should be in onCreate?
 
-private val clientId = "cb2af3cb9add453d8a18f97e2aae117f" // ERICA TODO after spotify application
+private val clientId = "cb2af3cb9add453d8a18f97e2aae117f"
 private val redirectUri = "http://localhost/"
 private var spotifyAppRemote: SpotifyAppRemote? = null
 
@@ -43,6 +43,8 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onStart() {
+        // probably don't want to prompt for spotify connection right as app starts
+        // could put as separate option
         super.onStart()
         // Set the Spotify connection parameters
         val connectionParams = ConnectionParams.Builder(clientId)
@@ -55,7 +57,6 @@ class MainActivity : ComponentActivity() {
                 spotifyAppRemote = appRemote
                 Log.d("MainActivity", "Connected! Yay!")
                 // Now you can start interacting with App Remote
-                connected()
             }
 
             override fun onFailure(throwable: Throwable) {
@@ -65,13 +66,25 @@ class MainActivity : ComponentActivity() {
         })
     }
 
-    private fun connected() {
-        // Then we will write some more code here.
+    private fun playSamplePlaylist() {
+        spotifyAppRemote?.let {
+            // Play a playlist
+            val playlistURI = "spotify:playlist:37i9dQZF1DX2sUQwD7tbmL"
+            it.playerApi.play(playlistURI)
+            // Subscribe to PlayerState
+            it.playerApi.subscribeToPlayerState().setEventCallback {
+                val track: Track = it.track
+                Log.d("MainActivity", track.name + " by " + track.artist.name)
+            }
+        }
+
     }
 
     override fun onStop() {
         super.onStop()
-        // Aaand we will finish off here.
+        spotifyAppRemote?.let {
+            SpotifyAppRemote.disconnect(it)
+        }
     }
 }
 
