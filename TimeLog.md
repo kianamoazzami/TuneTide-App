@@ -32,5 +32,5 @@
  | 06/18/24 | Adding MediaPlayer to HomePage      |           |           |           |           | 2.5       |
  | 06/19/24 | Working on the UI HomePage          |           | 2.0       |           | 2.0       |           |
  | 06/19/24 | Completing MP3Player UI and Manager |           |           |           |           | 3.0       |
- | 06/20/24 | Review PR/Work on Spotify module    |           |           | 1.5       |           |           |
+ | 06/20/24 | Review PR/Work on Spotify module    |           |           | 2.5       |           |           |
 
