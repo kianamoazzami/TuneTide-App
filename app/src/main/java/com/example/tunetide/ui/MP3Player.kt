@@ -31,7 +31,7 @@ class MP3Player (var context: Context){
                 )
             }
             IconButton(onClick = { mp3PlayerManager.togglePlayPause() }) {
-                val playPauseIcon = if (isPlaying) R.drawable.pausebutton else R.drawable.playbutton
+                val playPauseIcon = if (isPlaying) R.drawable.musicpausebutton else R.drawable.musicplaybutton
                 Icon(
                     painter = painterResource(id = playPauseIcon),
                     contentDescription = "Play/Pause", tint = Color.Unspecified,
