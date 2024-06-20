@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -59,12 +60,19 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
     implementation 'androidx.room:room-common:2.6.1'
     implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+
+    implementation 'androidx.room:room-runtime:2.5.2'
+    annotationProcessor 'androidx.room:room-compiler:2.5.2'
+    kapt("androidx.room:room-compiler:2.5.2")
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2'
+    implementation 'androidx.room:room-ktx:2.5.2'
     implementation 'com.google.code.gson:gson:2.10.1'
 
     // Spotify Dependencies:
