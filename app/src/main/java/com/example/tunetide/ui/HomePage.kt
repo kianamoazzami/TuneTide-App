@@ -1,31 +1,54 @@
 package com.example.tunetide.ui
 
-import android.widget.ImageButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.tunetide.ui.theme.*
 import com.example.tunetide.R
-import androidx.compose.ui.res.painterResource
+import com.example.tunetide.ui.theme.HighlightGreen
+import com.example.tunetide.ui.theme.PurpleBackground
+import kotlinx.coroutines.delay
+import java.util.Locale
 
-class HomePage {
+class HomePage() {
+    /* SAMPLE VALUE FOR TIMER */
+    var timerValue: Long = 30000
+
+    private fun timeFormat(timeMillis: Long): String {
+        val minutes = (timeMillis / 1000) / 60
+        val seconds = (timeMillis / 1000) % 60
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
+    }
 
     @Composable
     fun layout() {
+
+        var currentTimeMillis by remember { mutableStateOf(timerValue) }
+        var isRunning by remember { mutableStateOf(false) }
+
+        val timerText = remember { mutableStateOf(timeFormat(timerValue)) }
+
+        LaunchedEffect(isRunning) {
+            while (isRunning && currentTimeMillis > 0) {
+                delay(1000)
+                currentTimeMillis -= 1000
+                timerText.value = timeFormat(currentTimeMillis)
+            }
+            if (currentTimeMillis <= 0) {
+                isRunning = false
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -34,53 +57,23 @@ class HomePage {
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopAppBar(
-                backgroundColor = PurpleBackground,
-                contentPadding = PaddingValues(horizontal = 16.dp)
-            ) {
-                IconButton(onClick = { /* add navigation action */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.settings),
-                        contentDescription = "Settings", tint = PurpleAccent,
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "tunetide",
-                    color = Color(0xFF544FA3),
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    modifier = Modifier.weight(6f)
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick = { /* add navigation action */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.queue),
-                        contentDescription = "Queue", tint = PurpleAccent,
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
-            }
+            TopBar().layout()
 
-            // Replace Chill Work (Long) with tide flow and style it
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 4.dp), // Reduce padding to minimize space
-                horizontalArrangement = Arrangement.Start // Move to the left
+                    .padding(bottom = 4.dp),
+                horizontalArrangement = Arrangement.Start
             ) {
                 Text(
                     text = "tide flow",
-                    color = Color.White.copy(alpha = 0.4f), // Adjusted color with 40% opacity
-                    fontSize = 24.sp, // Smaller font size
-                    fontWeight = FontWeight.Normal, // Unbold
+                    color = Color.White.copy(alpha = 0.4f),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Normal,
                     modifier = Modifier.padding(start = 16.dp)
                 )
             }
 
-            // Dark purple container with rounded corners
             Box(
                 modifier = Modifier
                     .width(344.dp)
@@ -88,31 +81,199 @@ class HomePage {
                     .background(Color(0xFF2B217F), shape = RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
                 ) {
-                    Text(
-                        text = "12:36",
-                        color = Color.White,
-                        fontSize = 48.sp,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.weight(1f)
                     ) {
-                        Text("Completed", color = Color.White)
-                        Text("Interval 3 of 4", color = Color.White)
-                        Text("Remaining", color = Color.White)
+                        Text(
+                            text = timerText.value,
+                            color = Color.White,
+                            fontSize = 48.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        IconButton(onClick = {
+                            if (isRunning) {
+                                isRunning = false
+                            } else{
+                                isRunning = true
+                            }
+                        }) {
+                            if (isRunning) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.pausebutton),
+                                    contentDescription = "Pause Button",
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            } else {
+                                Image(
+                                    painter = painterResource(id = R.drawable.playbutton),
+                                    contentDescription = "Play Button",
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(180.dp)
+                                .background(Color(0xFF544FA3), shape = RoundedCornerShape(8.dp)),
+                            contentAlignment = Alignment.TopStart
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(8.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(30.dp)
+                                        .fillMaxWidth()
+                                        .background(
+                                            Color(0xFFC0BFE0).copy(alpha = 0.75f),
+                                            shape = RoundedCornerShape(4.dp)
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(horizontal = 8.dp)
+                                    ) {
+                                        Text(
+                                            "completed",
+                                            color = Color(0xFF2B217F),
+                                            fontSize = 12.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Text(
+                                            "2",
+                                            color = Color(0xFF2B217F),
+                                            fontSize = 12.sp,
+                                            textAlign = TextAlign.End,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .height(100.dp)
+                                        .background(
+                                            Color(0xFFE6E5F2).copy(alpha = 0.75f),
+                                            shape = RoundedCornerShape(4.dp)
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(8.dp)
+                                    ) {
+                                        Text(
+                                            "interval 3 of 4",
+                                            color = Color(0xFF241673).copy(alpha = 0.5f),
+                                            fontSize = 12.sp
+                                        )
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .background(Color(0xFFE0BFDF), shape = RoundedCornerShape(4.dp))
+                                                .padding(horizontal = 8.dp)
+                                        ) {
+                                            Text(
+                                                "flow",
+                                                color = Color(0xFFBF5FFF),
+                                                fontSize = 12.sp
+                                            )
+                                            Text(
+                                                "12:36",
+                                                color = Color(0xFF821A93),
+                                                fontSize = 12.sp
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .background(Color(0xFFBFCEE0), shape = RoundedCornerShape(4.dp))
+                                                .padding(horizontal = 8.dp)
+                                        ) {
+                                            Text(
+                                                "break",
+                                                color = Color(0xFF4F5F71),
+                                                fontSize = 12.sp
+                                            )
+                                            Text(
+                                                "5:00",
+                                                color = Color(0xFFB2A9A9),
+                                                fontSize = 12.sp
+                                            )
+                                        }
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .height(30.dp)
+                                        .fillMaxWidth()
+                                        .background(
+                                            Color(0xFFC0BFE0),
+                                            shape = RoundedCornerShape(4.dp)
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(horizontal = 8.dp)
+                                    ) {
+                                        Text(
+                                            "remaining",
+                                            color = Color(0xFF2B217F),
+                                            fontSize = 12.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Text(
+                                            "1",
+                                            color = Color(0xFF2B217F),
+                                            fontSize = 12.sp,
+                                            textAlign = TextAlign.End,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Light purple container with rounded corners
             Box(
                 modifier = Modifier
                     .width(344.dp)
@@ -120,7 +281,6 @@ class HomePage {
                     .background(Color(0xFFE6E5F2), shape = RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                // Placeholder for music player UI
                 Text(
                     text = "Music Player UI",
                     color = Color.Gray,
@@ -129,46 +289,7 @@ class HomePage {
                 )
             }
 
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.bottom_bar_blank),
-                    contentDescription = "Bottom Bar",
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    IconButton(onClick = { /* add navigation action */ }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.calendar),
-                            contentDescription = "Calendar", tint = PurpleBackground,
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                    IconButton(onClick = { /* add navigation action */ }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.home),
-                            contentDescription = "Home", tint = PurpleAccent,
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                    IconButton(onClick = { /* add navigation action */ }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.timer),
-                            contentDescription = "Timer", tint = PurpleBackground,
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                }
-            }
+            BottomBar().layout()
         }
     }
-
 }
