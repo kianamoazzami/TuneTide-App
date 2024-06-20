@@ -20,15 +20,15 @@ import com.example.tunetide.ui.theme.PurpleBackground
 import kotlinx.coroutines.delay
 import java.util.Locale
 
-fun timeFormat(timeMillis: Long): String {
-    val minutes = (timeMillis / 1000) / 60
-    val seconds = (timeMillis / 1000) % 60
-    return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
-}
-
 class HomePage() {
     /* SAMPLE VALUE FOR TIMER */
     var timerValue: Long = 30000
+
+    private fun timeFormat(timeMillis: Long): String {
+        val minutes = (timeMillis / 1000) / 60
+        val seconds = (timeMillis / 1000) % 60
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
+    }
 
     @Composable
     fun layout() {
