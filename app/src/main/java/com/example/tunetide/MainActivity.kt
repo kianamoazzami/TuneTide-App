@@ -10,11 +10,13 @@ import com.example.tunetide.ui.theme.TuneTideTheme
 import com.example.tunetide.ui.HomePage
 import com.example.tunetide.spotify.SpotifyController
 
+
 class MainActivity : ComponentActivity() {
     private var homePage: HomePage = HomePage()
     private var mainSpotifyController = SpotifyController();
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             TuneTideTheme {
                 homePage.layout();
@@ -33,6 +35,7 @@ class MainActivity : ComponentActivity() {
     override fun onStop() {
         super.onStop()
         mainSpotifyController.Disconnect();
+
     }
 }
 
