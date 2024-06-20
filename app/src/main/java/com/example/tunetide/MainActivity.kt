@@ -12,7 +12,7 @@ import com.example.tunetide.spotify.SpotifyController
 
 class MainActivity : ComponentActivity() {
     private var homePage: HomePage = HomePage()
-
+    private var mainSpotifyController = SpotifyController();
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -27,11 +27,12 @@ class MainActivity : ComponentActivity() {
         // probably don't want to prompt for spotify connection right as app starts
         // could put as separate option
         super.onStart()
-        //SpotifyController.Connect(this);
+        mainSpotifyController.Connect(this);
     }
 
     override fun onStop() {
         super.onStop()
+        mainSpotifyController.Disconnect();
     }
 }
 
