@@ -1,6 +1,5 @@
 package com.example.tunetide
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,23 +9,30 @@ import com.example.tunetide.ui.theme.TuneTideTheme
 import com.example.tunetide.ui.HomePage
 
 class MainActivity : ComponentActivity() {
-    private var homePage: HomePage = HomePage()
+    private lateinit var homePage: HomePage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        homePage = HomePage(this)
+
         setContent {
             TuneTideTheme {
-                homePage.layout();
+                homePage.layout()
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        homePage.onDestroy();
+    }
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     TuneTideTheme {
-        HomePage()
     }
 }
