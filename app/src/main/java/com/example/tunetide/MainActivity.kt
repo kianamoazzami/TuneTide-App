@@ -1,6 +1,5 @@
 package com.example.tunetide
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,14 +11,15 @@ import com.example.tunetide.spotify.SpotifyController
 
 
 class MainActivity : ComponentActivity() {
-    private var homePage: HomePage = HomePage()
-    private var mainSpotifyController = SpotifyController();
+    private lateinit var homePage: HomePage
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        homePage = HomePage(this)
+
         setContent {
             TuneTideTheme {
-                homePage.layout();
+                homePage.layout()
             }
         }
 
@@ -37,12 +37,17 @@ class MainActivity : ComponentActivity() {
         mainSpotifyController.Disconnect();
 
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        homePage.onDestroy();
+    }
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     TuneTideTheme {
-        HomePage()
     }
 }

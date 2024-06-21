@@ -1,5 +1,6 @@
 package com.example.tunetide.ui
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,7 +21,9 @@ import com.example.tunetide.ui.theme.PurpleBackground
 import kotlinx.coroutines.delay
 import java.util.Locale
 
-class HomePage() {
+class HomePage (var context: Context) {
+    private var mp3Player: MP3Player = MP3Player(context)
+
     /* SAMPLE VALUE FOR TIMER */
     var timerValue: Long = 30000
 
@@ -281,15 +284,16 @@ class HomePage() {
                     .background(Color(0xFFE6E5F2), shape = RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "Music Player UI",
-                    color = Color.Gray,
-                    fontSize = 16.sp,
-                    textAlign = TextAlign.Center
-                )
+                // Placeholder for music player UI
+                mp3Player.layout()
             }
 
             BottomBar().layout()
         }
     }
+
+    fun onDestroy() {
+        mp3Player.onDestroy()
+    }
+
 }
