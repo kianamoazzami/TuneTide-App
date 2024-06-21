@@ -35,4 +35,4 @@
  | 06/19/24 | Work on D3                          | 0.5       |           |           |           |           |
  | 06/20/24 | Review PR/Work on Spotify module    |           |           | 2.5       |           |           |
  | 06/21/24 | Build Debugging                     | 3.5       |           |           |           |           |
-
+ | 06/21/24 | Database and Backend Dev            | 3.5       |           |           |           |           |
