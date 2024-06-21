@@ -15,7 +15,7 @@ private var spotifyAppRemote: SpotifyAppRemote? = null
 
 
 class SpotifyController {
-    fun Connect(activity: Context) {
+    fun connect(activity: Context) {
         val connectionParams = ConnectionParams.Builder(clientId)
             .setRedirectUri(redirectUri)
             .showAuthView(true)
@@ -26,6 +26,7 @@ class SpotifyController {
                 spotifyAppRemote = appRemote
                 Log.d("MainActivity", "Connected! Yay!")
                 // Now you can start interacting with App Remote
+                return
             }
 
             override fun onFailure(throwable: Throwable) {
@@ -35,17 +36,19 @@ class SpotifyController {
         })
     }
 
-    fun Disconnect() {
+    fun disconnect() {
         spotifyAppRemote?.let {
             SpotifyAppRemote.disconnect(it)
         }
     }
 
     fun playSamplePlaylist() {
+        Log.d("MainActivity", "pressed play")
         spotifyAppRemote?.let {
             // Play a playlist
             val playlistURI = "spotify:playlist:37i9dQZF1DX2sUQwD7tbmL"
             it.playerApi.play(playlistURI)
+            Log.d("MainActivity", "pressed play")
             // Subscribe to PlayerState
             it.playerApi.subscribeToPlayerState().setEventCallback {
                 val track: Track = it.track

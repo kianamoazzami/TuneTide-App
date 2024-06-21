@@ -30,12 +30,13 @@ class MainActivity : ComponentActivity() {
         // probably don't want to prompt for spotify connection right as app starts
         // could put as separate option
         super.onStart()
-        mainSpotifyController.Connect(this);
+        //mainSpotifyController.connect(this);
+        //mainSpotifyController.playSamplePlaylist();
     }
 
     override fun onStop() {
         super.onStop()
-        mainSpotifyController.Disconnect();
+       // mainSpotifyController.disconnect();
 
     }
 
