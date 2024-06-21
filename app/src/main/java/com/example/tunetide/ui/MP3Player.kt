@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.tunetide.R
 import androidx.compose.ui.res.painterResource
-import com.example.tunetide.ui.manager.MP3PlayerManager
+import com.example.tunetide.mp3player.MP3PlayerManager
 
 class MP3Player (var context: Context){
     private var mp3PlayerManager: MP3PlayerManager = MP3PlayerManager(context)

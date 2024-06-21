@@ -1,9 +1,7 @@
 package com.example.tunetide.state
 
-import androidx.annotation.NonNull
-import androidx.room.ColumnInfo
-import com.example.tunetide.data.FilterType
-import com.example.tunetide.data.Timer
+import com.example.tunetide.database.FilterType
+import com.example.tunetide.database.Timer
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.ExperimentalTime

@@ -2,18 +2,14 @@ package com.example.tunetide.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tunetide.data.FilterType
-import com.example.tunetide.data.Timer
-import com.example.tunetide.data.TimerDao
+import com.example.tunetide.database.FilterType
+import com.example.tunetide.database.Timer
+import com.example.tunetide.repository.TimerDao
 import com.example.tunetide.event.TimerEvent
 import com.example.tunetide.state.TimerState
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-
-// (Mia June 14) TODO integrate field type/value safety into UI
-//               (not sure if more should be done here too)
 
 /**
  * View Model to host state

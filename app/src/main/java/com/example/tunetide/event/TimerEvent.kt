@@ -1,7 +1,7 @@
 package com.example.tunetide.event
 
-import com.example.tunetide.data.FilterType
-import com.example.tunetide.data.Timer
+import com.example.tunetide.database.FilterType
+import com.example.tunetide.database.Timer
 import kotlin.time.Duration
 
 sealed interface TimerEvent {

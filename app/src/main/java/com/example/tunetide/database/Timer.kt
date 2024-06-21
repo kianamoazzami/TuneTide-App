@@ -1,16 +1,10 @@
-package com.example.tunetide.data
+package com.example.tunetide.database
 
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlin.time.Duration
-
-// (Mia June 14) No reference (here or throughout the object) for the music as I am unsure what
-//               form /datatype that will take
-
-// optional: can add sort order field (also must be done in DB)
 
 /**
  * Data class for timer object

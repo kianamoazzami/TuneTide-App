@@ -7,15 +7,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.tunetide.ui.theme.TuneTideTheme
 import com.example.tunetide.ui.HomePage
+/*
 import com.example.tunetide.spotify.SpotifyController
-
+*/
 
 class MainActivity : ComponentActivity() {
     private lateinit var homePage: HomePage
+    // instance to get dependencies
+    lateinit var container: AppContainer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         homePage = HomePage(this)
+        container = AppDataContainer(this)
 
         setContent {
             TuneTideTheme {
@@ -29,12 +34,12 @@ class MainActivity : ComponentActivity() {
         // probably don't want to prompt for spotify connection right as app starts
         // could put as separate option
         super.onStart()
-        mainSpotifyController.Connect(this);
+        //mainSpotifyController.Connect(this);
     }
 
     override fun onStop() {
         super.onStop()
-        mainSpotifyController.Disconnect();
+        //mainSpotifyController.Disconnect();
 
     }
 

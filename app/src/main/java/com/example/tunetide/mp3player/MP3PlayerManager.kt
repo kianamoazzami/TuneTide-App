@@ -1,4 +1,4 @@
-package com.example.tunetide.ui.manager
+package com.example.tunetide.mp3player
 
 import android.content.Context
 import android.media.MediaPlayer

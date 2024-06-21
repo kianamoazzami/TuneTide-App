@@ -1,4 +1,4 @@
-package com.example.tunetide.data
+package com.example.tunetide.database
 
 enum class FilterType {
     ALL,
