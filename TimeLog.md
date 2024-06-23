@@ -33,6 +33,6 @@
  | 06/19/24 | Working on the UI HomePage          |           | 2.0       |           | 2.0       |           |
  | 06/19/24 | Completing MP3Player UI and Manager |           |           |           |           | 3.0       |
  | 06/19/24 | Work on D3                          | 0.5       |           |           |           |           |
- | 06/20/24 | Review PR/Work on Spotify module    |           |           | 2.5       |           |           |
+ | 06/20/24 | Review PR/Work on Spotify module    |           |           | 4.5       |           |           |
  | 06/21/24 | Build Debugging                     | 3.5       |           |           |           |           |
  | 06/21/24 | Database and Backend Dev            | 3.5       |           |           |           |           |
