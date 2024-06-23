@@ -4,7 +4,7 @@ Nour Tayem (ntayem) - 20845166 (Github user Nour2468)
 
 Katherine Kononyuk (kkononyu) - 20889614 (Github user kkononyuk)
 
-Kiana Moazzami (k3moazza) - 20886181
+Kiana Moazzami (k3moazza) - 20886181 (Github user kianamoazzami)
 
 Mia Dallan (m2dallan) - 20938665 (Github user miadallan22)
 
