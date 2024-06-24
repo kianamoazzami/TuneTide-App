@@ -78,10 +78,6 @@ dependencies {
     implementation 'com.spotify.android:auth:1.2.5' // Maven dependency
     implementation 'androidx.browser:browser:1.0.0'
     ///implementation "androidx.appcompat:appcompat:$appCompatVersion"
-    implementation project(':SpotifySDK')
-    implementation "com.google.code.gson:gson:2.6.1"
-    implementation 'com.spotify.android:app-remote-sdk:0.7.0'
-    implementation 'com.spotify.sdk:spotify-app-remote:0.7.0'
 }
 
 //For Spotify Auth
