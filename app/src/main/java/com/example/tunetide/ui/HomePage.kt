@@ -15,24 +15,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.AppContainer
 import com.example.tunetide.AppDataContainer
 import com.example.tunetide.R
 import com.example.tunetide.database.Timer
+import com.example.tunetide.event.CurrentTimerEvent
+import com.example.tunetide.model.CurrentTimerViewModel
 import com.example.tunetide.repository.TimerRepository
+import com.example.tunetide.state.CurrentTimerState
 import com.example.tunetide.ui.theme.HighlightGreen
 import com.example.tunetide.ui.theme.PurpleBackground
 import kotlinx.coroutines.delay
 import java.util.Locale
+import com.example.tunetide.ui.AppViewModelProvider
 
 class HomePage (var context: Context) {
     private var mp3Player: MP3Player = MP3Player(context)
-    private var container = AppDataContainer(context)
+
 
     /* SAMPLE VALUE FOR TIMER */
-    //var timerValue: Long = 30000
-    val currentTimer: Timer = container.timerRepository.getTimerById(1)
-    var timerValue: Long = currentTimer.flowMusicDuration.inWholeSeconds
+    var timerValue: Long = 30000
 
     private fun timeFormat(timeMillis: Long): String {
         val minutes = (timeMillis / 1000) / 60
@@ -42,6 +45,7 @@ class HomePage (var context: Context) {
 
     @Composable
     fun layout(
+        viewModel: CurrentTimerViewModel = viewModel(factory = AppViewModelProvider.Factory)
     ) {
 
         var currentTimeMillis by remember { mutableStateOf(timerValue) }

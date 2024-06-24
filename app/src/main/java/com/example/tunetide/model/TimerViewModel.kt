@@ -2,10 +2,12 @@ package com.example.tunetide.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.tunetide.AppModule
 import com.example.tunetide.database.FilterType
 import com.example.tunetide.database.Timer
 import com.example.tunetide.repository.TimerDao
 import com.example.tunetide.event.TimerEvent
+import com.example.tunetide.repository.TimerRepository
 import com.example.tunetide.state.TimerState
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -15,7 +17,7 @@ import kotlin.time.Duration.Companion.minutes
  * View Model to host state
  */
 class TimerViewModel (
-    private val dao: TimerDao
+    private val timerRepository: TimerRepository
 ): ViewModel() {
 
     private val _filterType = MutableStateFlow(FilterType.ALL)

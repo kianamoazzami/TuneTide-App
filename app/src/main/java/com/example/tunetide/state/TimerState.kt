@@ -19,7 +19,7 @@ data class TimerState @OptIn(ExperimentalTime::class) constructor(
     val flowMusicDuration: Duration = 0.minutes,
     val breakMusicDuration: Duration = 0.minutes,
     val isSaved: Boolean = false,
-    val isAddingTimer: Boolean = false,
+    val isAddingTimer: Boolean = false, // for showing and hiding dialog
 
     // not sure if this should be apart of this object ... easy to change later
     val timers: List<Timer> = emptyList(),

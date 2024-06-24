@@ -1,5 +1,6 @@
 package com.example.tunetide.repository
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Data access object for timer database direct interface (CRUD)
  */
+@Dao
 interface TimerDao {
 
     // region CUD

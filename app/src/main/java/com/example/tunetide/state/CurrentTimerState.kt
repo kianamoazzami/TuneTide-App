@@ -10,6 +10,6 @@ data class CurrentTimerState(
     val timerId: Int,
     val state: String, // "flow" or "break" OR we can use Int with 1 and 2
     val currentInterval: Int,
-    val currentIntervalRemainingDuration: Duration,
+    val currentIntervalRemainingDuration: Duration, // seconds
     val isFinished: Boolean
 )

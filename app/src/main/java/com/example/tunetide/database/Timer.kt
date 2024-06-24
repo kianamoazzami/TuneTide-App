@@ -9,7 +9,7 @@ import kotlin.time.Duration
 /**
  * Data class for timer object
  */
-@Entity(tableName = "timer")
+@Entity(tableName = "Timer")
 data class Timer(
     // PK must still have default value (in this mapped DB object) to allow auto generation
     @ColumnInfo(name = "timer_id")
@@ -25,20 +25,27 @@ data class Timer(
     @NonNull
     @androidx.annotation.IntRange(from = 1, to = Long.MAX_VALUE)
     val numIntervals: Int,
-    /**
-    @ColumnInfo(name = "flow_music_id")
+
+    @ColumnInfo(name = "spotify_flow_music_playlist_id")
     @NonNull
-    val flowMusicId: Int,
-    @ColumnInfo(name = "break_music_id")
+    val spotifyFlowMusicPlaylistId: Int,
+    @ColumnInfo(name = "mp3_flow_music_playlist_id")
     @NonNull
-    val breakMusicId: Int,
-    **/
-    @ColumnInfo(name = "flow_music_duration")
+    val mp3FlowMusicPlaylistId: Int,
+    @ColumnInfo(name = "flow_music_duration_seconds")
     @NonNull
-    val flowMusicDuration: Duration,
-    @ColumnInfo(name = "break_music_duration")
+    val flowMusicDuration: Duration, // seconds
+
+    @ColumnInfo(name = "break_music_duration_seconds")
     @NonNull
-    val breakMusicDuration: Duration,
+    val breakMusicDuration: Duration, // seconds
+    @ColumnInfo(name = "spotify_break_music_playlist_id")
+    @NonNull
+    val spotifyBreakMusicPlaylistId: Int,
+    @ColumnInfo(name = "mp3_break_music_playlist_id")
+    @NonNull
+    val mp3BreakMusicPlaylistId: Int,
+
     @ColumnInfo(name = "is_saved")
     @NonNull
     val isSaved: Boolean

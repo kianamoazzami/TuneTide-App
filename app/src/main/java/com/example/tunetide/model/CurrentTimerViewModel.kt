@@ -7,6 +7,7 @@ import com.example.tunetide.database.Timer
 import com.example.tunetide.event.CurrentTimerEvent
 import com.example.tunetide.event.TimerEvent
 import com.example.tunetide.repository.TimerDao
+import com.example.tunetide.repository.TimerRepository
 import com.example.tunetide.state.TimerState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,7 +22,7 @@ import kotlin.time.Duration.Companion.minutes
  * View Model to host state
  */
 class CurrentTimerViewModel (
-    private val dao: TimerDao
+    private val timerRepository: TimerRepository
 ): ViewModel() {
 
     fun onEvent(event: CurrentTimerEvent) {

@@ -3,14 +3,18 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.tunetide.repository.MP3FileDao
+import com.example.tunetide.repository.MP3Dao
+import com.example.tunetide.repository.SpotifyDao
 import com.example.tunetide.repository.TimerDao
 
 @Database(entities = [MP3File::class,
-                      Timer::class], version = 1)
+                      Timer::class,
+                      MP3Playlist::class,
+                      SpotifyPlaylist::class], version = 1)
 abstract class TuneTideDatabase : RoomDatabase() {
-    abstract fun mp3FileDao(): MP3FileDao
+    abstract fun mp3Dao(): MP3Dao
     abstract fun timerDao(): TimerDao
+    abstract fun spotifyDao(): SpotifyDao
 
     companion object {
         @Volatile
