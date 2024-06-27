@@ -4,7 +4,6 @@ import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlin.time.Duration
 
 /**
  * Data class for timer object
@@ -34,17 +33,19 @@ data class Timer(
     val mp3FlowMusicPlaylistId: Int,
     @ColumnInfo(name = "flow_music_duration_seconds")
     @NonNull
-    val flowMusicDuration: Duration, // seconds
+    @androidx.annotation.IntRange(from = 0, to = Long.MAX_VALUE)
+    val flowMusicDurationSeconds: Int, // seconds
 
-    @ColumnInfo(name = "break_music_duration_seconds")
-    @NonNull
-    val breakMusicDuration: Duration, // seconds
     @ColumnInfo(name = "spotify_break_music_playlist_id")
     @NonNull
     val spotifyBreakMusicPlaylistId: Int,
     @ColumnInfo(name = "mp3_break_music_playlist_id")
     @NonNull
     val mp3BreakMusicPlaylistId: Int,
+    @ColumnInfo(name = "break_music_duration_seconds")
+    @NonNull
+    @androidx.annotation.IntRange(from = 1, to = Long.MAX_VALUE)
+    val breakMusicDurationSeconds: Int, // seconds
 
     @ColumnInfo(name = "is_saved")
     @NonNull

@@ -3,39 +3,28 @@ package com.example.tunetide
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.room.Room
-import com.example.tunetide.database.TuneTideDatabase
-import com.example.tunetide.model.CurrentTimerViewModel
-import com.example.tunetide.model.TimerViewModel
 import com.example.tunetide.ui.theme.TuneTideTheme
-import com.example.tunetide.ui.HomePage
+import com.example.tunetide.ui.home.HomePage
 /*
 import com.example.tunetide.spotify.SpotifyController
 */
 
 class MainActivity : ComponentActivity() {
-    private lateinit var homePage: HomePage
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        homePage = HomePage(this)
-
         setContent {
             TuneTideTheme {
-                homePage.layout()
+                TuneTideApp()
             }
         }
 
     }
 
+    // TODO @ERICA likely need to inject this via a dependency in it's own repo (see AppContainer.kt)
     override fun onStart() {
         // probably don't want to prompt for spotify connection right as app starts
         // could put as separate option
@@ -51,7 +40,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        homePage.onDestroy();
     }
 
 }

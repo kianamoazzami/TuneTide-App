@@ -3,6 +3,7 @@ package com.example.tunetide
 import android.content.Context
 import com.example.tunetide.database.TuneTideDatabase
 import com.example.tunetide.repository.MP3Repository
+import com.example.tunetide.repository.PlaybackRepository
 import com.example.tunetide.repository.SpotifyRepository
 import com.example.tunetide.repository.TimerRepository
 
@@ -13,6 +14,7 @@ interface AppContainer {
     val timerRepository : TimerRepository
     val mp3Repository : MP3Repository
     val spotifyRepository: SpotifyRepository
+    val playbackRepository: PlaybackRepository
 }
 
 /**
@@ -29,5 +31,9 @@ class AppDataContainer(private val context: Context): AppContainer {
 
     override val spotifyRepository: SpotifyRepository by lazy {
         SpotifyRepository(TuneTideDatabase.getDatabase(context).spotifyDao())
+    }
+
+    override val playbackRepository: PlaybackRepository by lazy {
+        PlaybackRepository(TuneTideDatabase.getDatabase(context).playbackDao())
     }
 }

@@ -1,14 +1,14 @@
 package com.example.tunetide.ui
 
-import android.app.Application
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.tunetide.TuneTideApplication
-import com.example.tunetide.model.CurrentTimerViewModel
-import com.example.tunetide.model.TimerViewModel
+import com.example.tunetide.ui.home.HomePageViewModel
+import com.example.tunetide.ui.timer.TimerEditViewModel
+import com.example.tunetide.ui.timer.TimerEntryViewModel
 
 /**
  * Factory (creates instance of ViewModel for the whole app to use)
@@ -16,19 +16,33 @@ import com.example.tunetide.model.TimerViewModel
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
-            TimerViewModel(
+            TimerEntryViewModel(
                 TuneTideApplication().container.timerRepository
             )
         }
 
         initializer {
-            CurrentTimerViewModel(
+            TimerEditViewModel(
+                this.createSavedStateHandle(),
                 TuneTideApplication().container.timerRepository
             )
         }
 
-        // TODO @ERICA add SpotifyViewModel
-        // TODO @KIANA add MP3ViewModel
+        initializer {
+            HomePageViewModel(
+                TuneTideApplication().container.playbackRepository
+            )
+        }
+
+        initializer {
+            TimerEntryViewModel(
+                TuneTideApplication().container.timerRepository
+            )
+        }
+
+        // TODO @MIA parse ViewModels into good sections
+        // TODO @ERICA add all Spotify ViewModels required
+        // TODO @KIANA add all MP3 ViewModel required
     }
 }
 
