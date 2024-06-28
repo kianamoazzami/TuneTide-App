@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.tunetide.repository.TimerRepository
 
 class TimerEditViewModel (
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val timerRepository: TimerRepository
 ): ViewModel() {
 }

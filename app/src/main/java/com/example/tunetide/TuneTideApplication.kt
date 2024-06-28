@@ -1,6 +1,7 @@
 package com.example.tunetide
 
 import android.app.Application
+import android.util.Log
 
 class TuneTideApplication : Application() {
 
@@ -9,6 +10,7 @@ class TuneTideApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.d("TuneTideApplication", "Initializing container")
         container = AppDataContainer(this)
     }
 }

@@ -3,9 +3,7 @@ package com.example.tunetide.ui.timers
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tunetide.database.FilterType
-import com.example.tunetide.event.TimerEvent
 import com.example.tunetide.repository.TimerRepository
-import com.example.tunetide.event.TimerState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -16,6 +14,8 @@ class TimersListViewModel (
     private val timerRepository: TimerRepository
 ): ViewModel() {
 
+    // TODO @MIA rewrite this to mimic HomePage ViewModel standards
+    /*
     private val _filterType = MutableStateFlow(FilterType.ALL)
 
     // reactive change (button changes data source (query))
@@ -49,4 +49,5 @@ class TimersListViewModel (
             else -> {}
         }
     }
+    */
 }

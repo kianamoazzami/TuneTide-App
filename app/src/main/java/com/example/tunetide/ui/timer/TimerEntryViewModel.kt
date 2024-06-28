@@ -4,13 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.tunetide.database.Timer
-import com.example.tunetide.event.TimerEvent
 import com.example.tunetide.repository.TimerRepository
-import com.example.tunetide.event.TimerState
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 /**
  * View Model to host state
@@ -78,7 +73,7 @@ data class TimerDetails(
 // TODO @MIA for now there is no type conversion, can decide further later if any other mods needed
 fun TimerDetails.toTimer(): Timer = Timer (
     timerId = timerId,
-    timerName = timerName ?: "Unnamed",
+    timerName = timerName,
     isInterval = isInterval,
     numIntervals = numIntervals.toInt() ?: 1,
     spotifyFlowMusicPlaylistId = spotifyFlowMusicPlaylistId.toInt() ?: -1,

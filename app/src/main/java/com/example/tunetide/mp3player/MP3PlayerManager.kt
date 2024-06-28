@@ -7,7 +7,7 @@ import androidx.compose.runtime.*
 import com.example.tunetide.R
 
 class MP3PlayerManager(var context: Context) {
-    private lateinit var mediaPlayer: MediaPlayer
+    private var mediaPlayer: MediaPlayer
     private var currentTrack = R.raw.flowmusic // resID
     var isPlaying by mutableStateOf(false)
         private set

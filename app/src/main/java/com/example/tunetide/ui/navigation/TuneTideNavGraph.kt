@@ -14,6 +14,8 @@ import com.example.tunetide.ui.home.HomeScreen
 /**
  * navigation graph for the app
  */
+// TODO @KATHERINE @NOUR more navigation parameters and structure is missing -> see resources
+
 @Composable
 fun TuneTideNavHost(
     navController: NavHostController,

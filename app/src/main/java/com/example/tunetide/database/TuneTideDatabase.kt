@@ -11,7 +11,6 @@ import com.example.tunetide.repository.TimerDao
 @Database(entities = [MP3File::class,
                       Timer::class,
                       MP3Playlist::class,
-                      MP3File::class,
                       SpotifyPlaylist::class,
                       Playback::class], version = 1)
 abstract class TuneTideDatabase : RoomDatabase() {

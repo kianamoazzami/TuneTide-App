@@ -15,7 +15,7 @@ interface IMP3Repository {
 
     fun getMP3Files(): Flow<List<MP3File>>
 
-    fun getMP3FileById(id: Int): Flow<MP3File?>
+    fun getMP3FileById(fileId: Int): Flow<MP3File?>
 
     fun getMP3FileByPlaylist(playlistId: Int): Flow<List<MP3File>>
 

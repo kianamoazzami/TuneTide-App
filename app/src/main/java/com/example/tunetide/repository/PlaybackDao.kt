@@ -1,5 +1,6 @@
 package com.example.tunetide.repository
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -10,6 +11,7 @@ import com.example.tunetide.database.Timer
 import com.example.tunetide.database.SpotifyPlaylist
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface PlaybackDao {
     // TODO @MIA to maintain singleton in DB, must assert that id = 1 so it will update, not insert
     // TODO @MIA assess the use of suspend functions and Flow

@@ -20,7 +20,7 @@ interface MP3Dao {
     @Query("SELECT * FROM MP3File")
     fun getMP3Files(): Flow<List<MP3File>>
 
-    @Query("SELECT file_path FROM MP3File WHERE file_id == :fileId")
+    @Query("SELECT * FROM MP3File WHERE file_id == :fileId")
     fun getMP3FileById(fileId: Int): Flow<MP3File?>
 
     @Query("SELECT * FROM MP3File WHERE playlist_id == :playlistId")

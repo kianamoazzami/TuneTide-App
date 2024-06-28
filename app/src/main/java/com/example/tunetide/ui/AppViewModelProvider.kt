@@ -47,5 +47,5 @@ object AppViewModelProvider {
 }
 
 // create queries for the application object, returns instance of the application
-fun CreationExtras.inventoryApplication(): TuneTideApplication =
+fun CreationExtras.TuneTideApplication(): TuneTideApplication =
     (this[AndroidViewModelFactory.APPLICATION_KEY] as TuneTideApplication)
