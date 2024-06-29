@@ -13,9 +13,9 @@ interface IPlaybackRepository {
 
     fun invalidatePlayback()
 
-    fun getPlayback(): Playback
+    fun getPlayback(): Flow<Playback>
 
-    fun getPlayingTimer(): Timer?
+    fun getPlayingTimer(): Flow<Timer?>
 
     fun getPlayingTimerId(): Int
 
@@ -35,6 +35,10 @@ interface IPlaybackRepository {
 
     fun getStateType(): StateType
 
+    fun getPlayingTimerNumIntervals(): Int
+
+    fun getCurrentInterval(): Int
+
     fun startNextInterval()
 }
 
@@ -43,9 +47,9 @@ class PlaybackRepository(private val playbackDao: PlaybackDao): IPlaybackReposit
 
     override fun invalidatePlayback() = playbackDao.invalidatePlayback()
 
-    override fun getPlayback(): Playback = playbackDao.getPlayback()
+    override fun getPlayback(): Flow<Playback> = playbackDao.getPlayback()
 
-    override fun getPlayingTimer(): Timer? = playbackDao.getPlayingTimer()
+    override fun getPlayingTimer(): Flow<Timer?> = playbackDao.getPlayingTimer()
 
     override fun getPlayingTimerId(): Int = playbackDao.getPlayingTimerId()
 
@@ -103,9 +107,13 @@ class PlaybackRepository(private val playbackDao: PlaybackDao): IPlaybackReposit
         return StateType.fromValue(playbackDao.getStateType()) ?: StateType.NONE
     }
 
+    override fun getPlayingTimerNumIntervals(): Int = playbackDao.getPlayingTimerNumIntervals()
+
+    override fun getCurrentInterval(): Int = playbackDao.getCurrentInterval()
+
     override fun startNextInterval() {
         if (getPlayingTimerId() == -1 ||
-            getStateType() == StateType.BREAK && getPlayingTimer()?.numIntervals == playbackDao.getCurrentInterval()) {
+            getStateType() == StateType.BREAK && playbackDao.getPlayingTimerNumIntervals() == playbackDao.getCurrentInterval()) {
         } else {
             if (getStateType() == StateType.BREAK) playbackDao.startNextFlow()
             else if (getStateType() == StateType.FLOW) playbackDao.startNextBreak()

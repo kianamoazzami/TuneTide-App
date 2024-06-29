@@ -10,7 +10,7 @@ interface ITimerRepository {
 
     suspend fun deleteTimer(timer: Timer)
 
-    fun getTimerById(timerId: Int): Timer
+    fun getTimerById(timerId: Int): Flow<Timer>
 
     fun getTimers(): Flow<List<Timer>>
 
@@ -24,7 +24,7 @@ class TimerRepository(private val timerDao: TimerDao) : ITimerRepository {
 
     override suspend fun deleteTimer(timer: Timer) = timerDao.deleteTimer(timer)
 
-    override fun getTimerById(timerId: Int): Timer = timerDao.getTimerById(timerId)
+    override fun getTimerById(timerId: Int): Flow<Timer> = timerDao.getTimerById(timerId)
 
     override fun getTimers(): Flow<List<Timer>> = timerDao.getTimers()
 

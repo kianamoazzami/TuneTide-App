@@ -1,5 +1,6 @@
 package com.example.tunetide.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -25,7 +26,12 @@ import java.util.Locale
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.navigation.NavigationDestination
 import com.example.tunetide.ui.timer.TimerUIState
+import com.example.tunetide.ui.timer.toTimer
+import com.example.tunetide.database.Timer
+import com.example.tunetide.database.Playback
 import kotlin.math.max
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -39,24 +45,44 @@ private fun timeFormat(timeMillis: Long): String {
 }
 
 // TODO @KATHERINE @NOUR fix scaffolding, etc, with UI (see inventory example)
+// TODO @KATHERINE @NOUR further separate this page into composables, see Inventory item details
+//      page as an example (VERY important to know when to use/pass/access playbackUIState vs
+//      playbackDetails vs playback)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomePageViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    Log.d("HomePage/HomeScreen", "about to collect states")
+    /*
+    // TEMP OUT -> RUNTIME ERROR
+    val playbackUIState = viewModel.playbackUIState.collectAsState()
+    val timerUIState = viewModel.timerUIState.collectAsState()
+    */
+    val coroutineScope = rememberCoroutineScope()
+
+    // TODO reformat / remove below ****************************************************************
 
     // TODO @KIANA will be injected another way (more top level/singleton)? (not sure how)
     /*
     var mp3Player: MP3Player = MP3Player(context)
     */
 
+    Log.d("HomePage/HomeScreen", "about to do launch effect")
     // values for launched effect
-    // TODO @KATHERINE @NOUR these values MAY (but maybe not) also be better practice to use
-    //      throughout the rest of the homepage (specifically the timer body)
+    /*
+    // TEMP OUT -> RUNTIME ERROR
     var timerValue = viewModel.getStartingTimerValue().toLong()
-    var isPlaying = viewModel.playbackUIState.playbackDetails.isPlaying
+    var isPlaying = playbackUIState.value.playbackDetails.isPlaying
     var currentTimeMillis by remember { mutableStateOf(timerValue) }
     var isRunning by remember { mutableStateOf(isPlaying) }
+    val timerText = remember { mutableStateOf(timeFormat(timerValue)) }
+    */
+    // TEMP IN -> RUNTIME ERROR
+    val theTimerValue: Long = 30000
+    var timerValue = theTimerValue
+    var currentTimeMillis by remember { mutableStateOf(timerValue) }
+    var isRunning by remember { mutableStateOf(false) }
     val timerText = remember { mutableStateOf(timeFormat(timerValue)) }
 
     // TODO @MIA @KATHERINE @NOUR figure out updating database (seconds remaining) when app close
@@ -72,7 +98,9 @@ fun HomeScreen(
             viewModel.startNextInterval() // TODO this should update the above values ...
         }
     }
+    // TODO reformat / remove above ****************************************************************
 
+    Log.d("HomePage/HomeScreen", "about to scaffold top and bottom bar")
     Scaffold( // TODO @KATHERINE @NOUR augment scaffolding
         topBar = {
             TuneTideTopAppBar()
@@ -89,29 +117,30 @@ fun HomeScreen(
     }
 }
 
+// NOTE @KATHERINE @NOUR the only reason HomeBody is separate from HomeScreen composable is
+//  because I couldn't figure out how to have the homeScreen body have the columns you coded after
+//  the scaffolding section
 @Composable
 fun HomeBody(
     viewModel: HomePageViewModel,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+    contentPadding: PaddingValues = PaddingValues(16.dp),
 ) {
+    Log.d("HomePage/HomeBody", "about to create main layout")
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(PurpleBackground)
-            .padding(16.dp),
+            .padding(contentPadding),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TideFlow()
         TimerBody(
             viewModel = viewModel(factory = AppViewModelProvider.Factory),
-            playbackUIState = viewModel.playbackUIState,
-            timerUIState = viewModel.timerUIState,
             modifier = modifier)
         Spacer(modifier = Modifier.height(16.dp))
         MusicPlayerBody(viewModel = viewModel(factory = AppViewModelProvider.Factory),
-            playbackUIState = viewModel.playbackUIState,
             modifier = modifier) // TODO @KIANA @ERICA inject musicUIState here
     }
 }
@@ -137,10 +166,18 @@ fun TideFlow() {
 @Composable
 fun TimerBody(
     viewModel: HomePageViewModel,
-    playbackUIState: PlaybackUIState,
-    timerUIState: TimerUIState,
     modifier: Modifier
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    Log.d("HomePage/TimerBody", "about layout timer body")
+    // TODO @KATHERINE @NOUR, these vals should not be here, should have composables for dealing with
+    //      different types of dataview / edit / etc
+    /*
+    // TEMP OUT -> RUNTIME ERROR
+    val timer: Timer = viewModel.timerUIState.timerDetails.toTimer()
+    val playback: Playback = viewModel.playbackUIState.playbackDetails.toPlayback()
+     */
+
     Box(
         modifier = Modifier
             .width(344.dp)
@@ -161,7 +198,7 @@ fun TimerBody(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = playbackUIState.playbackDetails.currentIntervalRemainingSeconds.toString(), // TODO @KATHERINE @NOUR formatting
+                    text = "30", //playback.currentIntervalRemainingSeconds.toString(), // TODO @KATHERINE @NOUR formatting
                     color = Color.White,
                     fontSize = 48.sp,
                     textAlign = TextAlign.Center
@@ -173,25 +210,34 @@ fun TimerBody(
                 horizontalAlignment = Alignment.End
             ) {
                 IconButton(onClick = {
-                    if (playbackUIState.playbackDetails.isPlaying) {
-                        viewModel.pause()
+                    /*
+                    // TEMP OUT -> RUNTIME ERROR
+                    if (playback.isPlaying) {
+                        coroutineScope.launch {
+                            viewModel.pause()
+                        }
                     } else{
-                        viewModel.play()
+                        coroutineScope.launch {
+                            viewModel.play()
+                        }
                     }
+                     */
                 }) {
-                    if (playbackUIState.playbackDetails.isPlaying) {
+                    // TEMP OUT -> RUNTIME ERROR
+                    //if (playback.isPlaying) {
                         Image(
                             painter = painterResource(id = R.drawable.pausebutton),
                             contentDescription = "Pause Button",
                             modifier = Modifier.size(30.dp)
                         )
-                    } else {
+                    // TEMP OUT -> RUNTIME ERROR
+                    /*} else {
                         Image(
                             painter = painterResource(id = R.drawable.playbutton),
                             contentDescription = "Play Button",
                             modifier = Modifier.size(30.dp)
                         )
-                    }
+                    }*/
                 }
 
                 Box(
@@ -231,7 +277,7 @@ fun TimerBody(
                                     modifier = Modifier.weight(1f)
                                 )
                                 Text(
-                                    max(0, playbackUIState.playbackDetails.currentInterval - 1).toString(),
+                                    "1", //max(0, playback.currentInterval - 1).toString(),
                                     color = Color(0xFF2B217F),
                                     fontSize = 12.sp,
                                     textAlign = TextAlign.End,
@@ -254,14 +300,14 @@ fun TimerBody(
                                     .fillMaxSize()
                                     .padding(8.dp)
                             ) {
-                                if (timerUIState.timerDetails.isInterval) {
-                                    Text(
-                                        "interval " + playbackUIState.playbackDetails.currentInterval.toString()
-                                                + " of " + timerUIState.timerDetails.numIntervals,
+                                // TEMP OUT -> RUNTIME ERROR
+                                //if (timer.isInterval) {
+                                    Text("3 of 4",
+                                        //"interval " + playback.currentInterval.toString() + " of " + timer.numIntervals,
                                         color = Color(0xFF241673).copy(alpha = 0.5f),
                                         fontSize = 12.sp
                                     )
-                                }
+                                //}
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Row(
                                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -326,7 +372,8 @@ fun TimerBody(
                                     .fillMaxSize()
                                     .padding(horizontal = 8.dp)
                             ) {
-                                if (timerUIState.timerDetails.isInterval) {
+                                // TEMP OUT -> RUNTIME ERROR
+                                //if (timer.isInterval) {
                                     Text(
                                         "remaining",
                                         color = Color(0xFF2B217F),
@@ -335,13 +382,13 @@ fun TimerBody(
                                         modifier = Modifier.weight(1f)
                                     )
                                     Text(
-                                        (timerUIState.timerDetails.numIntervals - playbackUIState.playbackDetails.currentInterval).toString(),
+                                        "3", //(timer.numIntervals - playback.currentInterval).toString(),
                                         color = Color(0xFF2B217F),
                                         fontSize = 12.sp,
                                         textAlign = TextAlign.End,
                                         modifier = Modifier.weight(1f)
                                     )
-                                } // TODO @KATHERINE @NOUR
+                                //} // TODO @KATHERINE @NOUR
                             }
                         }
                     }
@@ -354,8 +401,9 @@ fun TimerBody(
 @Composable
 fun MusicPlayerBody(
     viewModel: HomePageViewModel,
-    playbackUIState: PlaybackUIState,
     modifier: Modifier) {
+    val coroutineScope = rememberCoroutineScope()
+
     Box(
         modifier = Modifier
             .width(344.dp)

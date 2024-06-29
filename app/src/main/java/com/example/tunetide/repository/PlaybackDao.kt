@@ -11,6 +11,9 @@ import com.example.tunetide.database.Timer
 import com.example.tunetide.database.SpotifyPlaylist
 import kotlinx.coroutines.flow.Flow
 
+// NOTE: @MIA Seems to be that objects must be in a flow when retrieving them from DB ...
+//       not sure if this applies to accessing one single piece of data (maybe only objects)
+
 @Dao
 interface PlaybackDao {
     // TODO @MIA to maintain singleton in DB, must assert that id = 1 so it will update, not insert
@@ -24,10 +27,10 @@ interface PlaybackDao {
     fun invalidatePlayback()
 
     @Query("SELECT * FROM Playback")
-    fun getPlayback(): Playback
+    fun getPlayback(): Flow<Playback>
 
     @Query("SELECT * FROM Timer WHERE timer_id == (SELECT timer_id FROM Playback WHERE id == 1)")
-    fun getPlayingTimer(): Timer?
+    fun getPlayingTimer(): Flow<Timer?>
 
     @Query("SELECT timer_id FROM Playback WHERE id == 1")
     fun getPlayingTimerId(): Int
@@ -80,7 +83,10 @@ interface PlaybackDao {
     @Query("SELECT state_type FROM Playback WHERE id == 1")
     fun getPlayingTimerStateType(): Int
 
-    @Query("SELECT current_interval FROM PLayback WHERE id == 1")
+    @Query("SELECT current_interval FROM Playback WHERE id == 1")
     fun getCurrentInterval(): Int
+
+    @Query("SELECT num_intervals FROM Timer WHERE timer_id == (SELECT timer_id FROM Playback WHERE id == 1)")
+    fun getPlayingTimerNumIntervals(): Int
     // endregion
 }

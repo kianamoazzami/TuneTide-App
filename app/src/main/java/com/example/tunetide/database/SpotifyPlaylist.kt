@@ -9,12 +9,16 @@ import androidx.room.PrimaryKey
 data class SpotifyPlaylist(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "playlist_id")
+    @NonNull
     val playlistId: Int = 0,
+
     @ColumnInfo(name = "playlist_name")
-    val playlistName: String,
+    val playlistName: String?,
+
     @ColumnInfo(name = "uri_path")
     @NonNull
     val uriPath: String,
+
     @ColumnInfo(name = "playlist_cover")
-    val playlistCover: String
+    val playlistCover: String?
 )

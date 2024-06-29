@@ -23,7 +23,7 @@ interface TimerDao {
 
     // region READ
     @Query("SELECT * FROM timer WHERE timer_id == :timerId")
-    fun getTimerById(timerId: Int): Timer
+    fun getTimerById(timerId: Int): Flow<Timer>
 
     @Query("SELECT * FROM timer WHERE is_saved ORDER BY timer_name ASC")
     fun getTimers(): Flow<List<Timer>>

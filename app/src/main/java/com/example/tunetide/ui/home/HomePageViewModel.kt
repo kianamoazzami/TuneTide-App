@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.tunetide.database.MusicType
 import com.example.tunetide.database.Playback
 import com.example.tunetide.database.StateType
@@ -12,8 +13,15 @@ import com.example.tunetide.repository.PlaybackRepository
 import com.example.tunetide.repository.TimerRepository
 import com.example.tunetide.ui.timer.TimerDetails
 import com.example.tunetide.ui.timer.TimerUIState
+import com.example.tunetide.ui.timer.toTimerDetails
 import com.example.tunetide.ui.timer.toTimerUIState
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 // TODO @MIA should have a way to halt the queue
 /**
@@ -23,56 +31,80 @@ class HomePageViewModel (
     private val playbackRepository: PlaybackRepository
 ): ViewModel() {
 
-    var playbackUIState by mutableStateOf(PlaybackUIState())
-    var timerUIState by mutableStateOf(TimerUIState())
+    // TEMP IN -> RUNTIME ERROR
+    private val _timerId = 1
+    // TEMP OUT -> RUNTIME ERROR
+    /*
     private val _timerId = playbackRepository.getPlayingTimerId()
-    //val timer = if (_timerId == -1) null else playbackRepository.getPlayingTimer()
 
-    init {
-        playbackUIState = playbackRepository.getPlayback().toPlaybackUIState()
-        timerUIState = (playbackRepository.getPlayingTimer()?.toTimerUIState() ?: null)!! // TODO ... this seems bad
-    }
+    val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
+        .filterNotNull()
+        .map {
+            PlaybackUIState(playbackDetails = it.toPlaybackDetails())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = PlaybackUIState()
+        )
+
+    val timerUIState: StateFlow<TimerUIState> = playbackRepository.getPlayingTimer()
+        .filterNotNull()
+        .map {
+            TimerUIState(timerDetails = it.toTimerDetails())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = TimerUIState()
+        )
+
+     */
 
     // TODO @MIA pause and play different functions?
     // TODO @MIA @ERICA @KIANA I want the backend play and pause booleans / countdowns to be
     //      synchronous with the music players
     fun play() {
-        playbackRepository.play()
+        viewModelScope.launch {
+            playbackRepository.play()
 
-        var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
+            var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
 
-        if (_timerId == -1) {
-        } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
-            // TODO @KIANA
+            if (_timerId == -1) {
+            } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
+                // TODO @KIANA
 
-        } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
-            // TODO @ERICA
+            } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
+                // TODO @ERICA
+            }
         }
     }
 
     fun pause() {
-        playbackRepository.pause()
+        viewModelScope.launch {
+            playbackRepository.pause()
 
-        var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
+            var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
 
-        if (_timerId == -1) {
-        } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
-            // TODO @KIANA
+            if (_timerId == -1) {
+            } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
+                // TODO @KIANA
 
-        } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
-            // TODO @ERICA
+            } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
+                // TODO @ERICA
+            }
         }
     }
 
     fun skipSong() {
-        var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
+        viewModelScope.launch {
+            var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
 
-        if (_timerId == -1) {
-        } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
-            // TODO @KIANA
+            if (_timerId == -1) {
+            } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
+                // TODO @KIANA
 
-        } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
-            // TODO @ERICA
+            } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
+                // TODO @ERICA
+            }
         }
     }
 
@@ -87,29 +119,35 @@ class HomePageViewModel (
     }
 
     fun startNextInterval() {
-        // if last interval finishes, finish
-        if (playbackUIState.playbackDetails.currentInterval == playbackRepository.getPlayingTimer()?.numIntervals &&
-            StateType.fromValue(playbackUIState.playbackDetails.stateType) == StateType.BREAK) {
-            finish()
-        } else {
-            playbackRepository.startNextInterval()
+        viewModelScope.launch {
+            // if last interval finishes, finish
+            if (playbackRepository.getCurrentInterval() == playbackRepository.getPlayingTimerNumIntervals() &&
+                playbackRepository.getStateType() == StateType.BREAK
+            ) {
+                finish()
+            } else {
+                playbackRepository.startNextInterval()
+            }
         }
     }
 
     // same as cancelling a timer
     fun finish() {
-        // TODO @ERICA @KIANA stop music
-        playbackRepository.invalidatePlayback()
+        viewModelScope.launch {
+            // TODO @ERICA @KIANA stop music
+            playbackRepository.invalidatePlayback()
+        }
     }
 
     fun restart() {
-        playbackRepository.restartTimer()
-        // TODO @ERICA @KIANA restart music
+        viewModelScope.launch {
+            playbackRepository.restartTimer()
+            // TODO @ERICA @KIANA restart music
+        }
     }
 
-    fun updateUIState(playbackDetails: PlaybackDetails, timerDetails: TimerDetails) {
-        playbackUIState = PlaybackUIState(playbackDetails = playbackDetails)
-        timerUIState = TimerUIState(timerDetails = timerDetails)
+    companion object {
+        private const val TIMEOUT_MILLIS = 5_000L
     }
 }
 
