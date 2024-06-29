@@ -39,4 +39,5 @@
  | 06/24/24 | Work on D3                          | 2.0       | 2.0       | 2.0       | 2.0       | 2.0       |
  | 06/24/24 | Working on the setting page         |           | 1.0       |           |           |           |
  | 06/24/24 | Database, Repos, Dependency Injectio| 3.75      |           |           |           |           |
- | 06/24/26 | Database, Repos, Dependency Injectio| 8         |           |           |           |           |
+ | 06/26/24 | Database, Repos, Dependency Injectio| 8         |           |           |           |           |
+ | 06/28/24 | Debugging and Database              | 2         |           |           |           |           |
