@@ -38,7 +38,6 @@ class MainActivity : ComponentActivity() {
     override fun onStop() {
         super.onStop()
         //mainSpotifyController.Disconnect();
-
     }
 
     override fun onDestroy() {
