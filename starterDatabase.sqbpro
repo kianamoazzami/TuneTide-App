@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/miada/Documents/ComputerScience/AndroidStudio/ECE-452-CS-446/app/src/main/assets/starterDatabase.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="0"/></window><tab_structure><column_width id="0" width="667"/><column_width id="1" width="0"/><column_width id="2" width="200"/><column_width id="3" width="6708"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="0" parent="0"/><expanded_item id="3" parent="0"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,15:mainsqlite_sequence"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1">CREATE TABLE &quot;MP3File&quot; (
+	&quot;file_id&quot;	INTEGER NOT NULL,
+	&quot;playlist_id&quot;	INTEGER NOT NULL,
+	&quot;file_name&quot;	TEXT,
+	&quot;file_path&quot;	TEXT NOT NULL,
+	&quot;file_cover&quot;	TEXT,
+	PRIMARY KEY(&quot;file_id&quot;),
+	FOREIGN KEY(&quot;playlist_id&quot;) REFERENCES MP3Playlist(playlist_id)
+);
+
+DROP TABLE &quot;MP3File&quot; </sql><current_tab id="0"/></tab_sql></sqlb_project>
