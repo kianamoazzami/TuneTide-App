@@ -15,9 +15,6 @@ import com.example.tunetide.spotify.SpotifyController
 
 class MainActivity : ComponentActivity() {
 
-    //public final lateinit var appContainer: AppDataContainer
-    //public final lateinit var appViewModelProvider: AppViewModelProvider
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -27,8 +24,6 @@ class MainActivity : ComponentActivity() {
                 TuneTideApp()
             }
         }
-
-        // Here is where container should be initialized .. why is there a runtime error!
 
     }
 
