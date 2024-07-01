@@ -43,3 +43,4 @@
  | 06/28/24 | Debugging and Database              | 2         |           |           |           |           |
  | 06/28/24 | Debugging, front end, view models   | 3.5       |           |           |           |           |
  | 06/28/24 | Review PR, Spotify Authentication   |           |           | 3         |           |           |
+ | 07/01/24 | PR Changes                          | 1.5       |           |           |           |           |
