@@ -45,3 +45,4 @@
  | 06/28/24 | Review PR, Spotify Authentication   |           |           | 3         |           |           |
  | 07/01/24 | PR Changes                          | 1.5       |           |           |           |           |
  | 07/02/24 | ViewModels, Navigation, New Pages   | 1.25      |           |           |           |           |
+ | 07/02/24 | Reviewing/Understanding/Testing PR  |           |           |           | 2.0       |           |
