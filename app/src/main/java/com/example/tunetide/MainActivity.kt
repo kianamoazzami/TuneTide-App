@@ -14,6 +14,8 @@ import com.example.tunetide.spotify.SpotifyController
 
 class MainActivity : ComponentActivity() {
 
+    //private val mainSpotifyController : SpotifyController = SpotifyController();
+  
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -31,12 +33,13 @@ class MainActivity : ComponentActivity() {
         // probably don't want to prompt for spotify connection right as app starts
         // could put as separate option
         super.onStart()
-        //mainSpotifyController.Connect(this);
+        //mainSpotifyController.connect(this);
+        //mainSpotifyController.playSamplePlaylist();
     }
 
     override fun onStop() {
         super.onStop()
-        //mainSpotifyController.Disconnect();
+       // mainSpotifyController.disconnect();
     }
 
     override fun onDestroy() {
