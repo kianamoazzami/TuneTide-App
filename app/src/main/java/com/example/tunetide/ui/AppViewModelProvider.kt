@@ -5,7 +5,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.tunetide.TuneTideApplication
+import com.example.tunetide.Application
 import com.example.tunetide.ui.home.HomePageViewModel
 import com.example.tunetide.ui.timer.TimerEditViewModel
 import com.example.tunetide.ui.timer.TimerEntryViewModel
@@ -47,5 +47,5 @@ object AppViewModelProvider {
 }
 
 // create queries for the application object, returns instance of the application
-fun CreationExtras.TuneTideApplication(): TuneTideApplication =
-    (this[AndroidViewModelFactory.APPLICATION_KEY] as TuneTideApplication)
+fun CreationExtras.TuneTideApplication(): Application =
+    (this[AndroidViewModelFactory.APPLICATION_KEY] as Application)

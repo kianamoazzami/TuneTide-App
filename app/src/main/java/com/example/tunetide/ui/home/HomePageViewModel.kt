@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-// TODO @MIA should have a way to halt the queue
+// TODO @MIA should have a way to halt the queue / standards
 /**
  * View Model to host state of the timer that is running
  */
@@ -136,6 +136,7 @@ class HomePageViewModel (
         viewModelScope.launch {
             // TODO @ERICA @KIANA stop music
             playbackRepository.invalidatePlayback()
+            // TODO @MIA invoke next in queue??? (decide how queue will work)
         }
     }
 

@@ -17,25 +17,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.R
-import com.example.tunetide.TuneTideBottomAppBar
-import com.example.tunetide.TuneTideTopAppBar
-import com.example.tunetide.database.StateType
+import com.example.tunetide.ui.TuneTideBottomAppBar
+import com.example.tunetide.ui.TuneTideTopAppBar
 import com.example.tunetide.ui.theme.PurpleBackground
 import kotlinx.coroutines.delay
 import java.util.Locale
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.navigation.NavigationDestination
-import com.example.tunetide.ui.timer.TimerUIState
-import com.example.tunetide.ui.timer.toTimer
-import com.example.tunetide.database.Timer
-import com.example.tunetide.database.Playback
-import kotlin.math.max
-import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
-    override val titleRes = R.string.app_name
+    override val titleRes = R.string.home_page_name
 }
 
 private fun timeFormat(timeMillis: Long): String {

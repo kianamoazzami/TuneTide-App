@@ -2,7 +2,9 @@ package com.example.tunetide.repository
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import androidx.room.Upsert
 import com.example.tunetide.database.Timer
 import kotlinx.coroutines.flow.Flow
@@ -14,8 +16,11 @@ import kotlinx.coroutines.flow.Flow
 interface TimerDao {
 
     // region CUD
-    @Upsert
-    suspend fun upsertTimer(timer: Timer)
+    @Insert
+    suspend fun insertTimer(timer: Timer)
+
+    @Update
+    suspend fun updateTimer(timer: Timer)
 
     @Delete
     suspend fun deleteTimer(timer: Timer)

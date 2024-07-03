@@ -3,7 +3,7 @@ package com.example.tunetide
 import android.app.Application
 import android.util.Log
 
-class TuneTideApplication : Application() {
+class Application : Application() {
 
     // AppContainer instance (the other classes use this for dependency injection)
     lateinit var container: AppContainer

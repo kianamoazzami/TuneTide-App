@@ -6,7 +6,9 @@ import com.example.tunetide.database.Timer
 import kotlinx.coroutines.flow.Flow
 
 interface ITimerRepository {
-    suspend fun upsertTimer(timer: Timer)
+    suspend fun insertTimer(timer: Timer)
+
+    suspend fun updateTimer(timer: Timer)
 
     suspend fun deleteTimer(timer: Timer)
 
@@ -20,7 +22,9 @@ interface ITimerRepository {
 }
 
 class TimerRepository(private val timerDao: TimerDao) : ITimerRepository {
-    override suspend fun upsertTimer(timer: Timer) = timerDao.upsertTimer(timer)
+    override suspend fun insertTimer(timer: Timer) = timerDao.insertTimer(timer)
+
+    override suspend fun updateTimer(timer: Timer) = timerDao.updateTimer(timer)
 
     override suspend fun deleteTimer(timer: Timer) = timerDao.deleteTimer(timer)
 

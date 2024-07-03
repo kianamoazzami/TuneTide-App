@@ -10,6 +10,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.tunetide.ui.home.HomeDestination
 import com.example.tunetide.ui.home.HomeScreen
+import com.example.tunetide.ui.timer.TimerEditDestination
+import com.example.tunetide.ui.timer.TimerEditScreen
+import com.example.tunetide.ui.timer.TimerEntryDestination
+import com.example.tunetide.ui.timer.TimerEntryScreen
+import com.example.tunetide.ui.timers.TimersListDestination
+import com.example.tunetide.ui.timers.TimersListScreen
 
 /**
  * navigation graph for the app
@@ -31,5 +37,34 @@ fun TuneTideNavHost(
                 // TODO @KATHERINE @NOUR navigation info here
             )
         }
+
+        composable(route = TimerEntryDestination.route) {
+            TimerEntryScreen(
+                navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() }
+            )
+        }
+
+        composable(
+            route = TimerEditDestination.routeWithArgs,
+            arguments = listOf(navArgument(TimerEditDestination.timerIdArg) {
+                type = NavType.IntType
+            })
+        ) {
+            TimerEditScreen(
+                navigateToEditTimer = { navController.navigate("${TimerEditDestination.route}/$it") },
+                navigateBack = { navController.navigateUp() }
+            )
+        }
+
+        composable(route = TimersListDestination.route) {
+            TimersListScreen(
+                navigateToTimerEntry = { navController.navigate(TimerEntryDestination.route) },
+                navigateToTimerEdit = {
+                    navController.navigate("${TimerEditDestination.route}/${it}")
+                }
+            )
+        }
     }
 }
+
