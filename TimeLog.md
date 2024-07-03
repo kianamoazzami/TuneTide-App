@@ -37,7 +37,7 @@
  | 06/21/24 | Build Debugging                     | 3.5       |           |           |           |           |
  | 06/21/24 | Database and Backend Dev            | 3.5       |           |           |           |           |
  | 06/24/24 | Work on D3                          | 2.0       | 2.0       | 2.0       | 2.0       | 2.0       |
- | 06/24/24 | Working on the setting page         |           | 1.0       |           |           |           |
+ | 06/24/24 | Working on the setting page         |           | 2.0       |           |           |           |
  | 06/24/24 | Database, Repos, Dependency Injectio| 3.75      |           |           |           |           |
  | 06/26/24 | Database, Repos, Dependency Injectio| 8         |           |           |           |           |
  | 06/28/24 | Debugging and Database              | 2         |           |           |           |           |
@@ -50,3 +50,4 @@
  | 07/02/24 | Studying Viewmodel + Debugging      |           |           |           | 3.0       |           |
  | 07/02/24 | Reviewing PR                        |           |           | 1.5       |           |           |
  | 07/02/24 | Reviewing PR                        |           |           |           |           | 1.0       |
+ | 07/02/24 | Reviewing PR                        |           | 2.0       |           |           |           | 
