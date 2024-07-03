@@ -48,3 +48,4 @@
  | 07/02/24 | Reviewing/Understanding/Testing PR  |           |           |           | 2.0       |           |
  | 07/02/24 | Spotify Controller Fixes            |           |           | 1.5       |           |           |
  | 07/02/24 | Studying Viewmodel + Debugging      |           |           |           | 3.0       |           |
+ | 07/02/24 | Reviewing PR                        |           |           | 1.5       |           |           |
