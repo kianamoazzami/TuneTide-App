@@ -14,12 +14,12 @@ import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import com.spotify.sdk.android.auth.LoginActivity
 
-private const val clientId = "cb2af3cb9add453d8a18f97e2aae117f"
-private const val redirectUri = "tunetide://test"
-private var spotifyAppRemote: SpotifyAppRemote? = null
-
-
 class SpotifyController(val mainContext: Context) {
+    // All new spotifyController functions for public use will need to go through a connectAndExecute call right now
+
+    private val clientId = "cb2af3cb9add453d8a18f97e2aae117f"
+    private val redirectUri = "tunetide://test"
+    private var spotifyAppRemote: SpotifyAppRemote? = null
 
     private fun connectAndExecute(operation: () -> Any?): Any? {
         val connectionParams = ConnectionParams.Builder(clientId)
@@ -44,7 +44,6 @@ class SpotifyController(val mainContext: Context) {
         })
 
         return returnVal;
-
     }
 
     // overload connect to take function with parameters
@@ -80,21 +79,55 @@ class SpotifyController(val mainContext: Context) {
             SpotifyAppRemote.disconnect(it)
         }
     }
-    fun playSamplePlaylist() {
-        fun playSampleWrapper() {
-            Log.d("MainActivity", "pressed play")
+
+    fun playPlaylistURI(uri: String) {
+        fun playURIWrapper() {
             spotifyAppRemote?.let {
                 // Play a playlist
-                val playlistURI = "spotify:playlist:37i9dQZF1DX2sUQwD7tbmL"
-                it.playerApi.play(playlistURI)
-                Log.d("MainActivity", "PlayerAPI called")
-                // Subscribe to PlayerState
+
+                it.playerApi.play(uri)
+                Log.d("SpotifyController", "Playing Playlist by URL")
+
                 it.playerApi.subscribeToPlayerState().setEventCallback {
                     val track: Track = it.track
-                    Log.d("MainActivity", track.name + " by " + track.artist.name)
+                    Log.d("SpotifyController", "Playing : " + track.name + " by " + track.artist.name)
                 }
             }
         }
-        connectAndExecute(::playSampleWrapper)
+        connectAndExecute(::playURIWrapper)
     }
+
+    fun pause() {
+        fun pauseWrapper() {
+            spotifyAppRemote?.let {
+                // Play a playlist
+
+                it.playerApi.pause();
+                Log.d("SpotifyController", "Pausing music")
+
+            }
+        }
+        connectAndExecute(::pauseWrapper)
+    }
+    /*
+    fun getCurrentTrackName() : String {
+
+        fun getTrackNameWrapper(): String {
+            var returnVal: String = ""
+            spotifyAppRemote?.let {
+                // Play a playlist
+                it.playerApi.subscribeToPlayerState().setEventCallback {
+                    val track: Track = it.track
+                    returnVal = track.name
+                }
+            }
+            return returnVal
+        }
+        return connectAndExecute(::getTrackNameWrapper)
+    }
+    */
+    fun getCurrentTrackArtist() {
+
+    }
+
 }
