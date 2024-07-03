@@ -54,11 +54,11 @@ fun HomeScreen(
     viewModel: HomePageViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     Log.d("HomePage/HomeScreen", "about to collect states")
-    /*
+
     // TEMP OUT -> RUNTIME ERROR
     val playbackUIState = viewModel.playbackUIState.collectAsState()
     val timerUIState = viewModel.timerUIState.collectAsState()
-    */
+
     val coroutineScope = rememberCoroutineScope()
 
     // TODO reformat / remove below ****************************************************************
@@ -70,19 +70,16 @@ fun HomeScreen(
 
     Log.d("HomePage/HomeScreen", "about to do launch effect")
     // values for launched effect
-    /*
-    // TEMP OUT -> RUNTIME ERROR
-    var timerValue = viewModel.getStartingTimerValue().toLong()
-    var isPlaying = playbackUIState.value.playbackDetails.isPlaying
-    var currentTimeMillis by remember { mutableStateOf(timerValue) }
-    var isRunning by remember { mutableStateOf(isPlaying) }
-    val timerText = remember { mutableStateOf(timeFormat(timerValue)) }
-    */
+
     // TEMP IN -> RUNTIME ERROR
     val theTimerValue: Long = 30000
     var timerValue = theTimerValue
+
+    // TEMP OUT -> RUNTIME ERROR
+    //var timerValue = viewModel.getStartingTimerValue().toLong()
+    var isPlaying = playbackUIState.value.playbackDetails.isPlaying
     var currentTimeMillis by remember { mutableStateOf(timerValue) }
-    var isRunning by remember { mutableStateOf(false) }
+    var isRunning by remember { mutableStateOf(isPlaying) }
     val timerText = remember { mutableStateOf(timeFormat(timerValue)) }
 
     // TODO @MIA @KATHERINE @NOUR figure out updating database (seconds remaining) when app close

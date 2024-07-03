@@ -15,8 +15,10 @@ import com.example.tunetide.ui.timer.TimerDetails
 import com.example.tunetide.ui.timer.TimerUIState
 import com.example.tunetide.ui.timer.toTimerDetails
 import com.example.tunetide.ui.timer.toTimerUIState
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -34,30 +36,15 @@ class HomePageViewModel (
     // TEMP IN -> RUNTIME ERROR
     private val _timerId = 1
     // TEMP OUT -> RUNTIME ERROR
-    /*
-    private val _timerId = playbackRepository.getPlayingTimerId()
 
-    val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
-        .filterNotNull()
-        .map {
-            PlaybackUIState(playbackDetails = it.toPlaybackDetails())
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = PlaybackUIState()
-        )
+    //private val _timerId = playbackRepository.getPlayingTimerId()
 
-    val timerUIState: StateFlow<TimerUIState> = playbackRepository.getPlayingTimer()
-        .filterNotNull()
-        .map {
-            TimerUIState(timerDetails = it.toTimerDetails())
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = TimerUIState()
-        )
+    val _playbackUIState = MutableStateFlow(PlaybackUIState())
+    val playbackUIState: StateFlow<PlaybackUIState> = _playbackUIState.asStateFlow()
 
-     */
+    val _timerUIState = MutableStateFlow(TimerUIState())
+    val timerUIState: StateFlow<TimerUIState> = _timerUIState.asStateFlow()
+
 
     // TODO @MIA pause and play different functions?
     // TODO @MIA @ERICA @KIANA I want the backend play and pause booleans / countdowns to be
