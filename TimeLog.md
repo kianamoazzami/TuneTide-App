@@ -52,4 +52,5 @@
  | 07/02/24 | Reviewing PR                        |           |           |           |           | 1.0       |
  | 07/02/24 | Reviewing PR                        |           | 2.0       |           |           |           | 
  | 07/02/24 | Reseach on Kotlin                   |           | 2.0       |           |           |           |
- | 07/03/24 | Group Meeting                       |           |           |           |           |           | 
+ | 07/03/24 | Fixes for PR                        | 0.5       |           |           |           |           | 
+ | 07/03/24 | Group Meeting                       | 2.0       |           |           |           |           | 
