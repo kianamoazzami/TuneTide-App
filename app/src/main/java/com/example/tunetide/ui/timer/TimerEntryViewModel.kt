@@ -16,15 +16,16 @@ class TimerEntryViewModel (
 
     // holds current timer UI state
     var timerUIState by mutableStateOf(TimerUIState())
+        private set
 
     // updates item UI
     fun updateUIState(timerDetails: TimerDetails) {
         timerUIState = TimerUIState(timerDetails = timerDetails, isValidEntry = validateInput(timerDetails))
     }
 
-    suspend fun saveTimer() {
+    suspend fun insertTimer() {
         if (validateInput()) {
-            timerRepository.upsertTimer(timerUIState.timerDetails.toTimer())
+            timerRepository.insertTimer(timerUIState.timerDetails.toTimer())
         }
     }
 
