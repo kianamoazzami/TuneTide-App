@@ -1,5 +1,5 @@
 package com.example.tunetide.spotify
-
+/*
 import android.content.Context
 import android.util.Log
 import com.spotify.android.appremote.api.SpotifyAppRemote
@@ -130,4 +130,4 @@ class SpotifyController(val mainContext: Context) {
 
     }
 
-}
+}*/
