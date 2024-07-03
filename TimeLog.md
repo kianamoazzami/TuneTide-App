@@ -51,3 +51,4 @@
  | 07/02/24 | Reviewing PR                        |           |           | 1.5       |           |           |
  | 07/02/24 | Reviewing PR                        |           |           |           |           | 1.0       |
  | 07/02/24 | Reviewing PR                        |           | 2.0       |           |           |           | 
+ | 07/03/24 | Group Meeting                       |           |           |           |           |           | 
