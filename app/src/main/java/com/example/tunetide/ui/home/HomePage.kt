@@ -25,8 +25,11 @@ import java.util.Locale
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.navigation.NavigationDestination
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.layout.AlignmentLine
+import androidx.compose.ui.layout.FirstBaseline
 import com.example.tunetide.database.Playback
 import com.example.tunetide.database.Timer
+import com.example.tunetide.ui.theme.Greyish
 import com.example.tunetide.ui.timer.toTimer
 import kotlinx.coroutines.launch
 import kotlin.math.max
@@ -41,12 +44,8 @@ fun TheTimer(
     modifier: Modifier = Modifier,
     viewModel: HomePageViewModel
 ) {
-    Log.d("HomePage/TheTimer", "about to collect states")
-    // TEMP OUT -> RUNTIME ERROR
     val playbackUIState = viewModel.playbackUIState.collectAsState()
     val timerUIState = viewModel.timerUIState.collectAsState()
-
-    val coroutineScope = rememberCoroutineScope()
 
     // TEMP IN -> RUNTIME ERROR
     val theTimerValue: Long = 30000
@@ -74,19 +73,13 @@ fun TheTimer(
     }
 }
 
-// TODO @KATHERINE @NOUR fix scaffolding, etc, with UI (see inventory example)
-// TODO @KATHERINE @NOUR further separate this page into composables, see Inventory item details
-//      page as an example (VERY important to know when to use/pass/access playbackUIState vs
-//      playbackDetails vs playback)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomePageViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    Log.d("HomePage/HomeScreen", "about to scaffold top and bottom bar")
     val timer: Timer = viewModel.timerUIState.collectAsState().value.timerDetails.toTimer()
     val playback: Playback = viewModel.playbackUIState.collectAsState().value.playbackDetails.toPlayback()
-    val coroutineScope = rememberCoroutineScope()
     TheTimer(modifier, viewModel)
     Scaffold(
         topBar = {
@@ -114,7 +107,6 @@ fun HomeBody(
     timer: Timer,
     contentPadding: PaddingValues = PaddingValues(16.dp),
 ) {
-    Log.d("HomePage/HomeBody", "about to create main layout")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -160,8 +152,6 @@ fun TimerBody(
     playback: Playback,
     timer: Timer,
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    Log.d("HomePage/TimerBody", "about layout timer body")
     Box(
         modifier = Modifier
             .width(344.dp)
@@ -250,14 +240,12 @@ fun PlayButton(
         }
 
     }) {
-        // TEMP OUT -> RUNTIME ERROR
         if (playback.isPlaying) {
         Image(
             painter = painterResource(id = R.drawable.pausebutton),
             contentDescription = "Pause Button",
             modifier = Modifier.size(30.dp)
         )
-        // TEMP OUT -> RUNTIME ERROR
         } else {
             Image(
                 painter = painterResource(id = R.drawable.playbutton),
@@ -281,20 +269,40 @@ fun InfoBody(
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        CompletedDisplay(viewModel = viewModel,
-            modifier = modifier,
-            playback = playback,
-            timer = timer)
-        Spacer(modifier = Modifier.height(8.dp))
-        FlowBreakDisplay(viewModel = viewModel,
-            modifier = modifier,
-            playback = playback,
-            timer = timer)
-        Spacer(modifier = Modifier.height(8.dp))
-        RemainingDisplay(viewModel = viewModel,
-            modifier = modifier,
-            playback = playback,
-            timer = timer)
+        if (timer.isInterval) {
+            CompletedDisplay(
+                viewModel = viewModel,
+                modifier = modifier,
+                playback = playback,
+                timer = timer
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            FlowBreakDisplay(
+                viewModel = viewModel,
+                modifier = modifier,
+                playback = playback,
+                timer = timer
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            RemainingDisplay(
+                viewModel = viewModel,
+                modifier = modifier,
+                playback = playback,
+                timer = timer
+            )
+
+        }
+        else {
+            Text(
+                "Standard Timer",
+                color = Color(Greyish.value),
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentHeight(align = Alignment.CenterVertically),
+            )
+        }
     }
 
 }
@@ -368,8 +376,6 @@ fun RemainingDisplay(
                 .fillMaxSize()
                 .padding(horizontal = 8.dp)
         ) {
-            // TEMP OUT -> RUNTIME ERROR
-            //if (timer.isInterval) {
             Text(
                 "remaining",
                 color = Color(0xFF2B217F),
@@ -384,7 +390,6 @@ fun RemainingDisplay(
                 textAlign = TextAlign.End,
                 modifier = Modifier.weight(1f)
             )
-            //} // TODO @KATHERINE @NOUR
         }
     }
 
@@ -412,13 +417,12 @@ fun FlowBreakDisplay(
                 .fillMaxSize()
                 .padding(8.dp)
         ) {
-            // TEMP OUT -> RUNTIME ERROR
-            //if (timer.isInterval) {
-            Text("interval " + playback.currentInterval.toString() + " of " + timer.numIntervals,
+            Text("Interval "
+                    + playback.currentInterval.toString()
+                    + " of " + timer.numIntervals,
                 color = Color(0xFF241673).copy(alpha = 0.5f),
                 fontSize = 12.sp
             )
-            //}
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -432,14 +436,36 @@ fun FlowBreakDisplay(
             ) {
                 Text(
                     "flow",
-                    color = Color(0xFFBF5FFF),
-                    fontSize = 12.sp
-                )
-                Text(
-                    "12:36", // TODO @KATHERINE @NOUR
                     color = Color(0xFF821A93),
                     fontSize = 12.sp
                 )
+                if (playback.stateType == 0) {
+                    // FLOW IS ON
+                    Text(
+                        playback.currentIntervalRemainingSeconds.toString(),
+                        color = Color(0xFF821A93),
+                        fontSize = 12.sp
+                    )
+
+                }
+                else if (playback.stateType == 1) {
+                    // BREAK IS ON
+                    Text(
+                        timer.flowMusicDurationSeconds.toString(),
+                        color = Color(0xFFBF5FFF),
+                        fontSize = 12.sp
+                    )
+
+                }
+                else {
+                    // NONE
+                    Text(
+                        "0",
+                        color = Color(0xFFBF5FFF),
+                        fontSize = 12.sp
+                    )
+
+                }
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row(
@@ -457,11 +483,33 @@ fun FlowBreakDisplay(
                     color = Color(0xFF4F5F71),
                     fontSize = 12.sp
                 )
-                Text(
-                    "5:00", // TODO @KATHERINE @NOUR
-                    color = Color(0xFFB2A9A9),
-                    fontSize = 12.sp
-                )
+                if (playback.stateType == 0) {
+                    // FLOW IS ON
+                    Text(
+                        timer.breakMusicDurationSeconds.toString(),
+                        color = Color(0xFFB2A9A9),
+                        fontSize = 12.sp
+                    )
+
+                }
+                else if (playback.stateType == 1) {
+                    // BREAK IS ON
+                    Text(
+                        playback.currentIntervalRemainingSeconds.toString(),
+                        color = Color(0xFF4F5F71),
+                        fontSize = 12.sp
+                    )
+
+                }
+                else {
+                    // NONE
+                    Text(
+                        "0",
+                        color = Color(0xFFB2A9A9),
+                        fontSize = 12.sp
+                    )
+
+                }
             }
         }
     }
