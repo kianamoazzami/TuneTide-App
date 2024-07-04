@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 // TODO @MIA should have a way to halt the queue / standards
 /**
@@ -45,6 +46,11 @@ class HomePageViewModel (
     val _timerUIState = MutableStateFlow(TimerUIState())
     val timerUIState: StateFlow<TimerUIState> = _timerUIState.asStateFlow()
 
+    fun timeFormat(timeMillis: Long): String {
+        val minutes = (timeMillis / 1000) / 60
+        val seconds = (timeMillis / 1000) % 60
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
+    }
 
     // TODO @MIA pause and play different functions?
     // TODO @MIA @ERICA @KIANA I want the backend play and pause booleans / countdowns to be
