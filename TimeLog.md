@@ -58,3 +58,4 @@
  | 07/03/24 | Kotlin Navigation Research          |           |           |           |           | 1.0       |
  | 07/03/24 | Local Music Files Page              |           |           |           |           | 2.0       |
  | 07/03/24 | Research+Progress Homepage Restructu|           |           |           | 5.0       |           |
+ | 07/04/24 | Homepage Restructuring              |           |           |           | 1.5       |           |
