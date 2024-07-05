@@ -42,7 +42,7 @@
  | 06/26/24 | Database, Repos, Dependency Injectio| 8         |           |           |           |           |
  | 06/28/24 | Debugging and Database              | 2         |           |           |           |           |
  | 06/28/24 | Debugging, front end, view models   | 3.5       |           |           |           |           |
- | 06/28/24 | Review PR, Spotify Authentication   |           |           | 3         |           |           |
+ | 06/28/24 | Review PR, Spotify Authentication   |           |           | 3.0       |           |           |
  | 07/01/24 | PR Changes                          | 1.5       |           |           |           |           |
  | 07/02/24 | ViewModels, Navigation, New Pages   | 1.25      |           |           |           |           |
  | 07/02/24 | Reviewing/Understanding/Testing PR  |           |           |           | 2.0       |           |
@@ -59,3 +59,4 @@
  | 07/03/24 | Local Music Files Page              |           |           |           |           | 2.0       |
  | 07/03/24 | Research+Progress Homepage Restructu|           |           |           | 5.0       |           |
  | 07/04/24 | Homepage Restructuring              |           |           |           | 1.5       |           |
+ | 07/05/24 | Spotify & Kotlin Coroutine Research |           |           | 2.5       |           |           |
