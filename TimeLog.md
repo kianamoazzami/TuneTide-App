@@ -60,3 +60,4 @@
  | 07/03/24 | Research+Progress Homepage Restructu|           |           |           | 5.0       |           |
  | 07/04/24 | Homepage Restructuring              |           |           |           | 1.5       |           |
  | 07/05/24 | Spotify & Kotlin Coroutine Research |           |           | 3.0       |           |           |
+ | 07/05/24 | Homepage Restructuring              |           |           |           | 4.0       |           |
