@@ -59,4 +59,4 @@
  | 07/03/24 | Local Music Files Page              |           |           |           |           | 2.0       |
  | 07/03/24 | Research+Progress Homepage Restructu|           |           |           | 5.0       |           |
  | 07/04/24 | Homepage Restructuring              |           |           |           | 1.5       |           |
- | 07/05/24 | Spotify & Kotlin Coroutine Research |           |           | 2.5       |           |           |
+ | 07/05/24 | Spotify & Kotlin Coroutine Research |           |           | 3.0       |           |           |
