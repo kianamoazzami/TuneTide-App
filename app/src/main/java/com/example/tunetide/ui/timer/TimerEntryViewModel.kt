@@ -57,7 +57,7 @@ data class TimerUIState(
 data class TimerDetails(
     val timerId: Int = -1,
     val timerName: String = "",
-    val isInterval: Boolean = true,
+    val isInterval: Boolean = false,
     val numIntervals: Int = 1,
     val spotifyFlowMusicPlaylistId: Int = -1,
     val mp3FlowMusicPlaylistId: Int = -1,

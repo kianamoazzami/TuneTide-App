@@ -30,7 +30,11 @@ import androidx.compose.ui.layout.FirstBaseline
 import com.example.tunetide.database.Playback
 import com.example.tunetide.database.Timer
 import com.example.tunetide.ui.theme.Greyish
+import com.example.tunetide.ui.timer.TimerUIState
 import com.example.tunetide.ui.timer.toTimer
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.max
 
@@ -42,33 +46,33 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun TheTimer(
     modifier: Modifier = Modifier,
-    viewModel: HomePageViewModel
+    viewModel: HomePageViewModel,
+    playback: PlaybackUIState,
+    timer: Timer,
 ) {
-    val playbackUIState = viewModel.playbackUIState.collectAsState()
-    val timerUIState = viewModel.timerUIState.collectAsState()
 
     // TEMP IN -> RUNTIME ERROR
-    val theTimerValue: Long = 30000
-    var timerValue = theTimerValue
+    var timerValue = 30000
 
-    // TEMP OUT -> RUNTIME ERROR
+    // TEMP OUT -> RUNTIME ERROR IN DATABASE ACCESS
     //var timerValue = viewModel.getStartingTimerValue().toLong()
-    var isPlaying = playbackUIState.value.playbackDetails.isPlaying
     var currentTimeMillis by remember { mutableStateOf(timerValue) }
-    var isRunning by remember { mutableStateOf(isPlaying) }
-    val timerText = remember { mutableStateOf(viewModel.timeFormat(timerValue)) }
+    viewModel.setCurrentTime(currentTimeMillis.toInt())
 
     // TODO @MIA @KATHERINE @NOUR figure out updating database (seconds remaining) when app close
     //      too costly / inefficent to update every second
-    // TODO @MIA @KATHERINE @NOUR @ERICA @KIANA this may not be the best way to do this countdown ... not sure
-    LaunchedEffect(isRunning) {
-        while (isRunning && currentTimeMillis > 0) {
+    // ^ Will do after database access errors resolved
+    LaunchedEffect(playback.isPlaying) {
+        while (playback.isPlaying && currentTimeMillis > 0) {
             delay(1000)
             currentTimeMillis -= 1000
-            timerText.value = viewModel.timeFormat(currentTimeMillis)
+            viewModel.setCurrentTime(currentTimeMillis.toInt())
         }
         if (currentTimeMillis <= 0) {
-            viewModel.startNextInterval() // TODO this should update the above values ...
+            if (timer.isInterval) {
+                viewModel.startNextInterval()
+            }
+            viewModel.setCurrentTime(currentTimeMillis.toInt())
         }
     }
 }
@@ -79,8 +83,8 @@ fun HomeScreen(
     viewModel: HomePageViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val timer: Timer = viewModel.timerUIState.collectAsState().value.timerDetails.toTimer()
-    val playback: Playback = viewModel.playbackUIState.collectAsState().value.playbackDetails.toPlayback()
-    TheTimer(modifier, viewModel)
+    val playback: PlaybackUIState = viewModel.playbackUIState.collectAsState().value
+    TheTimer(modifier, viewModel, playback, timer)
     Scaffold(
         topBar = {
             TuneTideTopAppBar()
@@ -103,7 +107,7 @@ fun HomeScreen(
 fun HomeBody(
     viewModel: HomePageViewModel,
     modifier: Modifier = Modifier,
-    playback: Playback,
+    playback: PlaybackUIState,
     timer: Timer,
     contentPadding: PaddingValues = PaddingValues(16.dp),
 ) {
@@ -149,7 +153,7 @@ fun TideFlow() {
 fun TimerBody(
     viewModel: HomePageViewModel,
     modifier: Modifier,
-    playback: Playback,
+    playback: PlaybackUIState,
     timer: Timer,
 ) {
     Box(
@@ -208,11 +212,11 @@ fun TimerBody(
 fun TimerDisplay(
     viewModel: HomePageViewModel,
     modifier: Modifier,
-    playback: Playback,
+    playback: PlaybackUIState,
     timer: Timer,
 ) {
     Text(
-        text = playback.currentIntervalRemainingSeconds.toString(),
+        text = viewModel.timeFormat(playback.currentIntervalRemainingSeconds.toLong()),
         color = Color.White,
         fontSize = 48.sp,
         textAlign = TextAlign.Center
@@ -223,7 +227,7 @@ fun TimerDisplay(
 fun PlayButton(
     viewModel: HomePageViewModel,
     modifier: Modifier,
-    playback: Playback,
+    playback: PlaybackUIState,
     timer: Timer,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -231,11 +235,15 @@ fun PlayButton(
     IconButton(onClick = {
         if (playback.isPlaying) {
             coroutineScope.launch {
-                viewModel.pause()
+                // TEMP OUT -> RUNTIME ERROR
+                //viewModel.pause()
+                viewModel.changePlayingStatus(false)
             }
         } else{
             coroutineScope.launch {
-                viewModel.play()
+                // TEMP OUT -> RUNTIME ERROR
+                //viewModel.play()
+                viewModel.changePlayingStatus(true)
             }
         }
 
@@ -261,7 +269,7 @@ fun PlayButton(
 fun InfoBody(
     viewModel: HomePageViewModel,
     modifier: Modifier,
-    playback: Playback,
+    playback: PlaybackUIState,
     timer: Timer,
 ) {
     Column(
@@ -311,7 +319,7 @@ fun InfoBody(
 fun CompletedDisplay(
     viewModel: HomePageViewModel,
     modifier: Modifier,
-    playback: Playback,
+    playback: PlaybackUIState,
     timer: Timer,
 ) {
 
@@ -355,7 +363,7 @@ fun CompletedDisplay(
 fun RemainingDisplay(
     viewModel: HomePageViewModel,
     modifier: Modifier,
-    playback: Playback,
+    playback: PlaybackUIState,
     timer: Timer,
 ) {
 
@@ -399,7 +407,7 @@ fun RemainingDisplay(
 fun FlowBreakDisplay(
     viewModel: HomePageViewModel,
     modifier: Modifier,
-    playback: Playback,
+    playback: PlaybackUIState,
     timer: Timer,
 ) {
 
@@ -442,7 +450,7 @@ fun FlowBreakDisplay(
                 if (playback.stateType == 0) {
                     // FLOW IS ON
                     Text(
-                        playback.currentIntervalRemainingSeconds.toString(),
+                        viewModel.timeFormat(playback.currentIntervalRemainingSeconds.toLong()),
                         color = Color(0xFF821A93),
                         fontSize = 12.sp
                     )
@@ -451,7 +459,7 @@ fun FlowBreakDisplay(
                 else if (playback.stateType == 1) {
                     // BREAK IS ON
                     Text(
-                        timer.flowMusicDurationSeconds.toString(),
+                        viewModel.timeFormat(timer.flowMusicDurationSeconds.toLong()),
                         color = Color(0xFFBF5FFF),
                         fontSize = 12.sp
                     )
@@ -460,7 +468,7 @@ fun FlowBreakDisplay(
                 else {
                     // NONE
                     Text(
-                        "0",
+                        "00:00",
                         color = Color(0xFFBF5FFF),
                         fontSize = 12.sp
                     )
@@ -486,7 +494,7 @@ fun FlowBreakDisplay(
                 if (playback.stateType == 0) {
                     // FLOW IS ON
                     Text(
-                        timer.breakMusicDurationSeconds.toString(),
+                        viewModel.timeFormat(timer.breakMusicDurationSeconds.toLong()),
                         color = Color(0xFFB2A9A9),
                         fontSize = 12.sp
                     )
@@ -495,7 +503,7 @@ fun FlowBreakDisplay(
                 else if (playback.stateType == 1) {
                     // BREAK IS ON
                     Text(
-                        playback.currentIntervalRemainingSeconds.toString(),
+                        viewModel.timeFormat(playback.currentIntervalRemainingSeconds.toLong()),
                         color = Color(0xFF4F5F71),
                         fontSize = 12.sp
                     )
@@ -504,7 +512,7 @@ fun FlowBreakDisplay(
                 else {
                     // NONE
                     Text(
-                        "0",
+                        "00:00",
                         color = Color(0xFFB2A9A9),
                         fontSize = 12.sp
                     )
@@ -520,7 +528,6 @@ fun FlowBreakDisplay(
 fun MusicPlayerBody(
     viewModel: HomePageViewModel,
     modifier: Modifier) {
-    val coroutineScope = rememberCoroutineScope()
     // TODO @KIANA will be injected another way (more top level/singleton)? (not sure how)
     /*
     var mp3Player: MP3Player = MP3Player(context)
