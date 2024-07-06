@@ -44,7 +44,7 @@ object HomeDestination : NavigationDestination {
 }
 
 @Composable
-fun TheTimer(
+fun HomeScreenTimer(
     modifier: Modifier = Modifier,
     viewModel: HomePageViewModel,
     playback: PlaybackUIState,
@@ -84,7 +84,7 @@ fun HomeScreen(
 ) {
     val timer: Timer = viewModel.timerUIState.collectAsState().value.timerDetails.toTimer()
     val playback: PlaybackUIState = viewModel.playbackUIState.collectAsState().value
-    TheTimer(modifier, viewModel, playback, timer)
+    HomeScreenTimer(modifier, viewModel, playback, timer)
     Scaffold(
         topBar = {
             TuneTideTopAppBar()
