@@ -62,3 +62,4 @@
  | 07/05/24 | Spotify & Kotlin Coroutine Research |           |           | 3.0       |           |           |
  | 07/05/24 | Homepage Restructuring              |           |           |           | 4.0       |           |
  | 07/05/24 | Local Music Files Page              |           |           |           |           | 1.0       |
+ | 07/06/24 | Local Files * Top App Bar 2         |           |           |           |           | 2.0       |
