@@ -61,3 +61,4 @@
  | 07/04/24 | Homepage Restructuring              |           |           |           | 1.5       |           |
  | 07/05/24 | Spotify & Kotlin Coroutine Research |           |           | 3.0       |           |           |
  | 07/05/24 | Homepage Restructuring              |           |           |           | 4.0       |           |
+ | 07/05/24 | Local Music Files Page              |           |           |           |           | 1.0       |
