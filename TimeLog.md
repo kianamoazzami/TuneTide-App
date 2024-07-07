@@ -63,3 +63,5 @@
  | 07/05/24 | Homepage Restructuring              |           |           |           | 4.0       |           |
  | 07/05/24 | Local Music Files Page              |           |           |           |           | 1.0       |
  | 07/06/24 | Local Files * Top App Bar 2         |           |           |           |           | 2.0       |
+ | 07/06/24 | Fixing the issue on Android Studio  |           |   2.5     |           |           |           |
+ | 07/06/24 | Updating the setting page           |           |   6.0     |           |           |           |
