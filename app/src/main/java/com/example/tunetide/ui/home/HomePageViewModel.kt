@@ -32,9 +32,9 @@ class HomePageViewModel (
 ): ViewModel() {
 
     // TEMP IN -> RUNTIME ERROR
-    private val _timerId = 1
+    // private val _timerId = 1
     // TEMP OUT -> RUNTIME ERROR
-    /*
+
     private val _timerId = playbackRepository.getPlayingTimerId()
 
     val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
@@ -57,7 +57,7 @@ class HomePageViewModel (
             initialValue = TimerUIState()
         )
 
-     */
+
 
     // TODO @MIA pause and play different functions?
     // TODO @MIA @ERICA @KIANA I want the backend play and pause booleans / countdowns to be
