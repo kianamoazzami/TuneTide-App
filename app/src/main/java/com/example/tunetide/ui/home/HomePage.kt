@@ -182,30 +182,45 @@ fun TimerBody(
                     timer = timer)
             }
             Spacer(modifier = Modifier.width(16.dp))
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.End
-            ) {
-                PlayButton(viewModel = viewModel,
-                    modifier = modifier,
-                    playback = playback,
-                    timer = timer)
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(180.dp)
-                        .background(Color(0xFF544FA3), shape = RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.TopStart
-                ) {
-                    InfoBody(viewModel = viewModel,
-                        modifier = modifier,
-                        playback = playback,
-                        timer = timer)
-                }
-            }
+            TimerRightPanel(
+                viewModel = viewModel,
+                modifier = modifier.weight(1f, false),
+                playback = playback,
+                timer = timer)
         }
     }
+}
+
+@Composable
+fun TimerRightPanel(
+    viewModel: HomePageViewModel,
+    modifier: Modifier,
+    playback: PlaybackUIState,
+    timer: Timer,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.End
+    ) {
+        PlayButton(viewModel = viewModel,
+            modifier = modifier,
+            playback = playback,
+            timer = timer)
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(180.dp)
+                .background(Color(0xFF544FA3), shape = RoundedCornerShape(8.dp)),
+            contentAlignment = Alignment.TopStart
+        ) {
+            InfoBody(viewModel = viewModel,
+                modifier = modifier,
+                playback = playback,
+                timer = timer)
+        }
+    }
+
 }
 
 @Composable
