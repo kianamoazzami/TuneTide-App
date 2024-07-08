@@ -67,4 +67,4 @@
  | 07/06/24 | Updating the setting page           |           |   6.0     |           |           |           |
  | 07/08/24 | Online meeting                      | 0.75      |           | 0.75      | 0.75      |           |
  | 07/08/24 | Fix Runtime Error, Update viewModels| 2.5       |           |           |           |           | 
- | 07/08/24 | Spotify Cooroutines and Activity    |           |           | 2.5       |           |           | 
+ | 07/08/24 | Spotify Cooroutines and Activity    |           |           | 3.5       |           |           | 
