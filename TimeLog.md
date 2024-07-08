@@ -65,3 +65,6 @@
  | 07/06/24 | Local Files * Top App Bar 2         |           |           |           |           | 2.0       |
  | 07/06/24 | Fixing the issue on Android Studio  |           |   2.5     |           |           |           |
  | 07/06/24 | Updating the setting page           |           |   6.0     |           |           |           |
+ | 07/08/24 | Meeting                             | 0.75      |           | 0.75      | 0.75      |           | 
+ | 07/08/24 | Bug Fix, updates to viewmodels      | 3         |           |           |           |           | 
+ | 07/08/24 | Spotify and Coroutines              |           |           | 4         |           |           | 
