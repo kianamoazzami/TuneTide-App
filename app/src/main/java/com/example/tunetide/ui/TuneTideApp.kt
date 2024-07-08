@@ -73,6 +73,34 @@ fun TuneTideTopAppBar() {
 }
 
 @Composable
+fun TuneTideTopAppBarBack(
+    navigateBack: () -> Unit
+) {
+    TopAppBar(
+        backgroundColor = PurpleBackground,
+        contentPadding = PaddingValues(horizontal = 1.dp)
+    ) {
+        IconButton(onClick = { navigateBack }) {
+            Icon(
+                painter = painterResource(id = R.drawable.back),
+                contentDescription = "Back", tint = PurpleAccent,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = "tunetide",
+            color = Color(0xFF544FA3),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            modifier = Modifier.weight(6f)
+        )
+        Spacer(modifier = Modifier.weight(2.3f))
+    }
+}
+
+@Composable
 fun TuneTideBottomAppBar() {
     Box(
         modifier = Modifier.fillMaxWidth(),
