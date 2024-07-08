@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.database.MusicType
 import com.example.tunetide.database.Playback
 import com.example.tunetide.database.StateType
@@ -15,6 +16,8 @@ import com.example.tunetide.ui.timer.TimerDetails
 import com.example.tunetide.ui.timer.TimerUIState
 import com.example.tunetide.ui.timer.toTimerDetails
 import com.example.tunetide.ui.timer.toTimerUIState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -23,7 +26,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-// TODO @MIA should have a way to halt the queue / standards
 /**
  * View Model to host state of the timer that is running
  */
@@ -31,11 +33,8 @@ class HomePageViewModel (
     private val playbackRepository: PlaybackRepository
 ): ViewModel() {
 
-    // TEMP IN -> RUNTIME ERROR
-    // private val _timerId = 1
-    // TEMP OUT -> RUNTIME ERROR
-
-    private val _timerId = playbackRepository.getPlayingTimerId()
+    private var _timerId: Int = -1
+        private set
 
     val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
         .filterNotNull()
@@ -52,18 +51,19 @@ class HomePageViewModel (
         .map {
             TimerUIState(timerDetails = it.toTimerDetails())
         }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = TimerUIState()
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+        initialValue = TimerUIState()
         )
 
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            _timerId = playbackRepository.getPlayingTimerId()
+        }
+    }
 
-
-    // TODO @MIA pause and play different functions?
-    // TODO @MIA @ERICA @KIANA I want the backend play and pause booleans / countdowns to be
-    //      synchronous with the music players
     fun play() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.play()
 
             var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
@@ -79,7 +79,7 @@ class HomePageViewModel (
     }
 
     fun pause() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.pause()
 
             var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
@@ -95,7 +95,7 @@ class HomePageViewModel (
     }
 
     fun skipSong() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
 
             if (_timerId == -1) {
@@ -119,7 +119,7 @@ class HomePageViewModel (
     }
 
     fun startNextInterval() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             // if last interval finishes, finish
             if (playbackRepository.getCurrentInterval() == playbackRepository.getPlayingTimerNumIntervals() &&
                 playbackRepository.getStateType() == StateType.BREAK
@@ -133,7 +133,7 @@ class HomePageViewModel (
 
     // same as cancelling a timer
     fun finish() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             // TODO @ERICA @KIANA stop music
             playbackRepository.invalidatePlayback()
             // TODO @MIA invoke next in queue??? (decide how queue will work)
@@ -141,7 +141,7 @@ class HomePageViewModel (
     }
 
     fun restart() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.restartTimer()
             // TODO @ERICA @KIANA restart music
         }
