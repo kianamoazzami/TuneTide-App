@@ -68,4 +68,5 @@
  | 07/08/24 | Meeting                             | 0.75      |           | 0.75      | 0.75      |           | 
  | 07/08/24 | Bug Fix, updates to viewmodels      | 3.0       |           |           |           |           | 
  | 07/08/24 | Spotify and Coroutines              |           |           | 4.0       |           |           | 
- | 07/08/24 | Local Music Files Playlists         |           |           |           |           | 3.0       | 
+ | 07/08/24 | Local Music Files Playlists         |           |           |           |           | 3.0       |
+ | 07/08/24 | PR Changes                          |           |           |           | 0.5       |           |
