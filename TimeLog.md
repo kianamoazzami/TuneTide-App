@@ -71,4 +71,4 @@
  | 07/08/24 | Local Music Files Playlists         |           |           |           |           | 3.0       |
  | 07/08/24 | PR Changes                          |           |           |           | 0.5       |           |
  | 07/08/24 | MP3 Playlist Entry Page             |           |           |           |           | 2.0       |
- | 07/09/24 | Spotify and Coroutine Research      |           |           | 1.0       |           |           |
+ | 07/09/24 | Spotify and Coroutine Research      |           |           | 2.0       |           |           |
