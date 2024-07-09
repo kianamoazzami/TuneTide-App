@@ -66,5 +66,9 @@
  | 07/06/24 | Fixing the issue on Android Studio  |           |   2.5     |           |           |           |
  | 07/06/24 | Updating the setting page           |           |   6.0     |           |           |           |
  | 07/08/24 | Meeting                             | 0.75      |           | 0.75      | 0.75      |           | 
- | 07/08/24 | Bug Fix, updates to viewmodels      | 3         |           |           |           |           | 
- | 07/08/24 | Spotify and Coroutines              |           |           | 4         |           |           | 
+ | 07/08/24 | Bug Fix, updates to viewmodels      | 3.0       |           |           |           |           | 
+ | 07/08/24 | Spotify and Coroutines              |           |           | 4.0       |           |           | 
+ | 07/08/24 | Local Music Files Playlists         |           |           |           |           | 3.0       |
+ | 07/08/24 | PR Changes                          |           |           |           | 0.5       |           |
+ | 07/08/24 | MP3 Playlist Entry Page             |           |           |           |           | 2.0       |
+ | 07/09/24 | Spotify and Coroutine Research      |           |           | 1.0       |           |           |
