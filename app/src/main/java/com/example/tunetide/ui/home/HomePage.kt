@@ -109,7 +109,7 @@ fun HomeBody(
     modifier: Modifier = Modifier,
     playback: PlaybackUIState,
     timer: Timer,
-    contentPadding: PaddingValues = PaddingValues(16.dp),
+    contentPadding: PaddingValues = PaddingValues(16.dp)
 ) {
     Column(
         modifier = Modifier
