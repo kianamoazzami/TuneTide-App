@@ -3,6 +3,7 @@ package com.example.tunetide.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -42,16 +43,20 @@ fun SettingsScreen(onBackClick: () -> Unit) {
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_back_arrow),
+                painter = painterResource(id = R.drawable.ic_back_arrow),  // Ensure this matches your drawable
                 contentDescription = stringResource(id = R.string.back),
-                modifier = Modifier.clickable { onBackClick() }  // Handle back arrow click
+                tint = Color(0xFF2B217F),  // Ensure the color matches your design
+                modifier = Modifier
+                    .clickable { onBackClick() }
+                    .padding(8.dp)  // Add some padding around the icon
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = "tunetide",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Normal,
-                color = Color(0xFF2B217F)
+                color = Color(0xFF2B217F),
+                modifier = Modifier.weight(1f)  // Take up the remaining space
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -89,9 +94,10 @@ fun SettingsScreen(onBackClick: () -> Unit) {
                 color = Color(0xFF333333),
                 modifier = Modifier.weight(1f)
             )
-            Icon(
-                painter = painterResource(id = R.drawable.ic_spotify),
-                contentDescription = stringResource(id = R.string.spotify)
+            Image(
+                painter = painterResource(id = R.drawable.spotify_logo),  // Ensure this matches your drawable file name
+                contentDescription = stringResource(id = R.string.spotify),
+                modifier = Modifier.size(30.dp)  // Adjust the size as needed
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
