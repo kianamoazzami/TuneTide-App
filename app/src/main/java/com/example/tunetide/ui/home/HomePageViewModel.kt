@@ -36,6 +36,9 @@ class HomePageViewModel (
     private var _timerId: Int = -1
         private set
 
+    var startingTimerIntervalValue = 0
+        private set
+
     val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
         .filterNotNull()
         .map {
@@ -59,6 +62,7 @@ class HomePageViewModel (
     init {
         CoroutineScope(Dispatchers.IO).launch {
             _timerId = playbackRepository.getPlayingTimerId()
+            getStartingTimerValue()
         }
     }
 
@@ -108,13 +112,15 @@ class HomePageViewModel (
         }
     }
 
-    fun getStartingTimerValue(): Int {
-        if (playbackRepository.getStateType() == StateType.FLOW) {
-            return playbackRepository.getFlowDurationSeconds()
-        } else if (playbackRepository.getStateType() == StateType.BREAK) {
-            return playbackRepository.getBreakDurationSeconds()
-        } else {
-            return 0
+    fun getStartingTimerValue() {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (playbackRepository.getStateType() == StateType.FLOW) {
+                startingTimerIntervalValue = playbackRepository.getFlowDurationSeconds()
+            } else if (playbackRepository.getStateType() == StateType.BREAK) {
+                startingTimerIntervalValue = playbackRepository.getBreakDurationSeconds()
+            } else {
+                startingTimerIntervalValue = 0
+            }
         }
     }
 
@@ -136,7 +142,6 @@ class HomePageViewModel (
         CoroutineScope(Dispatchers.IO).launch {
             // TODO @ERICA @KIANA stop music
             playbackRepository.invalidatePlayback()
-            // TODO @MIA invoke next in queue??? (decide how queue will work)
         }
     }
 
