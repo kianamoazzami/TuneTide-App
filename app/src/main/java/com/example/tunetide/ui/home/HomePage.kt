@@ -218,11 +218,11 @@ fun TimerBody(
                 }) {
                     // TEMP OUT -> RUNTIME ERROR
                     //if (playback.isPlaying) {
-                        Image(
-                            painter = painterResource(id = R.drawable.pausebutton),
-                            contentDescription = "Pause Button",
-                            modifier = Modifier.size(30.dp)
-                        )
+                    Image(
+                        painter = painterResource(id = R.drawable.pausebutton),
+                        contentDescription = "Pause Button",
+                        modifier = Modifier.size(30.dp)
+                    )
                     // TEMP OUT -> RUNTIME ERROR
                     /*} else {
                         Image(
@@ -295,11 +295,11 @@ fun TimerBody(
                             ) {
                                 // TEMP OUT -> RUNTIME ERROR
                                 //if (timer.isInterval) {
-                                    Text("3 of 4",
-                                        //"interval " + playback.currentInterval.toString() + " of " + timer.numIntervals,
-                                        color = Color(0xFF241673).copy(alpha = 0.5f),
-                                        fontSize = 12.sp
-                                    )
+                                Text("3 of 4",
+                                    //"interval " + playback.currentInterval.toString() + " of " + timer.numIntervals,
+                                    color = Color(0xFF241673).copy(alpha = 0.5f),
+                                    fontSize = 12.sp
+                                )
                                 //}
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Row(
@@ -367,20 +367,20 @@ fun TimerBody(
                             ) {
                                 // TEMP OUT -> RUNTIME ERROR
                                 //if (timer.isInterval) {
-                                    Text(
-                                        "remaining",
-                                        color = Color(0xFF2B217F),
-                                        fontSize = 12.sp,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Text(
-                                        "3", //(timer.numIntervals - playback.currentInterval).toString(),
-                                        color = Color(0xFF2B217F),
-                                        fontSize = 12.sp,
-                                        textAlign = TextAlign.End,
-                                        modifier = Modifier.weight(1f)
-                                    )
+                                Text(
+                                    "remaining",
+                                    color = Color(0xFF2B217F),
+                                    fontSize = 12.sp,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Text(
+                                    "3", //(timer.numIntervals - playback.currentInterval).toString(),
+                                    color = Color(0xFF2B217F),
+                                    fontSize = 12.sp,
+                                    textAlign = TextAlign.End,
+                                    modifier = Modifier.weight(1f)
+                                )
                                 //} // TODO @KATHERINE @NOUR
                             }
                         }
