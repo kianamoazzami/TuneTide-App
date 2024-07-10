@@ -42,7 +42,7 @@
  | 06/26/24 | Database, Repos, Dependency Injectio| 8         |           |           |           |           |
  | 06/28/24 | Debugging and Database              | 2         |           |           |           |           |
  | 06/28/24 | Debugging, front end, view models   | 3.5       |           |           |           |           |
- | 06/28/24 | Review PR, Spotify Authentication   |           |           | 3         |           |           |
+ | 06/28/24 | Review PR, Spotify Authentication   |           |           | 3.0       |           |           |
  | 07/01/24 | PR Changes                          | 1.5       |           |           |           |           |
  | 07/02/24 | ViewModels, Navigation, New Pages   | 1.25      |           |           |           |           |
  | 07/02/24 | Reviewing/Understanding/Testing PR  |           |           |           | 2.0       |           |
@@ -51,3 +51,25 @@
  | 07/02/24 | Reviewing PR                        |           |           | 1.5       |           |           |
  | 07/02/24 | Reviewing PR                        |           |           |           |           | 1.0       |
  | 07/02/24 | Reviewing PR                        |           | 2.0       |           |           |           | 
+ | 07/02/24 | Reseach on Kotlin                   |           | 2.0       |           |           |           |
+ | 07/03/24 | Fixes for PR                        | 0.5       |           |           |           |           | 
+ | 07/03/24 | Group Meeting                       | 2.0       | 2.0       | 2.0       | 2.0       | 2.0       |
+ | 07/03/24 | Kotlin & Spotify Research           |           |           | 1.0       |           |           |
+ | 07/03/24 | Kotlin Navigation Research          |           |           |           |           | 1.0       |
+ | 07/03/24 | Local Music Files Page              |           |           |           |           | 2.0       |
+ | 07/03/24 | Research+Progress Homepage Restructu|           |           |           | 5.0       |           |
+ | 07/04/24 | Homepage Restructuring              |           |           |           | 1.5       |           |
+ | 07/05/24 | Spotify & Kotlin Coroutine Research |           |           | 3.0       |           |           |
+ | 07/05/24 | Homepage Restructuring              |           |           |           | 4.0       |           |
+ | 07/05/24 | Local Music Files Page              |           |           |           |           | 1.0       |
+ | 07/06/24 | Local Files * Top App Bar 2         |           |           |           |           | 2.0       |
+ | 07/06/24 | Fixing the issue on Android Studio  |           |   2.5     |           |           |           |
+ | 07/06/24 | Updating the setting page           |           |   6.0     |           |           |           |
+ | 07/08/24 | Meeting                             | 0.75      |           | 0.75      | 0.75      |           | 
+ | 07/08/24 | Bug Fix, updates to viewmodels      | 3.0       |           |           |           |           | 
+ | 07/08/24 | Spotify and Coroutines              |           |           | 4.0       |           |           | 
+ | 07/08/24 | Local Music Files Playlists         |           |           |           |           | 3.0       |
+ | 07/08/24 | PR Changes                          |           |           |           | 0.5       |           |
+ | 07/08/24 | MP3 Playlist Entry Page             |           |           |           |           | 2.0       |
+ | 07/09/24 | Spotify and Coroutine Research      |           |           | 2.5       |           |           |
+ | 07/09/24 | Playlist Creation                   |           |           |           |           | 2.0       |

@@ -75,14 +75,15 @@ fun TuneTideTopAppBar() {
 @Composable
 fun TuneTideTopAppBarBack(
     navigateBack: () -> Unit
+    //TODO: add canNavigateBack
 ) {
     TopAppBar(
         backgroundColor = PurpleBackground,
         contentPadding = PaddingValues(horizontal = 1.dp)
     ) {
-        IconButton(onClick = { navigateBack }) {
+        IconButton(onClick = navigateBack) {
             Icon(
-                painter = painterResource(id = R.drawable.back),
+                painter = painterResource(id = R.drawable.ic_back_arrow),
                 contentDescription = "Back", tint = PurpleAccent,
                 modifier = Modifier.size(20.dp)
             )

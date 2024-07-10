@@ -13,40 +13,41 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import com.example.tunetide.ui.timer.TimerDetails
+import com.example.tunetide.ui.timer.toTimerDetails
+import com.example.tunetide.ui.timer.toTimerUIState
+import kotlinx.coroutines.flow.filterNotNull
 
 class TimersListViewModel (
     private val timerRepository: TimerRepository
 ): ViewModel() {
 
-
-    // TODO @NOUR @KATHERINE inject into UI - reactive change (button changes data source (query))
-    /*
+    // NOTE: may cause runtime errors (init not surrounded by coroutine)
     private val _filterType = MutableStateFlow(FilterType.ALL)
-    private val _timers = _filterType
+
+    private val _timers: StateFlow<List<Timer>> = _filterType
         .flatMapLatest { filterType ->
             when(filterType) {
-                FilterType.ALL -> timerRepository.getTimers()
-                FilterType.STANDARD -> timerRepository.getStandardTimers()
-                FilterType.INTERVAL -> timerRepository.getIntervalTimers()
+                FilterType.ALL -> timerRepository.getTimers().filterNotNull()
+                FilterType.STANDARD -> timerRepository.getStandardTimers().filterNotNull()
+                FilterType.INTERVAL -> timerRepository.getIntervalTimers().filterNotNull()
             }
         }
         // only show while user is active, default value is an empty list of timers
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-    private val _timerUIState = MutableStateFlow(TimerUIState())
 
-    // TODO @KATHERINE @MIA @NOUR figure out how to do this (have data that is changed based on
-    //      button click (filters)
-    // combine all flows into one flow; if any of these flows changes value, this code is executed
-    val timersUIState: StateFlow<TimerUIState>
-        = combine(_timerUIState, _filterType, _timers) { timersUIState, filterType, timers ->
-        timersUIState.copy (
-            timers = timers,
-            filterType = filterType
-        )
-        // stopTimeout : (complex to understand) but this prevents a specific type of bug
-    }.stateIn(scope = viewModelScope,
-              started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-              initialValue = TimerUIState())
+    private val _timerListUIState = MutableStateFlow(TimerListUIState())
+
+    // combine all flows into one State flow; if any of these flows changes value, this code is executed
+    val timerListUIState: StateFlow<TimerListUIState>
+        = combine(_timerListUIState, _timers, _filterType) { timerListUIState, timers, filterType ->
+            timerListUIState.copy (
+                timers = timers,
+                filterType = filterType
+            )
+        }.stateIn(scope = viewModelScope,
+          started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+          initialValue = TimerListUIState())
 
     fun filterTimers(filterType: FilterType) {
         // triggers change to map correct type of timers to our _timers Flow list
@@ -56,5 +57,13 @@ class TimersListViewModel (
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
-    */
+
 }
+
+/**
+ *  UI state for the list of timers
+ */
+data class TimerListUIState(
+    val timers: List<Timer> = listOf(),
+    val filterType: FilterType = FilterType.ALL
+)

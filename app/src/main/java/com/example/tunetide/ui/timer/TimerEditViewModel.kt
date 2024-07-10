@@ -7,6 +7,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tunetide.repository.TimerRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -26,7 +28,7 @@ class TimerEditViewModel (
     private val timerId: Int = checkNotNull(savedStateHandle[TimerEditDestination.timerIdArg])
 
     init {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             timerUIState = timerRepository.getTimerById(timerId)
                 .filterNotNull()
                 .first()
