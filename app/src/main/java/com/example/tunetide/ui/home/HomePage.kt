@@ -55,13 +55,12 @@ fun HomeScreenTimer(
     var timerValue = 30000
 
     // TEMP OUT -> RUNTIME ERROR IN DATABASE ACCESS
-    //var timerValue = viewModel.getStartingTimerValue().toLong()
+    //var timerValue =  viewModel.getStartingTimerValue().toLong()
     var currentTimeMillis by remember { mutableStateOf(timerValue) }
     viewModel.setCurrentTime(currentTimeMillis.toInt())
 
     // TODO @MIA @KATHERINE @NOUR figure out updating database (seconds remaining) when app close
     //      too costly / inefficent to update every second
-    // ^ Will do after database access errors resolved
     LaunchedEffect(playback.isPlaying) {
         while (playback.isPlaying && currentTimeMillis > 0) {
             delay(1000)
@@ -250,14 +249,12 @@ fun PlayButton(
     IconButton(onClick = {
         if (playback.isPlaying) {
             coroutineScope.launch {
-                // TEMP OUT -> RUNTIME ERROR
-                //viewModel.pause()
+                viewModel.pause()
                 viewModel.changePlayingStatus(false)
             }
         } else{
             coroutineScope.launch {
-                // TEMP OUT -> RUNTIME ERROR
-                //viewModel.play()
+                viewModel.play()
                 viewModel.changePlayingStatus(true)
             }
         }
