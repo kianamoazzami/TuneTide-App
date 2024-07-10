@@ -26,6 +26,8 @@ import com.example.tunetide.ui.navigation.NavigationDestination
 import androidx.compose.runtime.rememberCoroutineScope
 import com.example.tunetide.ui.theme.Greyish
 import com.example.tunetide.ui.timer.TimerUIState
+import com.example.tunetide.ui.timer.toTimer
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.max
 
@@ -44,21 +46,21 @@ fun HomeScreenTimer(
 
     var timerValue =  (viewModel.startingTimerIntervalValue).toLong()
     var currentTimeMillis by remember { mutableStateOf(timerValue) }
-    viewModel.currentTimerVal = currentTimeMillis.toInt()
+    viewModel.setCurrentTime(currentTimeMillis.toInt())
 
     // TODO @MIA @KATHERINE @NOUR figure out updating database (seconds remaining) when app close
     //      too costly / inefficent to update every second
-    LaunchedEffect(viewModel.isPlaying) {
-        while (viewModel.isPlaying && currentTimeMillis > 0) {
+    LaunchedEffect(playback.playbackDetails.isPlaying) {
+        while (playback.playbackDetails.isPlaying && currentTimeMillis > 0) {
             delay(1000)
             currentTimeMillis -= 1000
-            viewModel.currentTimerVal = currentTimeMillis.toInt()
+            viewModel.setCurrentTime(currentTimeMillis.toInt())
         }
         if (currentTimeMillis <= 0) {
             if (timer.timerDetails.isInterval) {
                 viewModel.startNextInterval()
             }
-            viewModel.currentTimerVal = currentTimeMillis.toInt()
+            viewModel.setCurrentTime(currentTimeMillis.toInt())
         }
     }
 }
@@ -219,7 +221,7 @@ fun TimerDisplay(
     timer: TimerUIState,
 ) {
     Text(
-        text = viewModel.timeFormat(viewModel.currentTimerVal.toLong()),
+        text = viewModel.timeFormat(playback.playbackDetails.currentIntervalRemainingSeconds.toLong()),
         color = Color.White,
         fontSize = 48.sp,
         textAlign = TextAlign.Center
@@ -236,20 +238,20 @@ fun PlayButton(
     val coroutineScope = rememberCoroutineScope()
 
     IconButton(onClick = {
-        if (viewModel.isPlaying) {
+        if (playback.playbackDetails.isPlaying) {
             coroutineScope.launch {
                 viewModel.pause()
-                viewModel.isPlaying = false
+                viewModel.changePlayingStatus(false)
             }
         } else{
             coroutineScope.launch {
                 viewModel.play()
-                viewModel.isPlaying = true
+                viewModel.changePlayingStatus(true)
             }
         }
 
     }) {
-        if (viewModel.isPlaying) {
+        if (playback.playbackDetails.isPlaying) {
         Image(
             painter = painterResource(id = R.drawable.pausebutton),
             contentDescription = "Pause Button",
@@ -451,7 +453,7 @@ fun FlowBreakDisplay(
                 if (playback.playbackDetails.stateType == 0) {
                     // FLOW IS ON
                     Text(
-                        viewModel.timeFormat(viewModel.currentTimerVal.toLong()),
+                        viewModel.timeFormat(playback.playbackDetails.currentIntervalRemainingSeconds.toLong()),
                         color = Color(0xFF821A93),
                         fontSize = 12.sp
                     )
@@ -504,7 +506,7 @@ fun FlowBreakDisplay(
                 else if (playback.playbackDetails.stateType == 1) {
                     // BREAK IS ON
                     Text(
-                        viewModel.timeFormat(viewModel.currentTimerVal.toLong()),
+                        viewModel.timeFormat(playback.playbackDetails.currentIntervalRemainingSeconds.toLong()),
                         color = Color(0xFF4F5F71),
                         fontSize = 12.sp
                     )

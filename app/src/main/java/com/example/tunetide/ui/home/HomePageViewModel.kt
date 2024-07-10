@@ -18,12 +18,15 @@ import com.example.tunetide.ui.timer.toTimerDetails
 import com.example.tunetide.ui.timer.toTimerUIState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -40,34 +43,46 @@ class HomePageViewModel (
     var startingTimerIntervalValue = 0
         private set
 
-    var currentTimerVal = 0
+    val _playbackUIState = MutableStateFlow(PlaybackUIState())
+    val playbackUIState: StateFlow<PlaybackUIState> = _playbackUIState.asStateFlow()
 
-    var isPlaying = false
-
-    val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
-        .filterNotNull()
-        .map {
-            PlaybackUIState(playbackDetails = it.toPlaybackDetails())
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = PlaybackUIState()
-        )
-
-    val timerUIState: StateFlow<TimerUIState> = playbackRepository.getPlayingTimer()
-        .filterNotNull()
-        .map {
-            TimerUIState(timerDetails = it.toTimerDetails())
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = TimerUIState()
-        )
+    val _timerUIState = MutableStateFlow(TimerUIState())
+    val timerUIState: StateFlow<TimerUIState> = _timerUIState.asStateFlow()
 
     fun timeFormat(timeMillis: Long): String {
         val minutes = (timeMillis / 1000) / 60
         val seconds = (timeMillis / 1000) % 60
         return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
+    }
+
+    fun setCurrentTime(newVal: Int) {
+        _playbackUIState.update { currentState ->
+            currentState.copy(
+                playbackDetails = PlaybackDetails(
+                    id = playbackUIState.value.playbackDetails.id,
+                    timerId = playbackUIState.value.playbackDetails.timerId,
+                    stateType = playbackUIState.value.playbackDetails.stateType,
+                    currentInterval = playbackUIState.value.playbackDetails.currentInterval,
+                    currentIntervalRemainingSeconds = newVal,
+                    isPlaying = playbackUIState.value.playbackDetails.isPlaying
+                )
+            )
+        }
+    }
+
+    fun changePlayingStatus(newStatus: Boolean) {
+        _playbackUIState.update { currentState ->
+            currentState.copy(
+                playbackDetails = PlaybackDetails(
+                    id = playbackUIState.value.playbackDetails.id,
+                    timerId = playbackUIState.value.playbackDetails.timerId,
+                    stateType = playbackUIState.value.playbackDetails.stateType,
+                    currentInterval = playbackUIState.value.playbackDetails.currentInterval,
+                    currentIntervalRemainingSeconds = playbackUIState.value.playbackDetails.currentIntervalRemainingSeconds,
+                    isPlaying = newStatus
+                )
+            )
+        }
     }
 
     init {
@@ -184,12 +199,12 @@ data class PlaybackUIState(
  * represents the "UI" for playback
  */
 data class PlaybackDetails(
-    var id: Int = -1,
-    var timerId: Int = -1,
-    var stateType: Int = 2,
-    var currentInterval: Int = 0,
-    var currentIntervalRemainingSeconds: Int = 0,
-    var isPlaying: Boolean = false
+    val id: Int = -1,
+    val timerId: Int = -1,
+    val stateType: Int = 2,
+    val currentInterval: Int = 0,
+    val currentIntervalRemainingSeconds: Int = 0,
+    val isPlaying: Boolean = false
 )
 
 /**
