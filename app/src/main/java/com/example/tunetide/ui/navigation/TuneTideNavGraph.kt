@@ -8,6 +8,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.tunetide.ui.SettingsDestination
+import com.example.tunetide.ui.SettingsScreen
 import com.example.tunetide.ui.home.HomeDestination
 import com.example.tunetide.ui.home.HomeScreen
 import com.example.tunetide.ui.timer.TimerEditDestination
@@ -29,12 +31,18 @@ fun TuneTideNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = HomeDestination.route, // to get
+        startDestination = SettingsDestination.route, // to get SettingsDestination.route
         modifier = modifier
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen(
                 // TODO @KATHERINE @NOUR navigation info here
+            )
+        }
+
+        composable(route = SettingsDestination.route) {
+            SettingsScreen(
+                navigateBack = { navController.popBackStack() }
             )
         }
 

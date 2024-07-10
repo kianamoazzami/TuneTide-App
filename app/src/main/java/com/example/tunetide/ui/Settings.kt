@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tunetide.R
+import com.example.tunetide.ui.navigation.NavigationDestination
 import com.example.tunetide.ui.theme.PurpleBackground
 import com.example.tunetide.ui.theme.PurpleAccent
 
@@ -33,40 +34,20 @@ class SettingsActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun TuneTideTopAppBarBack(navigateBack: () -> Unit) {
-    TopAppBar(
-        backgroundColor = PurpleBackground,
-        contentPadding = PaddingValues(horizontal = 1.dp)
-    ) {
-        IconButton(onClick = navigateBack) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_back_arrow),
-                contentDescription = "Back",
-                tint = PurpleAccent,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = "tunetide",
-            color = Color(0xFF544FA3),
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp,
-            modifier = Modifier.weight(6f)
-        )
-        Spacer(modifier = Modifier.weight(2.3f))
-    }
+object SettingsDestination : NavigationDestination {
+    override val route = "settings"
+    override val titleRes = R.string.settings_page_name
 }
 
 @Composable
-fun SettingsScreen(onBackClick: () -> Unit) {
+fun SettingsScreen(
+    navigateBack: () -> Unit
+) {
     var isDarkModeEnabled by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
-            TuneTideTopAppBarBack(navigateBack = onBackClick)
+            TuneTideTopAppBarBack(navigateBack)
         }
     ) { paddingValues ->
         Column(

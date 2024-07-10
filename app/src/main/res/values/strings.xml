@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">TuneTide</string>
     <string name="home_page_name">Tide Flow</string>
+    <string name="settings_page_name">Settings</string>
     <string name="timer_entry_name">Enter Timer</string>
     <string name="timer_edit_name">Edit Timer</string>
     <string name="timers_list_name">View Timers</string>
