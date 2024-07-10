@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-class LocalFilesPageViewModel (
+class LocalFilesViewModel (
     mp3Repository: MP3Repository
 ): ViewModel() {
 
