@@ -21,20 +21,11 @@ import com.example.tunetide.ui.TuneTideBottomAppBar
 import com.example.tunetide.ui.TuneTideTopAppBar
 import com.example.tunetide.ui.theme.PurpleBackground
 import kotlinx.coroutines.delay
-import java.util.Locale
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.navigation.NavigationDestination
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.layout.AlignmentLine
-import androidx.compose.ui.layout.FirstBaseline
-import com.example.tunetide.database.Playback
-import com.example.tunetide.database.Timer
 import com.example.tunetide.ui.theme.Greyish
 import com.example.tunetide.ui.timer.TimerUIState
-import com.example.tunetide.ui.timer.toTimer
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.max
 
@@ -48,30 +39,26 @@ fun HomeScreenTimer(
     modifier: Modifier = Modifier,
     viewModel: HomePageViewModel,
     playback: PlaybackUIState,
-    timer: Timer,
+    timer: TimerUIState,
 ) {
 
-    // TEMP IN -> RUNTIME ERROR
-    var timerValue = 30000
-
-    // TEMP OUT -> RUNTIME ERROR IN DATABASE ACCESS
-    //var timerValue =  viewModel.getStartingTimerValue().toLong()
+    var timerValue =  (viewModel.startingTimerIntervalValue).toLong()
     var currentTimeMillis by remember { mutableStateOf(timerValue) }
-    viewModel.setCurrentTime(currentTimeMillis.toInt())
+    viewModel.currentTimerVal = currentTimeMillis.toInt()
 
     // TODO @MIA @KATHERINE @NOUR figure out updating database (seconds remaining) when app close
     //      too costly / inefficent to update every second
-    LaunchedEffect(playback.isPlaying) {
-        while (playback.isPlaying && currentTimeMillis > 0) {
+    LaunchedEffect(viewModel.isPlaying) {
+        while (viewModel.isPlaying && currentTimeMillis > 0) {
             delay(1000)
             currentTimeMillis -= 1000
-            viewModel.setCurrentTime(currentTimeMillis.toInt())
+            viewModel.currentTimerVal = currentTimeMillis.toInt()
         }
         if (currentTimeMillis <= 0) {
-            if (timer.isInterval) {
+            if (timer.timerDetails.isInterval) {
                 viewModel.startNextInterval()
             }
-            viewModel.setCurrentTime(currentTimeMillis.toInt())
+            viewModel.currentTimerVal = currentTimeMillis.toInt()
         }
     }
 }
@@ -81,7 +68,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomePageViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val timer: Timer = viewModel.timerUIState.collectAsState().value.timerDetails.toTimer()
+    val timer: TimerUIState = viewModel.timerUIState.collectAsState().value
     val playback: PlaybackUIState = viewModel.playbackUIState.collectAsState().value
     HomeScreenTimer(modifier, viewModel, playback, timer)
     Scaffold(
@@ -107,7 +94,7 @@ fun HomeBody(
     viewModel: HomePageViewModel,
     modifier: Modifier = Modifier,
     playback: PlaybackUIState,
-    timer: Timer,
+    timer: TimerUIState,
     contentPadding: PaddingValues = PaddingValues(16.dp)
 ) {
     Column(
@@ -153,7 +140,7 @@ fun TimerBody(
     viewModel: HomePageViewModel,
     modifier: Modifier,
     playback: PlaybackUIState,
-    timer: Timer,
+    timer: TimerUIState,
 ) {
     Box(
         modifier = Modifier
@@ -195,13 +182,14 @@ fun TimerRightPanel(
     viewModel: HomePageViewModel,
     modifier: Modifier,
     playback: PlaybackUIState,
-    timer: Timer,
+    timer: TimerUIState,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.End
     ) {
-        PlayButton(viewModel = viewModel,
+        PlayButton(
+            viewModel = viewModel,
             modifier = modifier,
             playback = playback,
             timer = timer)
@@ -213,7 +201,8 @@ fun TimerRightPanel(
                 .background(Color(0xFF544FA3), shape = RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.TopStart
         ) {
-            InfoBody(viewModel = viewModel,
+            InfoBody(
+                viewModel = viewModel,
                 modifier = modifier,
                 playback = playback,
                 timer = timer)
@@ -227,10 +216,10 @@ fun TimerDisplay(
     viewModel: HomePageViewModel,
     modifier: Modifier,
     playback: PlaybackUIState,
-    timer: Timer,
+    timer: TimerUIState,
 ) {
     Text(
-        text = viewModel.timeFormat(playback.currentIntervalRemainingSeconds.toLong()),
+        text = viewModel.timeFormat(viewModel.currentTimerVal.toLong()),
         color = Color.White,
         fontSize = 48.sp,
         textAlign = TextAlign.Center
@@ -242,25 +231,25 @@ fun PlayButton(
     viewModel: HomePageViewModel,
     modifier: Modifier,
     playback: PlaybackUIState,
-    timer: Timer,
+    timer: TimerUIState,
 ) {
     val coroutineScope = rememberCoroutineScope()
 
     IconButton(onClick = {
-        if (playback.isPlaying) {
+        if (viewModel.isPlaying) {
             coroutineScope.launch {
                 viewModel.pause()
-                viewModel.changePlayingStatus(false)
+                viewModel.isPlaying = false
             }
         } else{
             coroutineScope.launch {
                 viewModel.play()
-                viewModel.changePlayingStatus(true)
+                viewModel.isPlaying = true
             }
         }
 
     }) {
-        if (playback.isPlaying) {
+        if (viewModel.isPlaying) {
         Image(
             painter = painterResource(id = R.drawable.pausebutton),
             contentDescription = "Pause Button",
@@ -282,14 +271,14 @@ fun InfoBody(
     viewModel: HomePageViewModel,
     modifier: Modifier,
     playback: PlaybackUIState,
-    timer: Timer,
+    timer: TimerUIState,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        if (timer.isInterval) {
+        if (timer.timerDetails.isInterval) {
             CompletedDisplay(
                 viewModel = viewModel,
                 modifier = modifier,
@@ -332,7 +321,7 @@ fun CompletedDisplay(
     viewModel: HomePageViewModel,
     modifier: Modifier,
     playback: PlaybackUIState,
-    timer: Timer,
+    timer: TimerUIState,
 ) {
 
     Box(
@@ -360,7 +349,7 @@ fun CompletedDisplay(
                 modifier = Modifier.weight(1f)
             )
             Text(
-                max(0, playback.currentInterval - 1).toString(),
+                max(0, playback.playbackDetails.currentInterval - 1).toString(),
                 color = Color(0xFF2B217F),
                 fontSize = 12.sp,
                 textAlign = TextAlign.End,
@@ -376,7 +365,7 @@ fun RemainingDisplay(
     viewModel: HomePageViewModel,
     modifier: Modifier,
     playback: PlaybackUIState,
-    timer: Timer,
+    timer: TimerUIState,
 ) {
 
     Box(
@@ -404,7 +393,7 @@ fun RemainingDisplay(
                 modifier = Modifier.weight(1f)
             )
             Text(
-                (timer.numIntervals - playback.currentInterval).toString(),
+                (timer.timerDetails.numIntervals - playback.playbackDetails.currentInterval).toString(),
                 color = Color(0xFF2B217F),
                 fontSize = 12.sp,
                 textAlign = TextAlign.End,
@@ -420,7 +409,7 @@ fun FlowBreakDisplay(
     viewModel: HomePageViewModel,
     modifier: Modifier,
     playback: PlaybackUIState,
-    timer: Timer,
+    timer: TimerUIState,
 ) {
 
     Box(
@@ -438,8 +427,8 @@ fun FlowBreakDisplay(
                 .padding(8.dp)
         ) {
             Text("Interval "
-                    + playback.currentInterval.toString()
-                    + " of " + timer.numIntervals,
+                    + playback.playbackDetails.currentInterval.toString()
+                    + " of " + timer.timerDetails.numIntervals,
                 color = Color(0xFF241673).copy(alpha = 0.5f),
                 fontSize = 12.sp
             )
@@ -459,19 +448,19 @@ fun FlowBreakDisplay(
                     color = Color(0xFF821A93),
                     fontSize = 12.sp
                 )
-                if (playback.stateType == 0) {
+                if (playback.playbackDetails.stateType == 0) {
                     // FLOW IS ON
                     Text(
-                        viewModel.timeFormat(playback.currentIntervalRemainingSeconds.toLong()),
+                        viewModel.timeFormat(viewModel.currentTimerVal.toLong()),
                         color = Color(0xFF821A93),
                         fontSize = 12.sp
                     )
 
                 }
-                else if (playback.stateType == 1) {
+                else if (playback.playbackDetails.stateType == 1) {
                     // BREAK IS ON
                     Text(
-                        viewModel.timeFormat(timer.flowMusicDurationSeconds.toLong()),
+                        viewModel.timeFormat(timer.timerDetails.flowMusicDurationSeconds.toLong()),
                         color = Color(0xFFBF5FFF),
                         fontSize = 12.sp
                     )
@@ -503,19 +492,19 @@ fun FlowBreakDisplay(
                     color = Color(0xFF4F5F71),
                     fontSize = 12.sp
                 )
-                if (playback.stateType == 0) {
+                if (playback.playbackDetails.stateType == 0) {
                     // FLOW IS ON
                     Text(
-                        viewModel.timeFormat(timer.breakMusicDurationSeconds.toLong()),
+                        viewModel.timeFormat(timer.timerDetails.breakMusicDurationSeconds.toLong()),
                         color = Color(0xFFB2A9A9),
                         fontSize = 12.sp
                     )
 
                 }
-                else if (playback.stateType == 1) {
+                else if (playback.playbackDetails.stateType == 1) {
                     // BREAK IS ON
                     Text(
-                        viewModel.timeFormat(playback.currentIntervalRemainingSeconds.toLong()),
+                        viewModel.timeFormat(viewModel.currentTimerVal.toLong()),
                         color = Color(0xFF4F5F71),
                         fontSize = 12.sp
                     )
@@ -563,6 +552,4 @@ fun onDestroy() {
     mp3Player.onDestroy()
 }
 */
-
-
 

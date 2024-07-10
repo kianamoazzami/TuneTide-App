@@ -18,15 +18,12 @@ import com.example.tunetide.ui.timer.toTimerDetails
 import com.example.tunetide.ui.timer.toTimerUIState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -40,46 +37,37 @@ class HomePageViewModel (
     private var _timerId: Int = -1
         private set
 
-    val _playbackUIState = MutableStateFlow(PlaybackUIState())
-    val playbackUIState: StateFlow<PlaybackUIState> = _playbackUIState.asStateFlow()
+    var startingTimerIntervalValue = 0
+        private set
 
-    val _timerUIState = MutableStateFlow(TimerUIState())
-    val timerUIState: StateFlow<TimerUIState> = _timerUIState.asStateFlow()
+    var currentTimerVal = 0
+
+    var isPlaying = false
+
+    val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
+        .filterNotNull()
+        .map {
+            PlaybackUIState(playbackDetails = it.toPlaybackDetails())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = PlaybackUIState()
+        )
+
+    val timerUIState: StateFlow<TimerUIState> = playbackRepository.getPlayingTimer()
+        .filterNotNull()
+        .map {
+            TimerUIState(timerDetails = it.toTimerDetails())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = TimerUIState()
+        )
 
     fun timeFormat(timeMillis: Long): String {
         val minutes = (timeMillis / 1000) / 60
         val seconds = (timeMillis / 1000) % 60
         return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
-    }
-
-    fun setCurrentTime(newVal: Int) {
-        _playbackUIState.update { currentState ->
-            currentState.copy(
-                currentIntervalRemainingSeconds = newVal
-            )
-        }
-    }
-
-    fun changePlayingStatus(newStatus: Boolean) {
-        if (newStatus == true) {
-
-            _playbackUIState.update { currentState ->
-                currentState.copy(
-                    isPlaying = true
-                )
-            }
-
-        }
-        else {
-
-            _playbackUIState.update { currentState ->
-                currentState.copy(
-                    isPlaying = false
-                )
-            }
-
-        }
-
     }
 
     init {
@@ -189,6 +177,13 @@ class HomePageViewModel (
  * represents "UI state" for playback
  */
 data class PlaybackUIState(
+    val playbackDetails: PlaybackDetails = PlaybackDetails()
+)
+
+/**
+ * represents the "UI" for playback
+ */
+data class PlaybackDetails(
     var id: Int = -1,
     var timerId: Int = -1,
     var stateType: Int = 2,
@@ -197,7 +192,20 @@ data class PlaybackUIState(
     var isPlaying: Boolean = false
 )
 
-fun Playback.toPlaybackUIState(): PlaybackUIState = PlaybackUIState(
+/**
+ * conversion of classes
+ */
+fun PlaybackDetails.toPlayback(): Playback = Playback (
+    id = id,
+    timerId = timerId,
+    stateType = stateType,
+    currentInterval = currentInterval,
+    currentIntervalRemainingSeconds = currentIntervalRemainingSeconds,
+    isPlaying = isPlaying
+
+)
+
+fun Playback.toPlaybackDetails(): PlaybackDetails = PlaybackDetails (
     id = id,
     timerId = timerId,
     stateType = stateType,
@@ -206,11 +214,6 @@ fun Playback.toPlaybackUIState(): PlaybackUIState = PlaybackUIState(
     isPlaying = isPlaying
 )
 
-fun PlaybackUIState.toPlayback(): Playback = Playback(
-    id = id,
-    timerId = timerId,
-    stateType = stateType,
-    currentInterval = currentInterval,
-    currentIntervalRemainingSeconds = currentIntervalRemainingSeconds,
-    isPlaying = isPlaying
+fun Playback.toPlaybackUIState(): PlaybackUIState = PlaybackUIState(
+    playbackDetails = this.toPlaybackDetails()
 )
