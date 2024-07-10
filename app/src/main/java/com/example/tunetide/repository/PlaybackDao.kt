@@ -5,20 +5,17 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import androidx.room.Upsert
 import com.example.tunetide.database.Playback
 import com.example.tunetide.database.Timer
 import com.example.tunetide.database.SpotifyPlaylist
 import kotlinx.coroutines.flow.Flow
 
-// NOTE: @MIA Seems to be that objects must be in a flow when retrieving them from DB ...
-//       not sure if this applies to accessing one single piece of data (maybe only objects)
-
 @Dao
 interface PlaybackDao {
     // TODO @MIA to maintain singleton in DB, must assert that id = 1 so it will update, not insert
-    // TODO @MIA assess the use of suspend functions and Flow
-    @Upsert
+    @Update
     suspend fun setPlayback(playback: Playback)
 
     @Query("UPDATE Playback" +
@@ -67,6 +64,7 @@ interface PlaybackDao {
             "current_interval_remaining_seconds = (SELECT break_music_duration_seconds FROM Timer WHERE timer_id == (SELECT timer_id FROM Playback WHERE id == 1)), is_playing = 1" +
             " WHERE id = 1")
     fun startNextBreak()
+
     // region helpers
     @Query("SELECT spotify_flow_music_playlist_id FROM Timer WHERE timer_id == (SELECT timer_id FROM Playback WHERE id == 1)")
     fun getPlayingTimerSpotifyFlowMusicPlaylistId(): Int
