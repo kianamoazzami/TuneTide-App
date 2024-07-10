@@ -27,7 +27,7 @@ abstract class TuneTideDatabase : RoomDatabase() {
             // if instance (of database) is not null, return, else create a new instance
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, TuneTideDatabase::class.java, "tunetide_database")
-                    .createFromAsset("starterDatabase.db") // TODO
+                    .createFromAsset("starterDatabase.db")
                     .build()
                     .also { Instance = it }
             }

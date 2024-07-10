@@ -12,8 +12,8 @@ import androidx.room.PrimaryKey
 data class Timer(
     @ColumnInfo(name = "timer_id")
     @PrimaryKey(autoGenerate = true)
-    val timerId: Int?,
-    // TODO @MIA this is supposed to be @NonNull, but I keep getting database mismatch (even though it is NonNull there!)
+    @NonNull
+    val timerId: Int,
 
     @ColumnInfo(name = "timer_name")
     @NonNull

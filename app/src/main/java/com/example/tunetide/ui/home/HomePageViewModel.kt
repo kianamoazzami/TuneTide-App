@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.database.MusicType
 import com.example.tunetide.database.Playback
 import com.example.tunetide.database.StateType
@@ -15,19 +16,16 @@ import com.example.tunetide.ui.timer.TimerDetails
 import com.example.tunetide.ui.timer.TimerUIState
 import com.example.tunetide.ui.timer.toTimerDetails
 import com.example.tunetide.ui.timer.toTimerUIState
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.Locale
 
-// TODO @MIA should have a way to halt the queue / standards
 /**
  * View Model to host state of the timer that is running
  */
@@ -35,58 +33,37 @@ class HomePageViewModel (
     private val playbackRepository: PlaybackRepository
 ): ViewModel() {
 
-    // TEMP IN -> RUNTIME ERROR
-    private val _timerId = 1
-    // TEMP OUT -> RUNTIME ERROR
-    //private val _timerId = playbackRepository.getPlayingTimerId()
+    private var _timerId: Int = -1
+        private set
 
-    val _playbackUIState = MutableStateFlow(PlaybackUIState())
-    val playbackUIState: StateFlow<PlaybackUIState> = _playbackUIState.asStateFlow()
+    val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
+        .filterNotNull()
+        .map {
+            PlaybackUIState(playbackDetails = it.toPlaybackDetails())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = PlaybackUIState()
+        )
 
-    val _timerUIState = MutableStateFlow(TimerUIState())
-    val timerUIState: StateFlow<TimerUIState> = _timerUIState.asStateFlow()
+    val timerUIState: StateFlow<TimerUIState> = playbackRepository.getPlayingTimer()
+        .filterNotNull()
+        .map {
+            TimerUIState(timerDetails = it.toTimerDetails())
+        }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+        initialValue = TimerUIState()
+        )
 
-    fun timeFormat(timeMillis: Long): String {
-        val minutes = (timeMillis / 1000) / 60
-        val seconds = (timeMillis / 1000) % 60
-        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
-    }
-
-    fun setCurrentTime(newVal: Int) {
-        _playbackUIState.update { currentState ->
-            currentState.copy(
-                currentIntervalRemainingSeconds = newVal
-            )
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            _timerId = playbackRepository.getPlayingTimerId()
         }
     }
 
-    fun changePlayingStatus(newStatus: Boolean) {
-        if (newStatus == true) {
-
-            _playbackUIState.update { currentState ->
-                currentState.copy(
-                    isPlaying = true
-                )
-            }
-
-        }
-        else {
-
-            _playbackUIState.update { currentState ->
-                currentState.copy(
-                    isPlaying = false
-                )
-            }
-
-        }
-
-    }
-
-    // TODO @MIA pause and play different functions?
-    // TODO @MIA @ERICA @KIANA I want the backend play and pause booleans / countdowns to be
-    //      synchronous with the music players
     fun play() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.play()
 
             var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
@@ -102,7 +79,7 @@ class HomePageViewModel (
     }
 
     fun pause() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.pause()
 
             var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
@@ -118,7 +95,7 @@ class HomePageViewModel (
     }
 
     fun skipSong() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
 
             if (_timerId == -1) {
@@ -142,7 +119,7 @@ class HomePageViewModel (
     }
 
     fun startNextInterval() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             // if last interval finishes, finish
             if (playbackRepository.getCurrentInterval() == playbackRepository.getPlayingTimerNumIntervals() &&
                 playbackRepository.getStateType() == StateType.BREAK
@@ -156,7 +133,7 @@ class HomePageViewModel (
 
     // same as cancelling a timer
     fun finish() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             // TODO @ERICA @KIANA stop music
             playbackRepository.invalidatePlayback()
             // TODO @MIA invoke next in queue??? (decide how queue will work)
@@ -164,7 +141,7 @@ class HomePageViewModel (
     }
 
     fun restart() {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.restartTimer()
             // TODO @ERICA @KIANA restart music
         }
@@ -184,29 +161,43 @@ class HomePageViewModel (
  * represents "UI state" for playback
  */
 data class PlaybackUIState(
-    var id: Int = -1,
-    var timerId: Int = -1,
-    var stateType: Int = 2,
-    var currentInterval: Int = 0,
-    var currentIntervalRemainingSeconds: Int = 0,
-    var isPlaying: Boolean = false
+    val playbackDetails: PlaybackDetails = PlaybackDetails()
+)
+
+/**
+ * represents the "UI" for playback
+ */
+data class PlaybackDetails(
+    val id: Int = -1,
+    val timerId: Int = -1,
+    val stateType: Int = 2,
+    val currentInterval: Int = 0,
+    val currentIntervalRemainingSeconds: Int = 0,
+    val isPlaying: Boolean = false
+)
+
+/**
+ * conversion of classes
+ */
+fun PlaybackDetails.toPlayback(): Playback = Playback (
+    id = id,
+    timerId = timerId,
+    stateType = stateType,
+    currentInterval = currentInterval,
+    currentIntervalRemainingSeconds = currentIntervalRemainingSeconds,
+    isPlaying = isPlaying
+
+)
+
+fun Playback.toPlaybackDetails(): PlaybackDetails = PlaybackDetails (
+    id = id,
+    timerId = timerId,
+    stateType = stateType,
+    currentInterval = currentInterval,
+    currentIntervalRemainingSeconds = currentIntervalRemainingSeconds,
+    isPlaying = isPlaying
 )
 
 fun Playback.toPlaybackUIState(): PlaybackUIState = PlaybackUIState(
-    id = id,
-    timerId = timerId,
-    stateType = stateType,
-    currentInterval = currentInterval,
-    currentIntervalRemainingSeconds = currentIntervalRemainingSeconds,
-    isPlaying = isPlaying
+    playbackDetails = this.toPlaybackDetails()
 )
-
-fun PlaybackUIState.toPlayback(): Playback = Playback(
-    id = id,
-    timerId = timerId,
-    stateType = stateType,
-    currentInterval = currentInterval,
-    currentIntervalRemainingSeconds = currentIntervalRemainingSeconds,
-    isPlaying = isPlaying
-)
-
