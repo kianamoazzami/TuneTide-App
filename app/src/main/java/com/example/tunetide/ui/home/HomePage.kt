@@ -45,6 +45,7 @@ fun HomeScreenTimer(
 ) {
 
     var timerValue =  (viewModel.startingTimerIntervalValue).toLong()
+    Log.d("TIMERVAL", timerValue.toString())
     var currentTimeMillis by remember { mutableStateOf(timerValue) }
     viewModel.setCurrentTime(currentTimeMillis.toInt())
 

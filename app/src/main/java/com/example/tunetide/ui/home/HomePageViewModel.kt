@@ -43,11 +43,25 @@ class HomePageViewModel (
     var startingTimerIntervalValue = 0
         private set
 
-    val _playbackUIState = MutableStateFlow(PlaybackUIState())
-    val playbackUIState: StateFlow<PlaybackUIState> = _playbackUIState.asStateFlow()
+    val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
+        .filterNotNull()
+        .map {
+            PlaybackUIState(playbackDetails = it.toPlaybackDetails())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = PlaybackUIState()
+        )
 
-    val _timerUIState = MutableStateFlow(TimerUIState())
-    val timerUIState: StateFlow<TimerUIState> = _timerUIState.asStateFlow()
+    val timerUIState: StateFlow<TimerUIState> = playbackRepository.getPlayingTimer()
+        .filterNotNull()
+        .map {
+            TimerUIState(timerDetails = it.toTimerDetails())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = TimerUIState()
+        )
 
     fun timeFormat(timeMillis: Long): String {
         val minutes = (timeMillis / 1000) / 60
@@ -56,33 +70,11 @@ class HomePageViewModel (
     }
 
     fun setCurrentTime(newVal: Int) {
-        _playbackUIState.update { currentState ->
-            currentState.copy(
-                playbackDetails = PlaybackDetails(
-                    id = playbackUIState.value.playbackDetails.id,
-                    timerId = playbackUIState.value.playbackDetails.timerId,
-                    stateType = playbackUIState.value.playbackDetails.stateType,
-                    currentInterval = playbackUIState.value.playbackDetails.currentInterval,
-                    currentIntervalRemainingSeconds = newVal,
-                    isPlaying = playbackUIState.value.playbackDetails.isPlaying
-                )
-            )
-        }
+        // TODO: Modify in playbackrepo.
     }
 
     fun changePlayingStatus(newStatus: Boolean) {
-        _playbackUIState.update { currentState ->
-            currentState.copy(
-                playbackDetails = PlaybackDetails(
-                    id = playbackUIState.value.playbackDetails.id,
-                    timerId = playbackUIState.value.playbackDetails.timerId,
-                    stateType = playbackUIState.value.playbackDetails.stateType,
-                    currentInterval = playbackUIState.value.playbackDetails.currentInterval,
-                    currentIntervalRemainingSeconds = playbackUIState.value.playbackDetails.currentIntervalRemainingSeconds,
-                    isPlaying = newStatus
-                )
-            )
-        }
+        // TODO: Modify in playbackrepo
     }
 
     init {
