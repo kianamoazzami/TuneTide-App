@@ -74,3 +74,4 @@
  | 07/09/24 | Spotify and Coroutine Research      |           |           | 2.5       |           |           |
  | 07/09/24 | Playlist Creation                   |           |           |           |           | 2.0       |
  | 07/10/24 | Group Meeting                       | 2.0       | 2.0       |           | 2.0       | 2.0       |
+ | 07/10/24 | HomePage debugging attempt          |           |           |           | 4.0       |           |
