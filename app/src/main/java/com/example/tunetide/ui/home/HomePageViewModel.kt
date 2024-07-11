@@ -36,7 +36,7 @@ class HomePageViewModel (
     private var _timerId: Int = -1
         private set
 
-    var startingTimerIntervalValue = 0
+    var startingTimerIntervalValue: Int = 0
         private set
 
     val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()

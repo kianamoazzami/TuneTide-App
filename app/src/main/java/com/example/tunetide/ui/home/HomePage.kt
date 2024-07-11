@@ -25,6 +25,10 @@ import java.util.Locale
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.navigation.NavigationDestination
 import androidx.compose.runtime.rememberCoroutineScope
+import com.example.tunetide.database.Timer
+import com.example.tunetide.ui.timer.TimerUIState
+import com.example.tunetide.ui.timer.TimerDetails
+import com.example.tunetide.ui.timer.toTimer
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -72,7 +76,7 @@ fun HomeScreen(
     val timerText = remember { mutableStateOf(timeFormat(timerValue)) }
     */
     // TEMP IN -> RUNTIME ERROR
-    val theTimerValue: Long = 30000
+    val theTimerValue: Long = viewModel.startingTimerIntervalValue.toLong() // 30000
     var timerValue = theTimerValue
     var currentTimeMillis by remember { mutableStateOf(timerValue) }
     var isRunning by remember { mutableStateOf(false) }
@@ -119,6 +123,9 @@ fun HomeBody(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(16.dp),
 ) {
+    val timerUIState = viewModel.timerUIState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+
     Log.d("HomePage/HomeBody", "about to create main layout")
     Column(
         modifier = Modifier
@@ -128,7 +135,13 @@ fun HomeBody(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TideFlow()
+        TideFlow(
+            // @KATHERINE - this is unwrapping to the UI state
+            timerUIState = timerUIState.value,
+            // @KATHERINE - this is unwrapping all the way down to the base database object
+            timer = (timerUIState.value).timerDetails.toTimer()
+            // @KATHERINE - i am not sure when to use each one, but the unit 6 pathway 2 talks more on this
+        )
         TimerBody(
             viewModel = viewModel(factory = AppViewModelProvider.Factory),
             modifier = modifier)
@@ -139,7 +152,10 @@ fun HomeBody(
 }
 
 @Composable
-fun TideFlow() {
+fun TideFlow(
+    timerUIState: TimerUIState,
+    timer: Timer
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -147,7 +163,8 @@ fun TideFlow() {
         horizontalArrangement = Arrangement.Start
     ) {
         Text(
-            text = "tide flow",
+            // @KATHERINE here i am displaying the data on the screen
+            text = timerUIState.timerDetails.timerName + " " + timer.breakMusicDurationSeconds.toString(),  /*"tide flow",*/
             color = Color.White.copy(alpha = 0.4f),
             fontSize = 24.sp,
             fontWeight = FontWeight.Normal,
