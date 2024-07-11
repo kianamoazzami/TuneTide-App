@@ -43,6 +43,10 @@ class HomePageViewModel (
     var startingTimerIntervalValue = 0
         private set
 
+    var currentTimerVal = 0
+
+    var isPlaying = false
+
     val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
         .filterNotNull()
         .map {
@@ -70,11 +74,11 @@ class HomePageViewModel (
     }
 
     fun setCurrentTime(newVal: Int) {
-        // TODO: Modify in playbackrepo.
+        currentTimerVal = newVal
     }
 
     fun changePlayingStatus(newStatus: Boolean) {
-        // TODO: Modify in playbackrepo
+        isPlaying = newStatus
     }
 
     init {

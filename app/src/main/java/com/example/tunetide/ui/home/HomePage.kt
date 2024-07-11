@@ -45,14 +45,13 @@ fun HomeScreenTimer(
 ) {
 
     var timerValue =  (viewModel.startingTimerIntervalValue).toLong()
-    Log.d("TIMERVAL", timerValue.toString())
     var currentTimeMillis by remember { mutableStateOf(timerValue) }
     viewModel.setCurrentTime(currentTimeMillis.toInt())
 
     // TODO @MIA @KATHERINE @NOUR figure out updating database (seconds remaining) when app close
     //      too costly / inefficent to update every second
-    LaunchedEffect(playback.playbackDetails.isPlaying) {
-        while (playback.playbackDetails.isPlaying && currentTimeMillis > 0) {
+    LaunchedEffect(viewModel.isPlaying) {
+        while (viewModel.isPlaying && currentTimeMillis > 0) {
             delay(1000)
             currentTimeMillis -= 1000
             viewModel.setCurrentTime(currentTimeMillis.toInt())
@@ -222,7 +221,7 @@ fun TimerDisplay(
     timer: TimerUIState,
 ) {
     Text(
-        text = viewModel.timeFormat(playback.playbackDetails.currentIntervalRemainingSeconds.toLong()),
+        text = viewModel.timeFormat(viewModel.currentTimerVal.toLong()),
         color = Color.White,
         fontSize = 48.sp,
         textAlign = TextAlign.Center
@@ -239,7 +238,7 @@ fun PlayButton(
     val coroutineScope = rememberCoroutineScope()
 
     IconButton(onClick = {
-        if (playback.playbackDetails.isPlaying) {
+        if (viewModel.isPlaying) {
             coroutineScope.launch {
                 viewModel.pause()
                 viewModel.changePlayingStatus(false)
@@ -252,7 +251,7 @@ fun PlayButton(
         }
 
     }) {
-        if (playback.playbackDetails.isPlaying) {
+        if (viewModel.isPlaying) {
         Image(
             painter = painterResource(id = R.drawable.pausebutton),
             contentDescription = "Pause Button",
@@ -454,7 +453,7 @@ fun FlowBreakDisplay(
                 if (playback.playbackDetails.stateType == 0) {
                     // FLOW IS ON
                     Text(
-                        viewModel.timeFormat(playback.playbackDetails.currentIntervalRemainingSeconds.toLong()),
+                        viewModel.timeFormat(viewModel.currentTimerVal.toLong()),
                         color = Color(0xFF821A93),
                         fontSize = 12.sp
                     )
@@ -507,7 +506,7 @@ fun FlowBreakDisplay(
                 else if (playback.playbackDetails.stateType == 1) {
                     // BREAK IS ON
                     Text(
-                        viewModel.timeFormat(playback.playbackDetails.currentIntervalRemainingSeconds.toLong()),
+                        viewModel.timeFormat(viewModel.currentTimerVal.toLong()),
                         color = Color(0xFF4F5F71),
                         fontSize = 12.sp
                     )
