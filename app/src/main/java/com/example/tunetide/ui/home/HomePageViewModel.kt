@@ -67,9 +67,9 @@ class HomePageViewModel (
             initialValue = TimerUIState()
         )
 
-    fun timeFormat(timeMillis: Long): String {
-        val minutes = (timeMillis / 1000) / 60
-        val seconds = (timeMillis / 1000) % 60
+    fun timeFormat(timeSec: Long): String {
+        val minutes = (timeSec) / 60
+        val seconds = (timeSec) % 60
         return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
     }
 
@@ -141,8 +141,10 @@ class HomePageViewModel (
             } else if (playbackRepository.getStateType() == StateType.BREAK) {
                 startingTimerIntervalValue = playbackRepository.getBreakDurationSeconds()
             } else {
-                startingTimerIntervalValue = 0
+                //STANDARD TIMER
+                startingTimerIntervalValue = playbackRepository.getFlowDurationSeconds()
             }
+
         }
     }
 
