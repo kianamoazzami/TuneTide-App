@@ -23,16 +23,16 @@ import com.example.tunetide.ui.navigation.NavigationDestination
 import com.example.tunetide.ui.theme.PurpleBackground
 import com.example.tunetide.ui.theme.PurpleAccent
 
-class SettingsActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            MaterialTheme {
-                SettingsScreen { finish() }  // Pass the finish function to handle back navigation
-            }
-        }
-    }
-}
+//class SettingsActivity : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContent {
+//            MaterialTheme {
+//                SettingsScreen { finish() }  // Pass the finish function to handle back navigation
+//            }
+//        }
+//    }
+//}
 
 object SettingsDestination : NavigationDestination {
     override val route = "settings"
@@ -41,7 +41,8 @@ object SettingsDestination : NavigationDestination {
 
 @Composable
 fun SettingsScreen(
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    navigateToLocalFiles: () -> Unit
 ) {
     var isDarkModeEnabled by remember { mutableStateOf(false) }
 
@@ -105,7 +106,7 @@ fun SettingsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
-                    .clickable { /* TODO: Implement Manage Local Music Files */ },
+                    .clickable(onClick = navigateToLocalFiles),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(

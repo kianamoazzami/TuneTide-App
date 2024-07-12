@@ -83,7 +83,7 @@ fun TuneTideTopAppBarBack(
     ) {
         IconButton(onClick = navigateBack) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_back_arrow),
+                painter = painterResource(id = R.drawable.back),
                 contentDescription = "Back", tint = PurpleAccent,
                 modifier = Modifier.size(20.dp)
             )
