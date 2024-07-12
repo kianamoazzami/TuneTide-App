@@ -21,30 +21,15 @@ import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class SpotifyController(connectedRemote : SpotifyAppRemote) {
-
-    private var spotifyAppRemote: SpotifyAppRemote? = null
-
-    init {
-        spotifyAppRemote = connectedRemote
-    }
-    fun isConnected() : Boolean {
-        return spotifyAppRemote == null;
-    }
-
-}
-
-
-/*
-class SpotifyController() : ComponentActivity() {
+class SpotifyController(private val mainContext: Context) {
     // All new spotifyController functions for public use will need to go through a connectAndExecute call right now
-
     private val clientId = "cb2af3cb9add453d8a18f97e2aae117f"
     private val redirectUri = "tunetide://test"
     private var spotifyAppRemote: SpotifyAppRemote? = null
@@ -55,42 +40,42 @@ class SpotifyController() : ComponentActivity() {
 
     private val errorCallback = { throwable: Throwable -> logError(throwable) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d("SpotifyController", "onCreate Called")
-        super.onCreate(savedInstanceState)
-        setContent {
-            TuneTideTheme {
-                Log.d("SpotifyController", "calling Theme")
-                TuneTideApp()
+    init {
+        connectPersist()
+    }
+
+    public fun playUri(uri: String) {
+        SpotifyAppRemote.disconnect(spotifyAppRemote)
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                spotifyAppRemote = connectToAppRemote(true)
+                onConnected()
+            } catch (error: Throwable) {
+                logError(error)
             }
+
+            spotifyAppRemote?.let {
+
+                it.playerApi.play(uri)
+                Log.d("SpotifyController", "Playing Playlist by URL")
+
+                it.playerApi.subscribeToPlayerState().setEventCallback {
+                    val track: Track = it.track
+                    Log.d(
+                        "SpotifyController",
+                        "Playing : " + track.name + " by " + track.artist.name
+                    )
+                }
+            }
+
         }
 
-        SpotifyAppRemote.setDebugMode(true)
-        connectPersist();
-    }
-
-    override fun onStart() {
-        super.onStart()
-        //playUri("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL")
-    }
-
-    private fun playUri(uri: String) {
-        assertAppRemoteConnected()
-            .playerApi
-            .play(uri)
-            .setResultCallback { logMessage("play") }
-            .setErrorCallback(errorCallback)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        SpotifyAppRemote.disconnect(spotifyAppRemote)
     }
 
     private suspend fun connectToAppRemote(showAuthView: Boolean): SpotifyAppRemote? =
         suspendCoroutine { cont: Continuation<SpotifyAppRemote> ->
             SpotifyAppRemote.connect(
-                applicationContext,
+                mainContext,
                 ConnectionParams.Builder(clientId)
                     .setRedirectUri(redirectUri)
                     .showAuthView(showAuthView)
@@ -109,15 +94,14 @@ class SpotifyController() : ComponentActivity() {
         }
 
     private fun logError(throwable: Throwable) {
-        Toast.makeText(this, "An Error Has Occured.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(mainContext, "An Error Has Occured.", Toast.LENGTH_SHORT).show()
         Log.e("SpotifyController", "", throwable)
     }
-    fun connectPersist(): String {
+    private fun connectPersist() {
         SpotifyAppRemote.disconnect(spotifyAppRemote)
-        lifecycleScope.launch {
+        CoroutineScope(Dispatchers.Main).launch {
             try {
                 spotifyAppRemote = connectToAppRemote(true)
-                onConnected()
             } catch (error: Throwable) {
                 logError(error)
             }
@@ -125,10 +109,6 @@ class SpotifyController() : ComponentActivity() {
                 Log.d("TestErica", "Connection alive")
             }
         }
-        if (spotifyAppRemote != null) {
-            Log.d("TestErica", "AYAY Connection persisted")
-        }
-        return "Im so tired"
     }
 
     private fun onConnected() {
@@ -151,27 +131,6 @@ class SpotifyController() : ComponentActivity() {
             .setErrorCallback { throwable ->
                 logError(throwable)
             } as Subscription<PlayerContext>
-    }
-    private fun onSubscribedToPlayerState() {
-        playerStateSubscription = cancelAndResetSubscription(playerStateSubscription)
-
-        playerStateSubscription = assertAppRemoteConnected()
-            .playerApi
-            .subscribeToPlayerState()
-            .setEventCallback(playerStateEventCallback)
-            .setLifecycleCallback(
-                object : Subscription.LifecycleCallback {
-                    override fun onStart() {
-                        logMessage("Event: start")
-                    }
-
-                    override fun onStop() {
-                        logMessage("Event: end")
-                    }
-                })
-            .setErrorCallback {
-                logError(it)
-            } as Subscription<PlayerState>
     }
 
     private val playerStateEventCallback = Subscription.EventCallback<PlayerState> { playerState ->
@@ -197,18 +156,13 @@ class SpotifyController() : ComponentActivity() {
         throw SpotifyDisconnectedException()
     }
 
-    private fun logMessage(msg: String, duration: Int = Toast.LENGTH_SHORT) {
-        Toast.makeText(this, msg, duration).show()
-        Log.d("SpotifyController", msg)
-    }
-
     private fun connectAndExecute(operation: () -> Any?): Any? {
         val connectionParams = ConnectionParams.Builder(clientId)
             .setRedirectUri(redirectUri)
             .showAuthView(true)
             .build()
 
-        SpotifyAppRemote.connect(application, connectionParams, object : Connector.ConnectionListener {
+        SpotifyAppRemote.connect(mainContext, connectionParams, object : Connector.ConnectionListener {
             override fun onConnected(appRemote: SpotifyAppRemote) {
                 spotifyAppRemote = appRemote
                 // TODO: see if you can make appRemote persist.. otherwise have to do this wrapper way yuck
@@ -232,7 +186,7 @@ class SpotifyController() : ComponentActivity() {
             .showAuthView(true)
             .build()
 
-        SpotifyAppRemote.connect(application, connectionParams, object : Connector.ConnectionListener {
+        SpotifyAppRemote.connect(mainContext, connectionParams, object : Connector.ConnectionListener {
             override fun onConnected(appRemote: SpotifyAppRemote) {
                 spotifyAppRemote = appRemote
                 Log.d("MainActivity", "Connected! Yay!")
@@ -251,7 +205,7 @@ class SpotifyController() : ComponentActivity() {
         return null;
     }
 
-    fun disconnect() {
+    public fun disconnect() {
         spotifyAppRemote?.let {
             SpotifyAppRemote.disconnect(it)
         }
@@ -317,5 +271,3 @@ class SpotifyController() : ComponentActivity() {
     }
 
 }
-
-*/
