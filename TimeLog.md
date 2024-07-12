@@ -77,3 +77,5 @@
  | 07/10/24 | Fixes for PR                        |           | 1.5       |           |           |           |
  | 07/10/24 | HomePage debugging attempt          |           |           |           | 4.0       |           |
  | 07/10/24 | Playlist Creation                   |           |           |           |           | 2.0       |
+ | 07/11/24 | Finished Playlist Creation          |           |           |           |           | 2.0       |
+ | 07/12/24 | Playlist Deletion                   |           |           |           |           | 2.5       |
