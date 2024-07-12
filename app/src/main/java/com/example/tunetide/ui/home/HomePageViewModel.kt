@@ -18,13 +18,17 @@ import com.example.tunetide.ui.timer.toTimerDetails
 import com.example.tunetide.ui.timer.toTimerUIState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 /**
  * View Model to host state of the timer that is running
@@ -38,6 +42,10 @@ class HomePageViewModel (
 
     var startingTimerIntervalValue = 0
         private set
+
+    var currentTimerVal = 0
+
+    var isPlaying = false
 
     val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
         .filterNotNull()
@@ -54,10 +62,24 @@ class HomePageViewModel (
         .map {
             TimerUIState(timerDetails = it.toTimerDetails())
         }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-        initialValue = TimerUIState()
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = TimerUIState()
         )
+
+    fun timeFormat(timeMillis: Long): String {
+        val minutes = (timeMillis / 1000) / 60
+        val seconds = (timeMillis / 1000) % 60
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
+    }
+
+    fun setCurrentTime(newVal: Int) {
+        currentTimerVal = newVal
+    }
+
+    fun changePlayingStatus(newStatus: Boolean) {
+        isPlaying = newStatus
+    }
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
