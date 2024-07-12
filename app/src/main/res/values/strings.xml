@@ -1,7 +1,19 @@
 <resources>
     <string name="app_name">TuneTide</string>
     <string name="home_page_name">Tide Flow</string>
+    <string name="local_files_page_name">Manage Local Music Files</string>
+    <string name="settings_page_name">Settings</string>
+    <string name="mp3_playlist_entry_name">Create MP3 Playlist</string>
     <string name="timer_entry_name">Enter Timer</string>
     <string name="timer_edit_name">Edit Timer</string>
     <string name="timers_list_name">View Timers</string>
+    <string name="settings">Settings</string>
+
+    <!-- New strings for Settings screen -->
+    <string name="back">Back</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="connect_spotify">Connect Spotify</string>
+    <string name="spotify">Spotify</string>
+    <string name="manage_local_music_files">Manage Local Music Files</string>
+    <string name="schedule_settings">Schedule Settings</string>
 </resources>
