@@ -81,3 +81,4 @@
  | 07/11/24 | Finished Playlist Creation          |           |           |           |           | 2.0       |
  | 07/11/24 | Work on D4                          |           |           |           |           | 1.0       |
  | 07/12/24 | Playlist Deletion                   |           |           |           |           | 2.5       |
+ | 07/12/24 | Spotify Controller                  |           | 2.0       |           |           |           |
