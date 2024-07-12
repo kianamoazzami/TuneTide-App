@@ -17,10 +17,6 @@ class MP3PlaylistDetailsViewModel(
 
     private val mp3PlaylistId: Int = checkNotNull(savedStateHandle[MP3PlaylistDetailsDestination.mp3PlaylistIdArg])
 
-    /**
-     * Holds the item details ui state. The data is retrieved from [ItemsRepository] and mapped to
-     * the UI state.
-     */
     val uiState: StateFlow<MP3PlaylistDetailsUIState> =
         mp3Repository.getMP3PlaylistById(mp3PlaylistId)
             .filterNotNull()
@@ -33,9 +29,6 @@ class MP3PlaylistDetailsViewModel(
             )
 
     suspend fun deleteMP3Playlist() {
-        //delete all the mp3 files with that tag too!
-
-        //or just use mp3PlaylistId
         mp3Repository.deleteFilesByPlaylistId(uiState.value.mp3PlaylistDetails.toMP3Playlist().playlistId)
 
         mp3Repository.deletePlaylist(uiState.value.mp3PlaylistDetails.toMP3Playlist())

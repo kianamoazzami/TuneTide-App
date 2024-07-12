@@ -25,6 +25,9 @@ interface MP3Dao {
 
     @Query("SELECT * FROM MP3File WHERE playlist_id == :playlistId")
     fun getMP3FileByPlaylist(playlistId: Int): Flow<List<MP3File>>
+
+    @Query("DELETE FROM MP3File WHERE playlist_id == :playlistId")
+    suspend fun deleteFilesByPlaylistId(playlistId: Int)
     // endregion Files *************************************************************************
 
     // region Playlist *************************************************************************
@@ -33,6 +36,9 @@ interface MP3Dao {
 
     @Delete
     suspend fun deletePlaylist(mp3Playlist: MP3Playlist)
+
+    @Query("SELECT * FROM MP3Playlist WHERE playlist_id == :playlistId")
+    fun getMP3PlaylistById(playlistId: Int): Flow<MP3Playlist?>
 
     @Query("SELECT * FROM MP3Playlist")
     fun getMP3Playlists(): Flow<List<MP3Playlist>>

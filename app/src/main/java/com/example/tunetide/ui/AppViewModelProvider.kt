@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.tunetide.Application
 import com.example.tunetide.ui.home.HomePageViewModel
 import com.example.tunetide.ui.mp3.LocalFilesViewModel
+import com.example.tunetide.ui.mp3.MP3PlaylistDetailsViewModel
 import com.example.tunetide.ui.mp3.MP3PlaylistEntryViewModel
 import com.example.tunetide.ui.timer.TimerEditViewModel
 import com.example.tunetide.ui.timer.TimerEntryViewModel
@@ -44,6 +45,13 @@ object AppViewModelProvider {
 
         initializer {
             MP3PlaylistEntryViewModel(
+                TuneTideApplication().container.mp3Repository
+            )
+        }
+
+        initializer {
+            MP3PlaylistDetailsViewModel(
+                this.createSavedStateHandle(),
                 TuneTideApplication().container.mp3Repository
             )
         }

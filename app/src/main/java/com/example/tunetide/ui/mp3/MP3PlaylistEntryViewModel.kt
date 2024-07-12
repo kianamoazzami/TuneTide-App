@@ -1,15 +1,37 @@
 package com.example.tunetide.ui.mp3
 
 import androidx.annotation.NonNull
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.room.ColumnInfo
 import com.example.tunetide.database.MP3Playlist
 import com.example.tunetide.repository.MP3Repository
 
 class MP3PlaylistEntryViewModel (
-    mp3Repository: MP3Repository
+    private val mp3Repository: MP3Repository
 ): ViewModel() {
 
+    var mp3PlaylistUIState by mutableStateOf(MP3PlaylistUIState())
+        private set
+
+    fun updateUIState(mp3PlaylistDetails: MP3PlaylistDetails) {
+        mp3PlaylistUIState =
+            MP3PlaylistUIState(mp3PlaylistDetails = mp3PlaylistDetails, isEntryValid = validateInput(mp3PlaylistDetails))
+    }
+
+    suspend fun saveItem() {
+        if (validateInput()) {
+            mp3Repository.insertPlaylist(mp3PlaylistUIState.mp3PlaylistDetails.toMP3Playlist())
+        }
+    }
+
+    private fun validateInput(uiState: MP3PlaylistDetails = mp3PlaylistUIState.mp3PlaylistDetails): Boolean {
+        return with(uiState) {
+            playlistName.isNotBlank() // && there is at least one song added!
+        }
+    }
 }
 
 data class MP3PlaylistUIState(

@@ -19,9 +19,13 @@ interface IMP3Repository {
 
     fun getMP3FileByPlaylist(playlistId: Int): Flow<List<MP3File>>
 
+    suspend fun deleteFilesByPlaylistId(playlistId: Int)
+
     suspend fun insertPlaylist(mp3Playlist: MP3Playlist)
 
     suspend fun deletePlaylist(mp3Playlist: MP3Playlist)
+
+    fun getMP3PlaylistById(playlistId: Int): Flow<MP3Playlist?>
 
     fun getMP3Playlists(): Flow<List<MP3Playlist>>
 }
@@ -37,12 +41,16 @@ class MP3Repository(private val mP3Dao: MP3Dao) : IMP3Repository {
     override fun getMP3FileById(fileId: Int): Flow<MP3File?> = mP3Dao.getMP3FileById(fileId)
 
     override fun getMP3FileByPlaylist(playlistId: Int): Flow<List<MP3File>> = mP3Dao.getMP3FileByPlaylist(playlistId)
+
+    override suspend fun deleteFilesByPlaylistId(playlistId: Int) = mP3Dao.deleteFilesByPlaylistId(playlistId)
     // endregion Files **************************************************************************
 
     // region Playlist **************************************************************************
     override suspend fun insertPlaylist(mp3Playlist: MP3Playlist) = mP3Dao.insertPlaylist(mp3Playlist)
 
     override suspend fun deletePlaylist(mp3Playlist: MP3Playlist) = mP3Dao.deletePlaylist(mp3Playlist)
+
+    override fun getMP3PlaylistById(playlistId: Int): Flow<MP3Playlist?> = mP3Dao.getMP3PlaylistById(playlistId)
 
     override fun getMP3Playlists(): Flow<List<MP3Playlist>> = mP3Dao.getMP3Playlists()
     // endregion Playlist ***********************************************************************

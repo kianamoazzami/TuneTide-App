@@ -15,7 +15,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -52,7 +51,6 @@ fun MP3PlaylistDetailsScreen(
     modifier: Modifier = Modifier,
     viewModel: MP3PlaylistDetailsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val uiState = viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
@@ -61,12 +59,7 @@ fun MP3PlaylistDetailsScreen(
         modifier = modifier,
     ) { innerPadding ->
         MP3PlaylistDetailsBody(
-            mp3PlaylistDetailsUIState = uiState.value,
             onDelete = {
-                // Note: If the user rotates the screen very fast, the operation may get cancelled
-                // and the item may not be deleted from the Database. This is because when config
-                // change occurs, the Activity will be recreated and the rememberCoroutineScope will
-                // be cancelled - since the scope is bound to composition.
                 coroutineScope.launch {
                     viewModel.deleteMP3Playlist()
                     navigateBack()
@@ -85,7 +78,6 @@ fun MP3PlaylistDetailsScreen(
 
 @Composable
 private fun MP3PlaylistDetailsBody(
-    mp3PlaylistDetailsUIState: MP3PlaylistDetailsUIState,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -94,9 +86,6 @@ private fun MP3PlaylistDetailsBody(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
-//        MP3PlaylistDetails(
-//            mp3Playlist = mp3PlaylistDetailsUIState.mp3PlaylistDetails.toMP3Playlist(), modifier = Modifier.fillMaxWidth()
-//        )
         IconButton(
             onClick = { deleteConfirmationRequired = true },
             modifier = Modifier.fillMaxWidth()
@@ -119,71 +108,6 @@ private fun MP3PlaylistDetailsBody(
         }
     }
 }
-
-/*
-@Composable
-fun MP3PlaylistDetails(
-    item: Item, modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier, colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.padding_medium)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
-        ) {
-            ItemDetailsRow(
-                labelResID = R.string.item,
-                itemDetail = item.name,
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(
-                        id = R.dimen
-                            .padding_medium
-                    )
-                )
-            )
-            ItemDetailsRow(
-                labelResID = R.string.quantity_in_stock,
-                itemDetail = item.quantity.toString(),
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(
-                        id = R.dimen
-                            .padding_medium
-                    )
-                )
-            )
-            ItemDetailsRow(
-                labelResID = R.string.price,
-                itemDetail = item.formatedPrice(),
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(
-                        id = R.dimen
-                            .padding_medium
-                    )
-                )
-            )
-        }
-
-    }
-}
-
-@Composable
-private fun ItemDetailsRow(
-    @StringRes labelResID: Int, itemDetail: String, modifier: Modifier = Modifier
-) {
-    Row(modifier = modifier) {
-        Text(text = stringResource(labelResID))
-        Spacer(modifier = Modifier.weight(1f))
-        Text(text = itemDetail, fontWeight = FontWeight.Bold)
-    }
-}
-
- */
 
 @Composable
 private fun DeleteConfirmationDialog(
