@@ -45,13 +45,6 @@ fun TuneTideTopAppBar() {
         backgroundColor = PurpleBackground,
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
-        IconButton(onClick = { /* add navigation action */ }) {
-            Icon(
-                painter = painterResource(id = R.drawable.settings),
-                contentDescription = "Settings", tint = PurpleAccent,
-                modifier = Modifier.size(30.dp)
-            )
-        }
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = "tunetide",
@@ -62,13 +55,6 @@ fun TuneTideTopAppBar() {
             modifier = Modifier.weight(6f)
         )
         Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = { /* add navigation action */ }) {
-            Icon(
-                painter = painterResource(id = R.drawable.queue),
-                contentDescription = "Queue", tint = PurpleAccent,
-                modifier = Modifier.size(30.dp)
-            )
-        }
     }
 }
 
@@ -121,8 +107,8 @@ fun TuneTideBottomAppBar() {
         ) {
             IconButton(onClick = { /* add navigation action */ }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.calendar),
-                    contentDescription = "Calendar", tint = PurpleBackground,
+                    painter = painterResource(id = R.drawable.settings),
+                    contentDescription = "Settings", tint = PurpleAccent,
                     modifier = Modifier.size(30.dp)
                 )
             }
@@ -136,7 +122,7 @@ fun TuneTideBottomAppBar() {
             IconButton(onClick = { /* add navigation action */ }) {
                 Icon(
                     painter = painterResource(id = R.drawable.timer),
-                    contentDescription = "Timer", tint = PurpleBackground,
+                    contentDescription = "Timer", tint = PurpleAccent,
                     modifier = Modifier.size(30.dp)
                 )
             }
