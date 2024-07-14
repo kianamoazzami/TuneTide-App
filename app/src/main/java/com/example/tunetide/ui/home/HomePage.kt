@@ -1,5 +1,6 @@
 package com.example.tunetide.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -34,36 +35,6 @@ object HomeDestination : NavigationDestination {
 }
 
 @Composable
-fun HomeScreenTimer(
-    modifier: Modifier = Modifier,
-    viewModel: HomePageViewModel,
-    playback: PlaybackDetails,
-    timer: TimerDetails,
-) {
-
-    var timerValue =  (viewModel.startingTimerIntervalValue).toLong()
-    var currentTimeSec by remember { mutableStateOf(timerValue) }
-    viewModel.setCurrentTime(currentTimeSec.toInt())
-
-    // TODO @MIA @KATHERINE @NOUR figure out updating database (seconds remaining) when app close
-    //      too costly / inefficent to update every second
-    LaunchedEffect(viewModel.isPlaying) {
-        while (viewModel.isPlaying && currentTimeSec > 0) {
-            delay(1000)
-            currentTimeSec -= 1
-            viewModel.setCurrentTime(currentTimeSec.toInt())
-
-        }
-        if (currentTimeSec <= 0) {
-            if (timer.isInterval) {
-                viewModel.startNextInterval()
-            }
-            viewModel.setCurrentTime(currentTimeSec.toInt())
-        }
-    }
-}
-
-@Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomePageViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -71,7 +42,7 @@ fun HomeScreen(
     // Unwrap timer and playback
     val timer: TimerDetails = viewModel.timerUIState.collectAsState().value.timerDetails
     val playback: PlaybackDetails = viewModel.playbackUIState.collectAsState().value.playbackDetails
-    HomeScreenTimer(modifier, viewModel, playback, timer)
+
     Scaffold(
         topBar = {
             TuneTideTopAppBar()
@@ -221,7 +192,7 @@ fun TimerDisplay(
 ) {
     Text(
         // LIVE TIMER
-        text = viewModel.timeFormat(viewModel.currentTimerVal.toLong()),
+        text = viewModel.timeFormat(viewModel.currentTimerVal.collectAsState().value.toLong()),
         color = Color.White,
         fontSize = 48.sp,
         textAlign = TextAlign.Center
@@ -238,20 +209,18 @@ fun PlayButton(
     val coroutineScope = rememberCoroutineScope()
 
     IconButton(onClick = {
-        if (viewModel.isPlaying) {
+        if (viewModel.isPlaying.value) {
             coroutineScope.launch {
                 viewModel.pause()
-                viewModel.changePlayingStatus(false)
             }
         } else{
             coroutineScope.launch {
                 viewModel.play()
-                viewModel.changePlayingStatus(true)
             }
         }
 
     }) {
-        if (viewModel.isPlaying) {
+        if (viewModel.isPlaying.collectAsState().value) {
         Image(
             painter = painterResource(id = R.drawable.pausebutton),
             contentDescription = "Pause Button",
@@ -280,7 +249,18 @@ fun InfoBody(
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        if (timer.isInterval) {
+        if (timer.isInterval && playback.currentInterval == -1) {
+            Text(
+                "Timer Finished",
+                color = Color(Greyish.value),
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentHeight(align = Alignment.CenterVertically),
+            )
+        }
+        else if (timer.isInterval) {
             CompletedDisplay(
                 viewModel = viewModel,
                 modifier = modifier,
@@ -454,7 +434,7 @@ fun FlowBreakDisplay(
                     // FLOW IS ON
                     Text(
                         // LIVE TIMER
-                        viewModel.timeFormat(viewModel.currentTimerVal.toLong()),
+                        viewModel.timeFormat(viewModel.currentTimerVal.collectAsState().value.toLong()),
                         color = Color(0xFF821A93),
                         fontSize = 12.sp
                     )
@@ -508,7 +488,7 @@ fun FlowBreakDisplay(
                     // BREAK IS ON
                     Text(
                         // LIVE TIMER
-                        viewModel.timeFormat(viewModel.currentTimerVal.toLong()),
+                        viewModel.timeFormat(viewModel.currentTimerVal.collectAsState().value.toLong()),
                         color = Color(0xFF4F5F71),
                         fontSize = 12.sp
                     )
