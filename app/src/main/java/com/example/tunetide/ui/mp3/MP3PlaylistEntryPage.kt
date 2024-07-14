@@ -198,7 +198,7 @@ fun MP3PlaylistInputForm(
         if (enabled) {
             Text(
                 text = stringResource(R.string.required_fields),
-                color = Color.Red, // Set text color explicitly
+                color = Color.Red,
                 modifier = Modifier.padding(16.dp)
             )
         }
