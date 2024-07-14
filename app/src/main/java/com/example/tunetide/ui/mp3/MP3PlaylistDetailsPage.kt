@@ -15,6 +15,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,6 +52,7 @@ fun MP3PlaylistDetailsScreen(
     modifier: Modifier = Modifier,
     viewModel: MP3PlaylistDetailsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val uiState = viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
@@ -59,7 +61,12 @@ fun MP3PlaylistDetailsScreen(
         modifier = modifier,
     ) { innerPadding ->
         MP3PlaylistDetailsBody(
+            mp3PlaylistDetailsUIState = uiState.value,
             onDelete = {
+                // Note: If the user rotates the screen very fast, the operation may get cancelled
+                // and the item may not be deleted from the Database. This is because when config
+                // change occurs, the Activity will be recreated and the rememberCoroutineScope will
+                // be cancelled - since the scope is bound to composition.
                 coroutineScope.launch {
                     viewModel.deleteMP3Playlist()
                     navigateBack()
@@ -78,6 +85,7 @@ fun MP3PlaylistDetailsScreen(
 
 @Composable
 private fun MP3PlaylistDetailsBody(
+    mp3PlaylistDetailsUIState: MP3PlaylistDetailsUIState,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
