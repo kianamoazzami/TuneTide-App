@@ -83,3 +83,4 @@
  | 07/12/24 | Playlist Deletion                   |           |           |           |           | 2.5       |
  | 07/12/24 | Spotify Controller                  |           | 2.0       |           |           |           |
  | 07/12/24 | Dealing with Data Access            |           |           |           | 4.0       |           |
+ | 07/13/24 | Solving Data Access/Timer Problems  |           |           |           | 3.0       |           |
