@@ -1,5 +1,10 @@
 package com.example.tunetide.ui.mp3
 
+import android.app.Activity
+import android.content.Intent
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +49,7 @@ fun MP3PlaylistEntryScreen(
     viewModel: MP3PlaylistEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -119,6 +125,32 @@ fun MP3PlaylistInputForm(
 ) {
     val focusManager = LocalFocusManager.current
 
+    val activityResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val clipData = result.data?.clipData
+            if (clipData != null) {
+                for (i in 0 until clipData.itemCount) {
+                    val uri = clipData.getItemAt(i).uri
+                    //TODO: add to data structure in view model
+                    Log.d("FilePicker", "Selected URI: $uri")
+                }
+            } else {
+                result.data?.data?.let { uri ->
+                    Log.d("FilePicker", "Selected URI: $uri")
+                }
+            }
+        } else {
+            //TODO: deal with cancelling
+        }
+    }
+
+    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        .addCategory(Intent.CATEGORY_OPENABLE)
+        .setType("audio/mpeg")
+        .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -150,6 +182,18 @@ fun MP3PlaylistInputForm(
                 }
             )
         )
+        IconButton(
+            onClick = {
+                activityResultLauncher.launch(intent) },
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.addsongs),
+                contentDescription = stringResource(R.string.add_songs),
+                tint = Color.Unspecified
+            )
+        }
 
         if (enabled) {
             Text(
@@ -160,4 +204,3 @@ fun MP3PlaylistInputForm(
         }
     }
 }
-

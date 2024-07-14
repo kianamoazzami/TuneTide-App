@@ -16,6 +16,7 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="attention">Attention</string>
+    <string name="add_songs">Add Songs</string>
 
     <!-- New strings for Settings screen -->
     <string name="back">Back</string>
