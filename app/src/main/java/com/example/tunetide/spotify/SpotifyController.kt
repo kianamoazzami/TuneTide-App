@@ -21,13 +21,21 @@ import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
+//Controller needs to be initialized with reference context..
+// 'application' should give application context
+// ie val controller : SpotifyController = SpotifyController(application)
 class SpotifyController(private val mainContext: Context) {
     // All new spotifyController functions for public use will need to go through a connectAndExecute call right now
     private val clientId = "cb2af3cb9add453d8a18f97e2aae117f"
@@ -38,38 +46,21 @@ class SpotifyController(private val mainContext: Context) {
     private var playerContextSubscription: Subscription<PlayerContext>? = null
     private var capabilitiesSubscription: Subscription<Capabilities>? = null
 
+    val trackLock : Mutex = Mutex(false)
+
+    class NowPlaying {
+        var title : String = ""
+        var artist : String = ""
+        var imgURL : String = ""
+        var paused : Boolean = true;
+        /* to add: track bar?*/
+    }
+
+    private var currentTrack : NowPlaying = NowPlaying()
     private val errorCallback = { throwable: Throwable -> logError(throwable) }
 
     init {
         connectPersist()
-    }
-
-    public fun playUri(uri: String) {
-        SpotifyAppRemote.disconnect(spotifyAppRemote)
-        CoroutineScope(Dispatchers.Main).launch {
-            try {
-                spotifyAppRemote = connectToAppRemote(true)
-                onConnected()
-            } catch (error: Throwable) {
-                logError(error)
-            }
-
-            spotifyAppRemote?.let {
-
-                it.playerApi.play(uri)
-                Log.d("SpotifyController", "Playing Playlist by URL")
-
-                it.playerApi.subscribeToPlayerState().setEventCallback {
-                    val track: Track = it.track
-                    Log.d(
-                        "SpotifyController",
-                        "Playing : " + track.name + " by " + track.artist.name
-                    )
-                }
-            }
-
-        }
-
     }
 
     private suspend fun connectToAppRemote(showAuthView: Boolean): SpotifyAppRemote? =
@@ -83,7 +74,6 @@ class SpotifyController(private val mainContext: Context) {
                 object : Connector.ConnectionListener {
                     override fun onConnected(appRemote: SpotifyAppRemote) {
                         cont.resume(appRemote)
-                        spotifyAppRemote = appRemote
                     }
 
                     override fun onFailure(error: Throwable) {
@@ -93,15 +83,12 @@ class SpotifyController(private val mainContext: Context) {
                 })
         }
 
-    private fun logError(throwable: Throwable) {
-        Toast.makeText(mainContext, "An Error Has Occured.", Toast.LENGTH_SHORT).show()
-        Log.e("SpotifyController", "", throwable)
-    }
     private fun connectPersist() {
         SpotifyAppRemote.disconnect(spotifyAppRemote)
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 spotifyAppRemote = connectToAppRemote(true)
+                onConnected()
             } catch (error: Throwable) {
                 logError(error)
             }
@@ -111,26 +98,106 @@ class SpotifyController(private val mainContext: Context) {
         }
     }
 
+    fun playUri(uri: String) {
+        fun inlinePlayUri() {
+            spotifyAppRemote?.let {
+                it.playerApi.play(uri)
+                Log.d("SpotifyController", "Playing content by URL")
+
+                it.playerApi.subscribeToPlayerState().setEventCallback {
+                    val track: Track = it.track
+
+                    currentTrack.title = track.name
+                    currentTrack.artist = track.artist.name
+                    currentTrack.imgURL = track.imageUri.toString()
+                    currentTrack.paused = false
+
+                    Log.d(
+                        "SpotifyController",
+                        "Playing : " + track.name + " by " + track.artist.name
+                    )
+                }
+            }
+        }
+
+        // If we can run sequentially, do it, if not send to wait
+        // Sequential has better chance of updating currentTrack faster
+        if (spotifyAppRemote != null) {
+            inlinePlayUri()
+        } else {
+            CoroutineScope(Dispatchers.Main).launch {
+                waitForConnection()
+                inlinePlayUri()
+            }
+        }
+    }
+
+    // Pause any current spotify playback
+    fun pause() {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (spotifyAppRemote == null) {
+                waitForConnection()
+            }
+            spotifyAppRemote?.let {
+                it.playerApi.pause()
+                currentTrack.paused = true
+                Log.d("Spotify Controller", "Music Paused")
+            }
+        }
+    }
+
+    //TODO: have recall of title reflect without delay from coroutine
+    fun getCurrentTrackName() : String {
+        return currentTrack.title
+    }
+
+    fun getCurrentTrackArtist() : String {
+        return currentTrack.artist
+    }
+
     private fun onConnected() {
+        Log.d("Spotify Controller", "Connection alive")
         //onSubscribedToPlayerState()
         //onSubscribedToPlayerContext()
     }
 
+
+    // Suspending function to wait for connection before API call
+    // Can be used publicly to suspend and wait for spotify and/or check connection
+    // may want private in future
+    suspend fun waitForConnection() {
+        var waited = 0;
+        while (spotifyAppRemote == null && waited < 5) {
+            delay(2000)
+            Log.d("Spotify Controller", "Waiting for Connection to play URI..")
+            waited++
+        }
+
+        if (waited >= 5) {
+            Log.e("Spotify Controller", "Connection to Spotify timed out")
+            throw(SpotifyDisconnectedException())
+        }
+    }
+
+    public fun disconnect() {
+        spotifyAppRemote?.let {
+            SpotifyAppRemote.disconnect(it)
+        }
+    }
+
+    private fun logError(throwable: Throwable) {
+        Toast.makeText(mainContext, "An Error Has occured.", Toast.LENGTH_SHORT).show()
+        Log.e("Spotify Controller", "", throwable)
+    }
+
+    //TODO: below functions.. track updates in-time, track browsing
 
     private val playerContextEventCallback = Subscription.EventCallback<PlayerContext> { playerContext ->
        //TODO: fill in
     }
 
     private fun onSubscribedToPlayerContext() {
-        playerContextSubscription = cancelAndResetSubscription(playerContextSubscription)
 
-        playerContextSubscription = assertAppRemoteConnected()
-            .playerApi
-            .subscribeToPlayerContext()
-            .setEventCallback(playerContextEventCallback)
-            .setErrorCallback { throwable ->
-                logError(throwable)
-            } as Subscription<PlayerContext>
     }
 
     private val playerStateEventCallback = Subscription.EventCallback<PlayerState> { playerState ->
@@ -146,128 +213,5 @@ class SpotifyController(private val mainContext: Context) {
         }
     }
 
-    private fun assertAppRemoteConnected(): SpotifyAppRemote {
-        spotifyAppRemote?.let {
-            if (it.isConnected) {
-                return it
-            }
-        }
-        Log.e("SpotifyController", "Spotify Disconnected")
-        throw SpotifyDisconnectedException()
-    }
-
-    private fun connectAndExecute(operation: () -> Any?): Any? {
-        val connectionParams = ConnectionParams.Builder(clientId)
-            .setRedirectUri(redirectUri)
-            .showAuthView(true)
-            .build()
-
-        SpotifyAppRemote.connect(mainContext, connectionParams, object : Connector.ConnectionListener {
-            override fun onConnected(appRemote: SpotifyAppRemote) {
-                spotifyAppRemote = appRemote
-                // TODO: see if you can make appRemote persist.. otherwise have to do this wrapper way yuck
-                Log.d("MainActivity", "Connected! Yay!")
-            }
-
-            override fun onFailure(throwable: Throwable) {
-                Log.e("MainActivity", throwable.message, throwable)
-                // Something went wrong when attempting to connect! Handle errors here
-            }
-        })
-
-        return null;
-    }
-
-    // overload connect to take function with parameters
-    // TODO: this is clunky. I can't find a way to have kotlin take a function that may or may not have parameters
-    private fun connectAndExecute(operation: (Any?) -> Unit, params: Any? = null): Any? {
-        val connectionParams = ConnectionParams.Builder(clientId)
-            .setRedirectUri(redirectUri)
-            .showAuthView(true)
-            .build()
-
-        SpotifyAppRemote.connect(mainContext, connectionParams, object : Connector.ConnectionListener {
-            override fun onConnected(appRemote: SpotifyAppRemote) {
-                spotifyAppRemote = appRemote
-                Log.d("MainActivity", "Connected! Yay!")
-            }
-
-            override fun onFailure(throwable: Throwable) {
-                Log.e("MainActivity", throwable.message, throwable)
-                // Something went wrong when attempting to connect! Handle errors here
-            }
-        })
-
-        if (params != null) {
-            return operation(params)
-        }
-
-        return null;
-    }
-
-    public fun disconnect() {
-        spotifyAppRemote?.let {
-            SpotifyAppRemote.disconnect(it)
-        }
-    }
-
-    fun playPlaylistURI(uri: String) {
-        fun playURIWrapper() {
-            spotifyAppRemote?.let {
-                // Play a playlist
-
-                it.playerApi.play(uri)
-                Log.d("SpotifyController", "Playing Playlist by URL")
-
-                it.playerApi.subscribeToPlayerState().setEventCallback {
-                    val track: Track = it.track
-                    Log.d("SpotifyController", "Playing : " + track.name + " by " + track.artist.name)
-                }
-            }
-        }
-        connectAndExecute(::playURIWrapper)
-    }
-
-    fun testReturn() {
-
-        fun foo (): String {
-            return "YAY GOT RESPONSE"
-        }
-        Log.d("TestReturn", connectAndExecute(::foo).toString())
-    }
-
-    fun pause() {
-        fun pauseWrapper() {
-            spotifyAppRemote?.let {
-                // Play a playlist
-
-                it.playerApi.pause();
-                Log.d("SpotifyController", "Pausing music")
-
-            }
-        }
-        connectAndExecute(::pauseWrapper)
-    }
-
-    /*
-    fun getCurrentTrackName() : String {
-
-        fun getTrackNameWrapper(): String {
-            var returnVal: String = ""
-            spotifyAppRemote?.let {
-                // Play a playlist
-                it.playerApi.subscribeToPlayerState().setEventCallback {
-                    val track: Track = it.track
-                    returnVal = track.name
-                }
-            }
-            return returnVal
-        }
-        return connectAndExecute(::getTrackNameWrapper)
-    }
-    */
-    fun getCurrentTrackArtist() {
-
-    }
 
 }
