@@ -4,10 +4,19 @@
     <string name="local_files_page_name">Manage Local Music Files</string>
     <string name="settings_page_name">Settings</string>
     <string name="mp3_playlist_entry_name">Create MP3 Playlist</string>
+    <string name="mp3_playlist_details_name">Edit MP3 Playlist</string>
     <string name="timer_entry_name">Enter Timer</string>
     <string name="timer_edit_name">Edit Timer</string>
     <string name="timers_list_name">View Timers</string>
     <string name="settings">Settings</string>
+    <string name="save">Save</string>
+
+    <string name="delete">Delete</string>
+    <string name="delete_question">Are you sure you want to delete?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="attention">Attention</string>
+    <string name="add_songs">Add Songs</string>
 
     <!-- New strings for Settings screen -->
     <string name="back">Back</string>
@@ -16,4 +25,8 @@
     <string name="spotify">Spotify</string>
     <string name="manage_local_music_files">Manage Local Music Files</string>
     <string name="schedule_settings">Schedule Settings</string>
+
+    <!-- New strings for MP3 Playlist Entry screen -->
+    <string name="playlist_name_req">Playlist Name*</string>
+    <string name="required_fields">* Required Fields</string>
 </resources>

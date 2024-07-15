@@ -1,5 +1,7 @@
 package com.example.tunetide.ui.home
 
+import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,6 +20,7 @@ import com.example.tunetide.ui.timer.toTimerDetails
 import com.example.tunetide.ui.timer.toTimerUIState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -40,13 +43,6 @@ class HomePageViewModel (
     private var _timerId: Int = -1
         private set
 
-    var startingTimerIntervalValue = 0
-        private set
-
-    var currentTimerVal = 0
-
-    var isPlaying = false
-
     val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
         .filterNotNull()
         .map {
@@ -67,18 +63,28 @@ class HomePageViewModel (
             initialValue = TimerUIState()
         )
 
-    fun timeFormat(timeMillis: Long): String {
-        val minutes = (timeMillis / 1000) / 60
-        val seconds = (timeMillis / 1000) % 60
+    private val _currentTimerVal = MutableStateFlow(0)
+    val currentTimerVal: StateFlow<Int> = _currentTimerVal
+
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying: StateFlow<Boolean> = _isPlaying
+
+    fun homeScreenTimer() {
+        CoroutineScope(Dispatchers.IO).launch {
+            while (isPlaying.value && currentTimerVal.value > 0) {
+                delay(1000)
+                _currentTimerVal.value -= 1
+            }
+            if (isPlaying.value && currentTimerVal.value <= 0) {
+                startNextInterval()
+            }
+        }
+    }
+
+    fun timeFormat(timeSec: Long): String {
+        val minutes = (timeSec) / 60
+        val seconds = (timeSec) % 60
         return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
-    }
-
-    fun setCurrentTime(newVal: Int) {
-        currentTimerVal = newVal
-    }
-
-    fun changePlayingStatus(newStatus: Boolean) {
-        isPlaying = newStatus
     }
 
     init {
@@ -91,6 +97,8 @@ class HomePageViewModel (
     fun play() {
         CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.play()
+            _isPlaying.value = true
+            homeScreenTimer()
 
             var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
 
@@ -107,6 +115,7 @@ class HomePageViewModel (
     fun pause() {
         CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.pause()
+            _isPlaying.value = false
 
             var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
 
@@ -137,12 +146,14 @@ class HomePageViewModel (
     fun getStartingTimerValue() {
         CoroutineScope(Dispatchers.IO).launch {
             if (playbackRepository.getStateType() == StateType.FLOW) {
-                startingTimerIntervalValue = playbackRepository.getFlowDurationSeconds()
+                _currentTimerVal.value = playbackRepository.getFlowDurationSeconds()
             } else if (playbackRepository.getStateType() == StateType.BREAK) {
-                startingTimerIntervalValue = playbackRepository.getBreakDurationSeconds()
+                _currentTimerVal.value = playbackRepository.getBreakDurationSeconds()
             } else {
-                startingTimerIntervalValue = 0
+                //STANDARD TIMER
+                _currentTimerVal.value = playbackRepository.getFlowDurationSeconds()
             }
+
         }
     }
 
@@ -155,6 +166,8 @@ class HomePageViewModel (
                 finish()
             } else {
                 playbackRepository.startNextInterval()
+                getStartingTimerValue()
+                homeScreenTimer()
             }
         }
     }
@@ -164,12 +177,16 @@ class HomePageViewModel (
         CoroutineScope(Dispatchers.IO).launch {
             // TODO @ERICA @KIANA stop music
             playbackRepository.invalidatePlayback()
+            _isPlaying.value = false
+            _currentTimerVal.value = 0
         }
     }
 
     fun restart() {
         CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.restartTimer()
+            _isPlaying.value = true
+            homeScreenTimer()
             // TODO @ERICA @KIANA restart music
         }
     }
@@ -194,11 +211,12 @@ data class PlaybackUIState(
 /**
  * represents the "UI" for playback
  */
+// Updated to match invalid timer details in PlaybackDao's invalidatePlayback()
 data class PlaybackDetails(
     val id: Int = -1,
     val timerId: Int = -1,
     val stateType: Int = 2,
-    val currentInterval: Int = 0,
+    val currentInterval: Int = -1,
     val currentIntervalRemainingSeconds: Int = 0,
     val isPlaying: Boolean = false
 )

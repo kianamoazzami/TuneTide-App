@@ -79,5 +79,15 @@
  | 07/10/24 | Playlist Creation                   |           |           |           |           | 2.0       |
  | 07/10/24 | Work on D4                          |           |           |           |           | 1.0       |
  | 07/11/24 | Finished Playlist Creation          |           |           |           |           | 2.0       |
- | 07/11/24 | Work on D4                          |           |           |           |           | 1.0       |
+ | 07/11/24 | Work on D4                          |           |           |           | 1.0       | 1.0       |
  | 07/12/24 | Playlist Deletion                   |           |           |           |           | 2.5       |
+ | 07/12/24 | Spotify Controller                  |           | 2.0       |           |           |           |
+ | 07/12/24 | Dealing with Data Access            |           |           |           | 4.0       |           |
+ | 07/13/24 | Solving Data Access/Timer Problems  |           |           |           | 3.0       |           |
+ | 07/13/24 | Opening File Explorer + Get URI     |           |           |           |           | 4.0       |
+ | 07/14/24 | Spotify Controller                  |           | 1.0       |           |           |           |
+ | 07/14/24 | Homepage Work                       |           |           |           | 2.0       |           |
+ | 07/14/24 | Saved timer page                    |           |  4.0      |           |           |           |
+ | 07/15/24 | Adding Songs to MP3File Table       |           |           |           |           | 3.0       |
+ | 07/15/24 | Meeting                             | 1.0       | 1.0       | 1.0       | 1.0       | 1.0       |
+ | 07/15/24 | Work on Parsing D6, D7              | 0.75      |           |           |           |           | 

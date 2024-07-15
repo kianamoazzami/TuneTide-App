@@ -2,7 +2,6 @@ package com.example.tunetide.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -14,6 +13,8 @@ import com.example.tunetide.ui.home.HomeDestination
 import com.example.tunetide.ui.home.HomeScreen
 import com.example.tunetide.ui.mp3.LocalFilesDestination
 import com.example.tunetide.ui.mp3.LocalFilesScreen
+import com.example.tunetide.ui.mp3.MP3PlaylistDetailsDestination
+import com.example.tunetide.ui.mp3.MP3PlaylistDetailsScreen
 import com.example.tunetide.ui.mp3.MP3PlaylistEntryDestination
 import com.example.tunetide.ui.mp3.MP3PlaylistEntryScreen
 import com.example.tunetide.ui.timer.TimerEditDestination
@@ -54,12 +55,26 @@ fun TuneTideNavHost(
         composable(route = LocalFilesDestination.route) {
             LocalFilesScreen(
                 navigateBack = { navController.popBackStack() },
-                navigateToMP3PlaylistEntry = { navController.navigate(MP3PlaylistEntryDestination.route) }
+                navigateToMP3PlaylistEntry = { navController.navigate(MP3PlaylistEntryDestination.route) },
+                navigateToMP3PlaylistUpdate = {
+                    navController.navigate("${MP3PlaylistDetailsDestination.route}/${it}")
+                }
             )
         }
 
         composable(route = MP3PlaylistEntryDestination.route) {
             MP3PlaylistEntryScreen(
+                navigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = MP3PlaylistDetailsDestination.routeWithArgs,
+            arguments = listOf(navArgument(MP3PlaylistDetailsDestination.mp3PlaylistIdArg) {
+                type = NavType.IntType
+            })
+        ) {
+            MP3PlaylistDetailsScreen(
                 navigateBack = { navController.popBackStack() }
             )
         }
