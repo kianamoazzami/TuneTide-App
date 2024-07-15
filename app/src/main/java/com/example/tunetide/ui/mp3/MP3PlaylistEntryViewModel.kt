@@ -18,24 +18,38 @@ class MP3PlaylistEntryViewModel (
     var mp3FilesUIState by mutableStateOf(MP3FilesUIState())
         private set
 
-    fun updateUIState(mp3PlaylistDetails: MP3PlaylistDetails) {
+    fun updatePlaylistUIState(mp3PlaylistDetails: MP3PlaylistDetails) {
         mp3PlaylistUIState = MP3PlaylistUIState(
             mp3PlaylistDetails = mp3PlaylistDetails,
-            isEntryValid = validateInput(mp3PlaylistDetails))
+            isEntryValid = validatePlaylistInput(mp3PlaylistDetails))
+    }
+
+    fun updateFilesUIState(mp3FileDetailsList: MutableList<MP3FileDetails>) {
+        mp3FilesUIState = MP3FilesUIState(
+            mp3FileDetailsList = mp3FileDetailsList,
+            isEntryValid = validateFileInput(mp3FileDetailsList))
     }
 
     suspend fun saveItem() {
-        if (validateInput()) {
-            mp3Repository.insertPlaylist(mp3PlaylistUIState.mp3PlaylistDetails.toMP3Playlist())
+        if (validatePlaylistInput() && validateFileInput()) {
+            val playlistId = mp3Repository.insertPlaylist(mp3PlaylistUIState.mp3PlaylistDetails.toMP3Playlist())
 
-            //first do playlist ^ to save a playlist ID then use that Id to assign to files to do files
+            mp3FilesUIState.mp3FileDetailsList.forEach { mp3FileDetails ->
+                val mp3File = mp3FileDetails.copy(playlistId = playlistId.toInt()).toMP3File() //not sure if copy works
+                mp3Repository.insertFile(mp3File)
+            }
+
         }
     }
 
-    private fun validateInput(uiState: MP3PlaylistDetails = mp3PlaylistUIState.mp3PlaylistDetails): Boolean {
+    private fun validatePlaylistInput(uiState: MP3PlaylistDetails = mp3PlaylistUIState.mp3PlaylistDetails): Boolean {
         return with(uiState) {
             playlistName.isNotBlank()
         }
+    }
+
+    private fun validateFileInput(uiState: MutableList<MP3FileDetails> = mp3FilesUIState.mp3FileDetailsList): Boolean {
+        return uiState.isNotEmpty()
     }
 }
 

@@ -21,7 +21,7 @@ interface IMP3Repository {
 
     suspend fun deleteFilesByPlaylistId(playlistId: Int)
 
-    suspend fun insertPlaylist(mp3Playlist: MP3Playlist)
+    suspend fun insertPlaylist(mp3Playlist: MP3Playlist): Long
 
     suspend fun deletePlaylist(mp3Playlist: MP3Playlist)
 
@@ -46,7 +46,7 @@ class MP3Repository(private val mP3Dao: MP3Dao) : IMP3Repository {
     // endregion Files **************************************************************************
 
     // region Playlist **************************************************************************
-    override suspend fun insertPlaylist(mp3Playlist: MP3Playlist) = mP3Dao.insertPlaylist(mp3Playlist)
+    override suspend fun insertPlaylist(mp3Playlist: MP3Playlist): Long = mP3Dao.insertPlaylist(mp3Playlist)
 
     override suspend fun deletePlaylist(mp3Playlist: MP3Playlist) = mP3Dao.deletePlaylist(mp3Playlist)
 

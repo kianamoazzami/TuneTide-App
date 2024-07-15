@@ -32,7 +32,7 @@ interface MP3Dao {
 
     // region Playlist *************************************************************************
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPlaylist(mp3Playlist: MP3Playlist)
+    suspend fun insertPlaylist(mp3Playlist: MP3Playlist): Long
 
     @Delete
     suspend fun deletePlaylist(mp3Playlist: MP3Playlist)

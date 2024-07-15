@@ -1,8 +1,10 @@
 package com.example.tunetide.ui.mp3
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
-import android.util.Log
+import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,6 +45,22 @@ object MP3PlaylistEntryDestination : NavigationDestination {
     override val titleRes = R.string.mp3_playlist_entry_name
 }
 
+/* --- helper function --- */
+fun getFileName(context: Context, uri: Uri): String? {
+    var fileName: String? = null
+    val cursor = context.contentResolver.query(uri, null, null, null, null)
+    cursor?.use {
+        if (it.moveToFirst()) {
+            val displayNameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            if (displayNameIndex != -1) {
+                fileName = it.getString(displayNameIndex)
+            }
+        }
+    }
+    return fileName
+}
+
+/* --- start page --- */
 @Composable
 fun MP3PlaylistEntryScreen(
     navigateBack: () -> Unit, //TODO: can navigate back
@@ -58,7 +77,9 @@ fun MP3PlaylistEntryScreen(
     )  { innerPadding ->
         MP3PlaylistEntryBody(
             mp3PlaylistUIState = viewModel.mp3PlaylistUIState,
-            onPlaylistValueChange = viewModel::updateUIState,
+            mp3FilesUIState = viewModel.mp3FilesUIState,
+            onPlaylistValueChange = viewModel::updatePlaylistUIState,
+            onAddFiles = viewModel::updateFilesUIState,
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.saveItem()
@@ -72,7 +93,9 @@ fun MP3PlaylistEntryScreen(
 @Composable
 fun MP3PlaylistEntryBody(
     mp3PlaylistUIState: MP3PlaylistUIState,
+    mp3FilesUIState: MP3FilesUIState,
     onPlaylistValueChange: (MP3PlaylistDetails) -> Unit,
+    onAddFiles: (MutableList<MP3FileDetails>) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -90,21 +113,23 @@ fun MP3PlaylistEntryBody(
         ) {
              MP3PlaylistInputForm(
                  mp3PlaylistDetails = mp3PlaylistUIState.mp3PlaylistDetails,
-                 onValueChange = onPlaylistValueChange,
+                 mp3FileDetailsList = mp3FilesUIState.mp3FileDetailsList,
+                 onPlaylistValueChange = onPlaylistValueChange,
+                 onAddFiles = onAddFiles,
                  modifier = Modifier.fillMaxWidth()
              )
         }
 
         IconButton(
             onClick = onSaveClick,
-            enabled = mp3PlaylistUIState.isEntryValid,
+            enabled = (mp3PlaylistUIState.isEntryValid && mp3FilesUIState.isEntryValid),
             modifier = Modifier
                 //.padding(16.dp)
                 .align(Alignment.BottomEnd)
         ) {
             Icon(
                 painter =
-                if (mp3PlaylistUIState.isEntryValid) {
+                if (mp3PlaylistUIState.isEntryValid && mp3FilesUIState.isEntryValid) {
                     painterResource(R.drawable.save)
                 } else {
                     painterResource(R.drawable.savegrey)
@@ -119,30 +144,46 @@ fun MP3PlaylistEntryBody(
 @Composable
 fun MP3PlaylistInputForm(
     mp3PlaylistDetails: MP3PlaylistDetails,
-    onValueChange: (MP3PlaylistDetails) -> Unit,
+    mp3FileDetailsList: MutableList<MP3FileDetails>,
+    onPlaylistValueChange: (MP3PlaylistDetails) -> Unit,
+    onAddFiles: (MutableList<MP3FileDetails>) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
     val focusManager = LocalFocusManager.current
+    val curContext = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     val activityResultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val clipData = result.data?.clipData
-            if (clipData != null) {
-                for (i in 0 until clipData.itemCount) {
-                    val uri = clipData.getItemAt(i).uri
-                    //TODO: add to data structure in view model
-                    Log.d("FilePicker", "Selected URI: $uri")
+        coroutineScope.launch {
+            if (result.resultCode == Activity.RESULT_OK) {
+                val clipData = result.data?.clipData
+                if (clipData != null) {
+                    for (i in 0 until clipData.itemCount) {
+                        val uri = clipData.getItemAt(i).uri
+                        val fileName = getFileName(curContext, uri)
+                        mp3FileDetailsList.add(
+                            MP3FileDetails(
+                                fileName = fileName,
+                                filePath = uri.toString()
+                            )
+                        )
+                    }
+                } else {
+                    result.data?.data?.let { uri ->
+                        val fileName = getFileName(curContext, uri)
+                        mp3FileDetailsList.add(
+                            MP3FileDetails(
+                                fileName = fileName,
+                                filePath = uri.toString()
+                            )
+                        )
+                    }
                 }
-            } else {
-                result.data?.data?.let { uri ->
-                    Log.d("FilePicker", "Selected URI: $uri")
-                }
+                onAddFiles(mp3FileDetailsList)
             }
-        } else {
-            //TODO: deal with cancelling
         }
     }
 
@@ -158,7 +199,7 @@ fun MP3PlaylistInputForm(
         OutlinedTextField(
             value = mp3PlaylistDetails.playlistName,
             onValueChange = {
-                onValueChange(mp3PlaylistDetails.copy(playlistName = it))
+                onPlaylistValueChange(mp3PlaylistDetails.copy(playlistName = it))
             },
             label = { Text(stringResource(R.string.playlist_name_req)) },
             colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -193,6 +234,19 @@ fun MP3PlaylistInputForm(
                 contentDescription = stringResource(R.string.add_songs),
                 tint = Color.Unspecified
             )
+        }
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            mp3FileDetailsList.forEach { fileDetails ->
+                Text(
+                    text = fileDetails.fileName ?: "Unknown",
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.onSurface
+                )
+            }
         }
 
         if (enabled) {
