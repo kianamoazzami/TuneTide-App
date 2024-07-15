@@ -38,6 +38,8 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    navigateToSettings: () -> Unit,
+    navigateToTimersList: () -> Unit,
     viewModel: HomePageViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     // Unwrap timer and playback
@@ -49,7 +51,12 @@ fun HomeScreen(
             TuneTideTopAppBar()
         },
         bottomBar = {
-            TuneTideBottomAppBar()
+            TuneTideBottomAppBar(
+                currentScreen = R.string.home_screen,
+                navigateToSettings = navigateToSettings,
+                navigateToHome = {},
+                navigateToTimersList = navigateToTimersList
+            )
         },
         modifier = modifier
     ) { innerPadding ->

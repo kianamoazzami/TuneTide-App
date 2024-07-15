@@ -41,14 +41,23 @@ object SettingsDestination : NavigationDestination {
 
 @Composable
 fun SettingsScreen(
-    navigateBack: () -> Unit,
+    navigateToHome: () -> Unit,
+    navigateToTimersList: () -> Unit,
     navigateToLocalFiles: () -> Unit
 ) {
     var isDarkModeEnabled by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
-            TuneTideTopAppBarBack(navigateBack)
+            TuneTideTopAppBar()
+        },
+        bottomBar = {
+            TuneTideBottomAppBar(
+                currentScreen = R.string.settings_screen,
+                navigateToSettings = {},
+                navigateToHome = navigateToHome,
+                navigateToTimersList = navigateToTimersList
+            )
         }
     ) { paddingValues ->
         Column(
