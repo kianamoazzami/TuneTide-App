@@ -21,80 +21,29 @@ import com.example.tunetide.ui.TuneTideBottomAppBar
 import com.example.tunetide.ui.TuneTideTopAppBar
 import com.example.tunetide.ui.theme.PurpleBackground
 import kotlinx.coroutines.delay
-import java.util.Locale
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.navigation.NavigationDestination
 import androidx.compose.runtime.rememberCoroutineScope
+import com.example.tunetide.ui.theme.Greyish
+import com.example.tunetide.ui.timer.TimerDetails
+import kotlinx.coroutines.launch
+import kotlin.math.max
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
     override val titleRes = R.string.home_page_name
 }
 
-private fun timeFormat(timeMillis: Long): String {
-    val minutes = (timeMillis / 1000) / 60
-    val seconds = (timeMillis / 1000) % 60
-    return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
-}
-
-// TODO @KATHERINE @NOUR fix scaffolding, etc, with UI (see inventory example)
-// TODO @KATHERINE @NOUR further separate this page into composables, see Inventory item details
-//      page as an example (VERY important to know when to use/pass/access playbackUIState vs
-//      playbackDetails vs playback)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomePageViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    Log.d("HomePage/HomeScreen", "about to collect states")
-    /*
-    // TEMP OUT -> RUNTIME ERROR
-    val playbackUIState = viewModel.playbackUIState.collectAsState()
-    val timerUIState = viewModel.timerUIState.collectAsState()
-    */
-    val coroutineScope = rememberCoroutineScope()
+    // Unwrap timer and playback
+    val timer: TimerDetails = viewModel.timerUIState.collectAsState().value.timerDetails
+    val playback: PlaybackDetails = viewModel.playbackUIState.collectAsState().value.playbackDetails
 
-    // TODO reformat / remove below ****************************************************************
-
-    // TODO @KIANA will be injected another way (more top level/singleton)? (not sure how)
-    /*
-    var mp3Player: MP3Player = MP3Player(context)
-    */
-
-    Log.d("HomePage/HomeScreen", "about to do launch effect")
-    // values for launched effect
-    /*
-    // TEMP OUT -> RUNTIME ERROR
-    var timerValue = viewModel.getStartingTimerValue().toLong()
-    var isPlaying = playbackUIState.value.playbackDetails.isPlaying
-    var currentTimeMillis by remember { mutableStateOf(timerValue) }
-    var isRunning by remember { mutableStateOf(isPlaying) }
-    val timerText = remember { mutableStateOf(timeFormat(timerValue)) }
-    */
-    // TEMP IN -> RUNTIME ERROR
-    val theTimerValue: Long = 30000
-    var timerValue = theTimerValue
-    var currentTimeMillis by remember { mutableStateOf(timerValue) }
-    var isRunning by remember { mutableStateOf(false) }
-    val timerText = remember { mutableStateOf(timeFormat(timerValue)) }
-
-    // TODO @MIA @KATHERINE @NOUR figure out updating database (seconds remaining) when app close
-    //      too costly / inefficent to update every second
-    // TODO @MIA @KATHERINE @NOUR @ERICA @KIANA this may not be the best way to do this countdown ... not sure
-    LaunchedEffect(isRunning) {
-        while (isRunning && currentTimeMillis > 0) {
-            delay(1000)
-            currentTimeMillis -= 1000
-            timerText.value = timeFormat(currentTimeMillis)
-        }
-        if (currentTimeMillis <= 0) {
-            viewModel.startNextInterval() // TODO this should update the above values ...
-        }
-    }
-    // TODO reformat / remove above ****************************************************************
-
-    Log.d("HomePage/HomeScreen", "about to scaffold top and bottom bar")
-    Scaffold( // TODO @KATHERINE @NOUR augment scaffolding
+    Scaffold(
         topBar = {
             TuneTideTopAppBar()
         },
@@ -106,20 +55,20 @@ fun HomeScreen(
         HomeBody(
             viewModel,
             modifier = modifier,
+            playback = playback,
+            timer = timer,
             innerPadding)
     }
 }
 
-// NOTE @KATHERINE @NOUR the only reason HomeBody is separate from HomeScreen composable is
-//  because I couldn't figure out how to have the homeScreen body have the columns you coded after
-//  the scaffolding section
 @Composable
 fun HomeBody(
     viewModel: HomePageViewModel,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(16.dp),
+    playback: PlaybackDetails,
+    timer: TimerDetails,
+    contentPadding: PaddingValues = PaddingValues(16.dp)
 ) {
-    Log.d("HomePage/HomeBody", "about to create main layout")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -130,8 +79,10 @@ fun HomeBody(
     ) {
         TideFlow()
         TimerBody(
-            viewModel = viewModel(factory = AppViewModelProvider.Factory),
-            modifier = modifier)
+            viewModel = viewModel,
+            modifier = modifier,
+            playback = playback,
+            timer = timer)
         Spacer(modifier = Modifier.height(16.dp))
         MusicPlayerBody(viewModel = viewModel(factory = AppViewModelProvider.Factory),
             modifier = modifier) // TODO @KIANA @ERICA inject musicUIState here
@@ -159,18 +110,10 @@ fun TideFlow() {
 @Composable
 fun TimerBody(
     viewModel: HomePageViewModel,
-    modifier: Modifier
+    modifier: Modifier,
+    playback: PlaybackDetails,
+    timer: TimerDetails,
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    Log.d("HomePage/TimerBody", "about layout timer body")
-    // TODO @KATHERINE @NOUR, these vals should not be here, should have composables for dealing with
-    //      different types of dataview / edit / etc
-    /*
-    // TEMP OUT -> RUNTIME ERROR
-    val timer: Timer = viewModel.timerUIState.timerDetails.toTimer()
-    val playback: Playback = viewModel.playbackUIState.playbackDetails.toPlayback()
-     */
-
     Box(
         modifier = Modifier
             .width(344.dp)
@@ -190,213 +133,390 @@ fun TimerBody(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.weight(1f)
             ) {
-                Text(
-                    text = "30", //playback.currentIntervalRemainingSeconds.toString(), // TODO @KATHERINE @NOUR formatting
-                    color = Color.White,
-                    fontSize = 48.sp,
-                    textAlign = TextAlign.Center
-                )
+                TimerDisplay(
+                    viewModel = viewModel,
+                    modifier = modifier,
+                    playback = playback,
+                    timer = timer)
             }
             Spacer(modifier = Modifier.width(16.dp))
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.End
-            ) {
-                IconButton(onClick = {
-                    /*
-                    // TEMP OUT -> RUNTIME ERROR
-                    if (playback.isPlaying) {
-                        coroutineScope.launch {
-                            viewModel.pause()
-                        }
-                    } else{
-                        coroutineScope.launch {
-                            viewModel.play()
-                        }
-                    }
-                     */
-                }) {
-                    // TEMP OUT -> RUNTIME ERROR
-                    //if (playback.isPlaying) {
-                    Image(
-                        painter = painterResource(id = R.drawable.pausebutton),
-                        contentDescription = "Pause Button",
-                        modifier = Modifier.size(30.dp)
-                    )
-                    // TEMP OUT -> RUNTIME ERROR
-                    /*} else {
-                        Image(
-                            painter = painterResource(id = R.drawable.playbutton),
-                            contentDescription = "Play Button",
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }*/
-                }
+            TimerRightPanel(
+                viewModel = viewModel,
+                modifier = modifier.weight(1f, false),
+                playback = playback,
+                timer = timer)
+        }
+    }
+}
 
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(180.dp)
-                        .background(Color(0xFF544FA3), shape = RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.TopStart
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .height(30.dp)
-                                .fillMaxWidth()
-                                .background(
-                                    Color(0xFFC0BFE0).copy(alpha = 0.75f),
-                                    shape = RoundedCornerShape(4.dp)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Row(
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(horizontal = 8.dp)
-                            ) {
-                                Text(
-                                    "completed",
-                                    color = Color(0xFF2B217F),
-                                    fontSize = 12.sp,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Text(
-                                    "1", //max(0, playback.currentInterval - 1).toString(),
-                                    color = Color(0xFF2B217F),
-                                    fontSize = 12.sp,
-                                    textAlign = TextAlign.End,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Box(
-                            modifier = Modifier
-                                .height(100.dp)
-                                .background(
-                                    Color(0xFFE6E5F2).copy(alpha = 0.75f),
-                                    shape = RoundedCornerShape(4.dp)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(8.dp)
-                            ) {
-                                // TEMP OUT -> RUNTIME ERROR
-                                //if (timer.isInterval) {
-                                Text("3 of 4",
-                                    //"interval " + playback.currentInterval.toString() + " of " + timer.numIntervals,
-                                    color = Color(0xFF241673).copy(alpha = 0.5f),
-                                    fontSize = 12.sp
-                                )
-                                //}
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(
-                                            Color(0xFFE0BFDF),
-                                            shape = RoundedCornerShape(4.dp)
-                                        )
-                                        .padding(horizontal = 8.dp)
-                                ) {
-                                    Text(
-                                        "flow",
-                                        color = Color(0xFFBF5FFF),
-                                        fontSize = 12.sp
-                                    )
-                                    Text(
-                                        "12:36", // TODO @KATHERINE @NOUR
-                                        color = Color(0xFF821A93),
-                                        fontSize = 12.sp
-                                    )
-                                }
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(
-                                            Color(0xFFBFCEE0),
-                                            shape = RoundedCornerShape(4.dp)
-                                        )
-                                        .padding(horizontal = 8.dp)
-                                ) {
-                                    Text(
-                                        "break",
-                                        color = Color(0xFF4F5F71),
-                                        fontSize = 12.sp
-                                    )
-                                    Text(
-                                        "5:00", // TODO @KATHERINE @NOUR
-                                        color = Color(0xFFB2A9A9),
-                                        fontSize = 12.sp
-                                    )
-                                }
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Box(
-                            modifier = Modifier
-                                .height(30.dp)
-                                .fillMaxWidth()
-                                .background(
-                                    Color(0xFFC0BFE0),
-                                    shape = RoundedCornerShape(4.dp)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Row(
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(horizontal = 8.dp)
-                            ) {
-                                // TEMP OUT -> RUNTIME ERROR
-                                //if (timer.isInterval) {
-                                Text(
-                                    "remaining",
-                                    color = Color(0xFF2B217F),
-                                    fontSize = 12.sp,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Text(
-                                    "3", //(timer.numIntervals - playback.currentInterval).toString(),
-                                    color = Color(0xFF2B217F),
-                                    fontSize = 12.sp,
-                                    textAlign = TextAlign.End,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                //} // TODO @KATHERINE @NOUR
-                            }
-                        }
-                    }
+@Composable
+fun TimerRightPanel(
+    viewModel: HomePageViewModel,
+    modifier: Modifier,
+    playback: PlaybackDetails,
+    timer: TimerDetails,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.End
+    ) {
+        PlayButton(
+            viewModel = viewModel,
+            modifier = modifier,
+            playback = playback,
+            timer = timer)
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(180.dp)
+                .background(Color(0xFF544FA3), shape = RoundedCornerShape(8.dp)),
+            contentAlignment = Alignment.TopStart
+        ) {
+            InfoBody(
+                viewModel = viewModel,
+                modifier = modifier,
+                playback = playback,
+                timer = timer)
+        }
+    }
+
+}
+
+@Composable
+fun TimerDisplay(
+    viewModel: HomePageViewModel,
+    modifier: Modifier,
+    playback: PlaybackDetails,
+    timer: TimerDetails,
+) {
+    Text(
+        // LIVE TIMER
+        text = viewModel.timeFormat(viewModel.currentTimerVal.collectAsState().value.toLong()),
+        color = Color.White,
+        fontSize = 48.sp,
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+fun PlayButton(
+    viewModel: HomePageViewModel,
+    modifier: Modifier,
+    playback: PlaybackDetails,
+    timer: TimerDetails,
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    IconButton(onClick = {
+        if (viewModel.isPlaying.value) {
+            coroutineScope.launch {
+                viewModel.pause()
+            }
+        } else{
+            coroutineScope.launch {
+                viewModel.play()
+            }
+        }
+
+    }) {
+        if (viewModel.isPlaying.collectAsState().value) {
+        Image(
+            painter = painterResource(id = R.drawable.pausebutton),
+            contentDescription = "Pause Button",
+            modifier = Modifier.size(30.dp)
+        )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.playbutton),
+                contentDescription = "Play Button",
+                modifier = Modifier.size(30.dp)
+            )
+        }
+    }
+
+}
+
+@Composable
+fun InfoBody(
+    viewModel: HomePageViewModel,
+    modifier: Modifier,
+    playback: PlaybackDetails,
+    timer: TimerDetails,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp)
+    ) {
+        if (timer.isInterval && playback.currentInterval == -1) {
+            Text(
+                "Timer Finished",
+                color = Color(Greyish.value),
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentHeight(align = Alignment.CenterVertically),
+            )
+        }
+        else if (timer.isInterval) {
+            CompletedDisplay(
+                viewModel = viewModel,
+                modifier = modifier,
+                playback = playback,
+                timer = timer
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            FlowBreakDisplay(
+                viewModel = viewModel,
+                modifier = modifier,
+                playback = playback,
+                timer = timer
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            RemainingDisplay(
+                viewModel = viewModel,
+                modifier = modifier,
+                playback = playback,
+                timer = timer
+            )
+
+        }
+        else {
+            Text(
+                "Standard Timer",
+                color = Color(Greyish.value),
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentHeight(align = Alignment.CenterVertically),
+            )
+        }
+    }
+
+}
+
+@Composable
+fun CompletedDisplay(
+    viewModel: HomePageViewModel,
+    modifier: Modifier,
+    playback: PlaybackDetails,
+    timer: TimerDetails,
+) {
+
+    Box(
+        modifier = Modifier
+            .height(30.dp)
+            .fillMaxWidth()
+            .background(
+                Color(0xFFC0BFE0).copy(alpha = 0.75f),
+                shape = RoundedCornerShape(4.dp)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp)
+        ) {
+            Text(
+                "completed",
+                color = Color(0xFF2B217F),
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                max(0, playback.currentInterval - 1).toString(),
+                color = Color(0xFF2B217F),
+                fontSize = 12.sp,
+                textAlign = TextAlign.End,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+
+}
+
+@Composable
+fun RemainingDisplay(
+    viewModel: HomePageViewModel,
+    modifier: Modifier,
+    playback: PlaybackDetails,
+    timer: TimerDetails,
+) {
+
+    Box(
+        modifier = Modifier
+            .height(30.dp)
+            .fillMaxWidth()
+            .background(
+                Color(0xFFC0BFE0),
+                shape = RoundedCornerShape(4.dp)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp)
+        ) {
+            Text(
+                "remaining",
+                color = Color(0xFF2B217F),
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                (timer.numIntervals - playback.currentInterval).toString(),
+                color = Color(0xFF2B217F),
+                fontSize = 12.sp,
+                textAlign = TextAlign.End,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+
+}
+
+@Composable
+fun FlowBreakDisplay(
+    viewModel: HomePageViewModel,
+    modifier: Modifier,
+    playback: PlaybackDetails,
+    timer: TimerDetails,
+) {
+
+    Box(
+        modifier = Modifier
+            .height(100.dp)
+            .background(
+                Color(0xFFE6E5F2).copy(alpha = 0.75f),
+                shape = RoundedCornerShape(4.dp)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+        ) {
+            Text("Interval "
+                    + playback.currentInterval.toString()
+                    + " of " + timer.numIntervals,
+                color = Color(0xFF241673).copy(alpha = 0.5f),
+                fontSize = 12.sp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        Color(0xFFE0BFDF),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+                    .padding(horizontal = 8.dp)
+            ) {
+                Text(
+                    "flow",
+                    color = Color(0xFF821A93),
+                    fontSize = 12.sp
+                )
+                if (playback.stateType == 0) {
+                    // FLOW IS ON
+                    Text(
+                        // LIVE TIMER
+                        viewModel.timeFormat(viewModel.currentTimerVal.collectAsState().value.toLong()),
+                        color = Color(0xFF821A93),
+                        fontSize = 12.sp
+                    )
+
+                }
+                else if (playback.stateType == 1) {
+                    // BREAK IS ON
+                    Text(
+                        viewModel.timeFormat(timer.flowMusicDurationSeconds.toLong()),
+                        color = Color(0xFFBF5FFF),
+                        fontSize = 12.sp
+                    )
+
+                }
+                else {
+                    // NONE
+                    Text(
+                        "00:00",
+                        color = Color(0xFFBF5FFF),
+                        fontSize = 12.sp
+                    )
+
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        Color(0xFFBFCEE0),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+                    .padding(horizontal = 8.dp)
+            ) {
+                Text(
+                    "break",
+                    color = Color(0xFF4F5F71),
+                    fontSize = 12.sp
+                )
+                if (playback.stateType == 0) {
+                    // FLOW IS ON
+                    Text(
+                        viewModel.timeFormat(timer.breakMusicDurationSeconds.toLong()),
+                        color = Color(0xFFB2A9A9),
+                        fontSize = 12.sp
+                    )
+
+                }
+                else if (playback.stateType == 1) {
+                    // BREAK IS ON
+                    Text(
+                        // LIVE TIMER
+                        viewModel.timeFormat(viewModel.currentTimerVal.collectAsState().value.toLong()),
+                        color = Color(0xFF4F5F71),
+                        fontSize = 12.sp
+                    )
+
+                }
+                else {
+                    // NONE
+                    Text(
+                        "00:00",
+                        color = Color(0xFFB2A9A9),
+                        fontSize = 12.sp
+                    )
+
                 }
             }
         }
     }
+
 }
 
 @Composable
 fun MusicPlayerBody(
     viewModel: HomePageViewModel,
     modifier: Modifier) {
-    val coroutineScope = rememberCoroutineScope()
-
+    // TODO @KIANA will be injected another way (more top level/singleton)? (not sure how)
+    /*
+    var mp3Player: MP3Player = MP3Player(context)
+    */
     Box(
         modifier = Modifier
             .width(344.dp)
@@ -416,6 +536,4 @@ fun onDestroy() {
     mp3Player.onDestroy()
 }
 */
-
-
 

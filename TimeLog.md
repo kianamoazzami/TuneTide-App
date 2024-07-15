@@ -73,3 +73,18 @@
  | 07/08/24 | MP3 Playlist Entry Page             |           |           |           |           | 2.0       |
  | 07/09/24 | Spotify and Coroutine Research      |           |           | 2.5       |           |           |
  | 07/09/24 | Playlist Creation                   |           |           |           |           | 2.0       |
+ | 07/10/24 | Group Meeting                       | 2.0       | 2.0       |           | 2.0       | 2.0       |
+ | 07/10/24 | Fixes for PR                        |           | 1.5       |           |           |           |
+ | 07/10/24 | HomePage debugging attempt          |           |           |           | 4.0       |           |
+ | 07/10/24 | Playlist Creation                   |           |           |           |           | 2.0       |
+ | 07/10/24 | Work on D4                          |           |           |           |           | 1.0       |
+ | 07/11/24 | Finished Playlist Creation          |           |           |           |           | 2.0       |
+ | 07/11/24 | Work on D4                          |           |           |           | 1.0       | 1.0       |
+ | 07/12/24 | Playlist Deletion                   |           |           |           |           | 2.5       |
+ | 07/12/24 | Spotify Controller                  |           | 2.0       |           |           |           |
+ | 07/12/24 | Dealing with Data Access            |           |           |           | 4.0       |           |
+ | 07/13/24 | Solving Data Access/Timer Problems  |           |           |           | 3.0       |           |
+ | 07/13/24 | Opening File Explorer + Get URI     |           |           |           |           | 4.0       |
+ | 07/14/24 | Spotify Controller                  |           | 1.0       |           |           |           |
+ | 07/14/24 | Homepage Work                       |           |           |           | 2.0       |           |
+ | 07/14/24| Saved timer page                     |           |  4.0      |           |           |           |

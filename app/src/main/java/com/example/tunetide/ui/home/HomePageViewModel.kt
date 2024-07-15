@@ -1,5 +1,7 @@
 package com.example.tunetide.ui.home
 
+import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,13 +20,18 @@ import com.example.tunetide.ui.timer.toTimerDetails
 import com.example.tunetide.ui.timer.toTimerUIState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 /**
  * View Model to host state of the timer that is running
@@ -34,9 +41,6 @@ class HomePageViewModel (
 ): ViewModel() {
 
     private var _timerId: Int = -1
-        private set
-
-    var startingTimerIntervalValue = 0
         private set
 
     val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
@@ -54,10 +58,34 @@ class HomePageViewModel (
         .map {
             TimerUIState(timerDetails = it.toTimerDetails())
         }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-        initialValue = TimerUIState()
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = TimerUIState()
         )
+
+    private val _currentTimerVal = MutableStateFlow(0)
+    val currentTimerVal: StateFlow<Int> = _currentTimerVal
+
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying: StateFlow<Boolean> = _isPlaying
+
+    fun homeScreenTimer() {
+        CoroutineScope(Dispatchers.IO).launch {
+            while (isPlaying.value && currentTimerVal.value > 0) {
+                delay(1000)
+                _currentTimerVal.value -= 1
+            }
+            if (isPlaying.value && currentTimerVal.value <= 0) {
+                startNextInterval()
+            }
+        }
+    }
+
+    fun timeFormat(timeSec: Long): String {
+        val minutes = (timeSec) / 60
+        val seconds = (timeSec) % 60
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
+    }
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -69,6 +97,8 @@ class HomePageViewModel (
     fun play() {
         CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.play()
+            _isPlaying.value = true
+            homeScreenTimer()
 
             var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
 
@@ -85,6 +115,7 @@ class HomePageViewModel (
     fun pause() {
         CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.pause()
+            _isPlaying.value = false
 
             var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
 
@@ -115,12 +146,14 @@ class HomePageViewModel (
     fun getStartingTimerValue() {
         CoroutineScope(Dispatchers.IO).launch {
             if (playbackRepository.getStateType() == StateType.FLOW) {
-                startingTimerIntervalValue = playbackRepository.getFlowDurationSeconds()
+                _currentTimerVal.value = playbackRepository.getFlowDurationSeconds()
             } else if (playbackRepository.getStateType() == StateType.BREAK) {
-                startingTimerIntervalValue = playbackRepository.getBreakDurationSeconds()
+                _currentTimerVal.value = playbackRepository.getBreakDurationSeconds()
             } else {
-                startingTimerIntervalValue = 0
+                //STANDARD TIMER
+                _currentTimerVal.value = playbackRepository.getFlowDurationSeconds()
             }
+
         }
     }
 
@@ -133,6 +166,8 @@ class HomePageViewModel (
                 finish()
             } else {
                 playbackRepository.startNextInterval()
+                getStartingTimerValue()
+                homeScreenTimer()
             }
         }
     }
@@ -142,12 +177,15 @@ class HomePageViewModel (
         CoroutineScope(Dispatchers.IO).launch {
             // TODO @ERICA @KIANA stop music
             playbackRepository.invalidatePlayback()
+            _isPlaying.value = false
         }
     }
 
     fun restart() {
         CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.restartTimer()
+            _isPlaying.value = true
+            homeScreenTimer()
             // TODO @ERICA @KIANA restart music
         }
     }
