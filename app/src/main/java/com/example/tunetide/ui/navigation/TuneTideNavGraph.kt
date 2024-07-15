@@ -36,7 +36,7 @@ fun TuneTideNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = SettingsDestination.route, //TODO: change back to HomeDestination
+        startDestination = HomeDestination.route,
         modifier = modifier
     ) {
         composable(route = HomeDestination.route) {
