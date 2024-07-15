@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.R
+import com.example.tunetide.database.MP3Playlist
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.TuneTideTopAppBarBack
 import com.example.tunetide.ui.navigation.NavigationDestination
@@ -63,10 +64,6 @@ fun MP3PlaylistDetailsScreen(
         MP3PlaylistDetailsBody(
             mp3PlaylistDetailsUIState = uiState.value,
             onDelete = {
-                // Note: If the user rotates the screen very fast, the operation may get cancelled
-                // and the item may not be deleted from the Database. This is because when config
-                // change occurs, the Activity will be recreated and the rememberCoroutineScope will
-                // be cancelled - since the scope is bound to composition.
                 coroutineScope.launch {
                     viewModel.deleteMP3Playlist()
                     navigateBack()
@@ -89,11 +86,16 @@ private fun MP3PlaylistDetailsBody(
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    //TODO: change to lazy column for scrolling
     Column(
         modifier = modifier.padding(16.dp), //not sure
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
+        MP3PlaylistDetails(
+            mp3Playlist = mp3PlaylistDetailsUIState.mp3PlaylistDetails.toMP3Playlist(),
+            modifier = Modifier.fillMaxWidth()
+        )
         IconButton(
             onClick = { deleteConfirmationRequired = true },
             modifier = Modifier.fillMaxWidth()
@@ -115,6 +117,15 @@ private fun MP3PlaylistDetailsBody(
             )
         }
     }
+}
+
+//TODO
+@Composable
+fun MP3PlaylistDetails(
+    mp3Playlist: MP3Playlist,
+    modifier: Modifier = Modifier
+) {
+
 }
 
 @Composable

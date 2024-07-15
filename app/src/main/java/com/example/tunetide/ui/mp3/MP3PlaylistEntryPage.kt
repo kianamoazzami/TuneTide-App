@@ -10,9 +10,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
@@ -192,68 +195,70 @@ fun MP3PlaylistInputForm(
         .setType("audio/mpeg")
         .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
 
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
     ) {
-        OutlinedTextField(
-            value = mp3PlaylistDetails.playlistName,
-            onValueChange = {
-                onPlaylistValueChange(mp3PlaylistDetails.copy(playlistName = it))
-            },
-            label = { Text(stringResource(R.string.playlist_name_req)) },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                textColor = MaterialTheme.colors.onSurface,
-                focusedBorderColor = MaterialTheme.colors.secondary,
-                unfocusedBorderColor = MaterialTheme.colors.secondary,
-                disabledBorderColor = MaterialTheme.colors.secondary,
-                backgroundColor = MaterialTheme.colors.surface.copy(alpha = TextFieldDefaults.BackgroundOpacity),
-                cursorColor = MaterialTheme.colors.secondary,
-                focusedLabelColor = MaterialTheme.colors.secondary
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-                }
+        item {
+            OutlinedTextField(
+                value = mp3PlaylistDetails.playlistName,
+                onValueChange = {
+                    onPlaylistValueChange(mp3PlaylistDetails.copy(playlistName = it))
+                },
+                label = { Text(stringResource(R.string.playlist_name_req)) },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    textColor = MaterialTheme.colors.onSurface,
+                    focusedBorderColor = MaterialTheme.colors.secondary,
+                    unfocusedBorderColor = MaterialTheme.colors.secondary,
+                    disabledBorderColor = MaterialTheme.colors.secondary,
+                    backgroundColor = MaterialTheme.colors.surface.copy(alpha = TextFieldDefaults.BackgroundOpacity),
+                    cursorColor = MaterialTheme.colors.secondary,
+                    focusedLabelColor = MaterialTheme.colors.secondary
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                enabled = enabled,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    }
+                )
             )
-        )
-        IconButton(
-            onClick = {
-                activityResultLauncher.launch(intent) },
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.addsongs),
-                contentDescription = stringResource(R.string.add_songs),
-                tint = Color.Unspecified
-            )
-        }
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            mp3FileDetailsList.forEach { fileDetails ->
+
+            if (enabled) {
                 Text(
-                    text = fileDetails.fileName ?: "Unknown",
-                    modifier = Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.onSurface
+                    text = stringResource(R.string.required_fields),
+                    color = Color.Red,
+                    modifier = Modifier.padding(16.dp)
                 )
             }
         }
-
-        if (enabled) {
+        item {
+            IconButton(
+                onClick = {
+                    activityResultLauncher.launch(intent)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.addsongs),
+                    contentDescription = stringResource(R.string.add_songs),
+                    tint = Color.Unspecified
+                )
+            }
+        }
+        items(mp3FileDetailsList) { fileDetails ->
             Text(
-                text = stringResource(R.string.required_fields),
-                color = Color.Red,
-                modifier = Modifier.padding(16.dp)
+                text = fileDetails.fileName ?: "Unknown",
+                modifier = Modifier.fillMaxWidth(),
+                style = MaterialTheme.typography.body1,
+                color = MaterialTheme.colors.onSurface
             )
         }
     }
