@@ -178,6 +178,7 @@ class HomePageViewModel (
             // TODO @ERICA @KIANA stop music
             playbackRepository.invalidatePlayback()
             _isPlaying.value = false
+            _currentTimerVal.value = 0
         }
     }
 
@@ -210,11 +211,12 @@ data class PlaybackUIState(
 /**
  * represents the "UI" for playback
  */
+// Updated to match invalid timer details in PlaybackDao's invalidatePlayback()
 data class PlaybackDetails(
     val id: Int = -1,
     val timerId: Int = -1,
     val stateType: Int = 2,
-    val currentInterval: Int = 0,
+    val currentInterval: Int = -1,
     val currentIntervalRemainingSeconds: Int = 0,
     val isPlaying: Boolean = false
 )

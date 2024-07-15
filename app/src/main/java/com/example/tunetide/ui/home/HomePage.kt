@@ -24,6 +24,7 @@ import kotlinx.coroutines.delay
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.navigation.NavigationDestination
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.tunetide.ui.theme.Greyish
 import com.example.tunetide.ui.timer.TimerDetails
 import kotlinx.coroutines.launch
@@ -142,7 +143,7 @@ fun TimerBody(
             Spacer(modifier = Modifier.width(16.dp))
             TimerRightPanel(
                 viewModel = viewModel,
-                modifier = modifier.weight(1f, false),
+                modifier = modifier.weight(1f),
                 playback = playback,
                 timer = timer)
         }
@@ -158,20 +159,38 @@ fun TimerRightPanel(
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.End
+        horizontalAlignment = Alignment.End,
     ) {
-        PlayButton(
-            viewModel = viewModel,
-            modifier = modifier,
-            playback = playback,
-            timer = timer)
+        Row (
+            modifier = modifier
+        ) {
+            /*
+            CancelButton(
+                viewModel = viewModel,
+                modifier = modifier,
+                playback = playback,
+                timer = timer)
+
+             */
+            /*
+            RestartButton(
+                viewModel = viewModel,
+                modifier = modifier,
+                playback = playback,
+                timer = timer)
+             */
+            PlayButton(
+                viewModel = viewModel,
+                modifier = modifier,
+                playback = playback,
+                timer = timer)
+        }
 
         Box(
             modifier = Modifier
-                .weight(1f)
-                .height(180.dp)
+                .height(190.dp)
                 .background(Color(0xFF544FA3), shape = RoundedCornerShape(8.dp)),
-            contentAlignment = Alignment.TopStart
+            contentAlignment = Alignment.TopStart,
         ) {
             InfoBody(
                 viewModel = viewModel,
@@ -238,6 +257,53 @@ fun PlayButton(
 }
 
 @Composable
+fun CancelButton(
+    viewModel: HomePageViewModel,
+    modifier: Modifier,
+    playback: PlaybackDetails,
+    timer: TimerDetails,
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    IconButton(onClick = {
+        coroutineScope.launch {
+            viewModel.finish()
+        }
+
+    }) {
+        Image(
+            painter = painterResource(id = R.drawable.cancelbutton),
+            contentDescription = "Cancel Button",
+            modifier = Modifier.size(30.dp)
+        )
+    }
+
+}
+
+@Composable
+fun RestartButton(
+    viewModel: HomePageViewModel,
+    modifier: Modifier,
+    playback: PlaybackDetails,
+    timer: TimerDetails,
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    IconButton(onClick = {
+        coroutineScope.launch {
+            viewModel.restart()
+        }
+    }) {
+        Image(
+            painter = painterResource(id = R.drawable.restartbutton),
+            contentDescription = "Restart Button",
+            modifier = Modifier.size(30.dp)
+        )
+    }
+
+}
+
+@Composable
 fun InfoBody(
     viewModel: HomePageViewModel,
     modifier: Modifier,
@@ -249,9 +315,9 @@ fun InfoBody(
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        if (timer.isInterval && playback.currentInterval == -1) {
+        if (playback.timerId == -1) {
             Text(
-                "Timer Finished",
+                "No Timer Playing",
                 color = Color(Greyish.value),
                 fontSize = 30.sp,
                 textAlign = TextAlign.Center,

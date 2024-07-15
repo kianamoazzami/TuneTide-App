@@ -19,7 +19,7 @@ interface PlaybackDao {
     suspend fun setPlayback(playback: Playback)
 
     @Query("UPDATE Playback" +
-            " SET timer_id = 0, state_type = 2, current_interval = -1, current_interval_remaining_seconds = 0, is_playing = 0" +
+            " SET timer_id = -1, state_type = 2, current_interval = -1, current_interval_remaining_seconds = 0, is_playing = 0" +
             " WHERE id = 1")
     fun invalidatePlayback()
 
