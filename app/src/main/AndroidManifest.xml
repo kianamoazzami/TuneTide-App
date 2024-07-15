@@ -29,7 +29,7 @@
             android:label="@string/settings"
             android:theme="@style/Theme.TuneTide">
         </activity>
-
+        <!--
         <activity
             android:name="com.example.tunetide.spotify.SpotifyController"
             android:exported="true"
@@ -39,7 +39,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        -->
         <activity
             android:name="com.spotify.sdk.android.auth.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
