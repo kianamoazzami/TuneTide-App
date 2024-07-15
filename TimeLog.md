@@ -91,3 +91,4 @@
  | 07/15/24 | Adding Songs to MP3File Table       |           |           |           |           | 3.0       |
  | 07/15/24 | Meeting                             | 1.0       | 1.0       | 1.0       | 1.0       | 1.0       |
  | 07/15/24 | Work on Parsing D6, D7              | 0.75      |           |           |           |           | 
+ | 07/14/24 | Spotify Controller                  |           | 2.0       |           |           |           |
