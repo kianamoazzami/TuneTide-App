@@ -87,4 +87,5 @@
  | 07/13/24 | Opening File Explorer + Get URI     |           |           |           |           | 4.0       |
  | 07/14/24 | Spotify Controller                  |           | 1.0       |           |           |           |
  | 07/14/24 | Homepage Work                       |           |           |           | 2.0       |           |
- | 07/14/24| Saved timer page                     |           |  4.0      |           |           |           |
+ | 07/14/24 | Saved timer page                    |           |  4.0      |           |           |           |
+ | 07/15/24 | Adding Songs to MP3File Table       |           |           |           |           | 3.0       |
