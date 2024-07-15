@@ -164,12 +164,21 @@ fun TimerRightPanel(
         Row (
             modifier = modifier
         ) {
+            /*
             CancelButton(
                 viewModel = viewModel,
                 modifier = modifier,
                 playback = playback,
                 timer = timer)
-            //Restart Button
+
+             */
+            /*
+            RestartButton(
+                viewModel = viewModel,
+                modifier = modifier,
+                playback = playback,
+                timer = timer)
+             */
             PlayButton(
                 viewModel = viewModel,
                 modifier = modifier,
@@ -257,11 +266,37 @@ fun CancelButton(
     val coroutineScope = rememberCoroutineScope()
 
     IconButton(onClick = {
-        viewModel.finish()
+        coroutineScope.launch {
+            viewModel.finish()
+        }
+
     }) {
         Image(
             painter = painterResource(id = R.drawable.cancelbutton),
             contentDescription = "Cancel Button",
+            modifier = Modifier.size(30.dp)
+        )
+    }
+
+}
+
+@Composable
+fun RestartButton(
+    viewModel: HomePageViewModel,
+    modifier: Modifier,
+    playback: PlaybackDetails,
+    timer: TimerDetails,
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    IconButton(onClick = {
+        coroutineScope.launch {
+            viewModel.restart()
+        }
+    }) {
+        Image(
+            painter = painterResource(id = R.drawable.restartbutton),
+            contentDescription = "Restart Button",
             modifier = Modifier.size(30.dp)
         )
     }
