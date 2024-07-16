@@ -8,6 +8,10 @@
     <string name="timer_edit_name">Edit Timer</string>
     <string name="timers_list_name">View Timers</string>
     <string name="settings">Settings</string>
+    <string name="saved_timers_page_name">Saved Timers</string>
+    <string name="standard_page_name">Standard Page</string>
+    <string name="all_timers_page_name">All Timers</string>
+    <string name="interval_page_name">Interval Page</string>
 
     <!-- New strings for Settings screen -->
     <string name="back">Back</string>
