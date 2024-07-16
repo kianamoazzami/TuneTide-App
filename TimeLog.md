@@ -94,3 +94,6 @@
  | 07/14/24 | Spotify Controller                  |           | 2.0       |           |           |           |
  | 07/15/24 | Add Timer Page                      |           |           |           | 5.0       |           |
  | 07/15/24 | Navigation + MP3 Player             |           |           |           |           | 2.5       |
+ | 07/15/24 | Fixing errors on saved timer page   |           | 2.0       |           |           |           |
+ 
+ 
