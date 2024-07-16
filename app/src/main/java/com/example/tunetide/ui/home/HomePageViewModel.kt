@@ -151,10 +151,8 @@ class HomePageViewModel (
             } else if (playbackRepository.getStateType() == StateType.BREAK) {
                 _currentTimerVal.value = playbackRepository.getBreakDurationSeconds()
             } else {
-                //STANDARD TIMER
-                _currentTimerVal.value = playbackRepository.getFlowDurationSeconds()
+                _currentTimerVal.value = 0
             }
-
         }
     }
 
