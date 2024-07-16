@@ -66,7 +66,8 @@ class MP3PlayerManager(private val context: Context) {
     fun skipToNextSong() {
         currentSongIndex++
         if (currentSongIndex >= playlist.size) {
-            stopMusic()
+            currentSongIndex = 0 //restart playlist
+            playCurrentSong()
         } else {
             playCurrentSong()
         }
