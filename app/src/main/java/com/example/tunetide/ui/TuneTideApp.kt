@@ -88,12 +88,7 @@ fun TuneTideTopAppBarBack(
 }
 
 @Composable
-fun TuneTideBottomAppBar(
-    currentScreen: Int,
-    navigateToSettings: () -> Unit,
-    navigateToHome: () -> Unit,
-    navigateToTimersList: () -> Unit
-) {
+fun TuneTideBottomAppBar() {
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
@@ -110,39 +105,24 @@ fun TuneTideBottomAppBar(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            IconButton(onClick = navigateToSettings) {
+            IconButton(onClick = { /* add navigation action */ }) {
                 Icon(
                     painter = painterResource(id = R.drawable.settings),
-                    contentDescription = "Settings",
-                    tint =
-                    if (currentScreen == R.string.settings_screen) {
-                        PurpleAccent
-                    } else {
-                        PurpleBackground },
+                    contentDescription = "Settings", tint = PurpleAccent,
                     modifier = Modifier.size(30.dp)
                 )
             }
-            IconButton(onClick = navigateToHome) {
+            IconButton(onClick = { /* add navigation action */ }) {
                 Icon(
                     painter = painterResource(id = R.drawable.home),
-                    contentDescription = "Home",
-                    tint =
-                    if (currentScreen == R.string.home_screen) {
-                        PurpleAccent
-                    } else {
-                        PurpleBackground },
+                    contentDescription = "Home", tint = PurpleAccent,
                     modifier = Modifier.size(30.dp)
                 )
             }
-            IconButton(onClick = navigateToTimersList) {
+            IconButton(onClick = { /* add navigation action */ }) {
                 Icon(
                     painter = painterResource(id = R.drawable.timer),
-                    contentDescription = "Timer",
-                    tint =
-                    if (currentScreen == R.string.timers_screen) {
-                        PurpleAccent
-                    } else {
-                        PurpleBackground },
+                    contentDescription = "Timer", tint = PurpleAccent,
                     modifier = Modifier.size(30.dp)
                 )
             }
