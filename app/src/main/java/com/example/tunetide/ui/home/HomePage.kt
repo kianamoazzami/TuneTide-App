@@ -38,6 +38,8 @@ object HomeDestination : NavigationDestination {
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    navigateToSettings: () -> Unit,
+    navigateToTimersList: () -> Unit,
     viewModel: HomePageViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     // Unwrap timer and playback
@@ -49,7 +51,12 @@ fun HomeScreen(
             TuneTideTopAppBar()
         },
         bottomBar = {
-            TuneTideBottomAppBar()
+            TuneTideBottomAppBar(
+                currentScreen = R.string.home_screen,
+                navigateToSettings = navigateToSettings,
+                navigateToHome = {},
+                navigateToTimersList = navigateToTimersList
+            )
         },
         modifier = modifier
     ) { innerPadding ->
@@ -590,16 +597,10 @@ fun MusicPlayerBody(
             .background(Color(0xFFE6E5F2), shape = RoundedCornerShape(16.dp)),
         contentAlignment = Alignment.Center
     ) {
-        // TODO @KIANA (see above for how to inject singleton mp3player)
-        // Placeholder for music player UI
-        // mp3Player.layout()
+        //TODO: @KIANA show song name and playlist and add button to go to next song
+        //TODO: @KIANA add a photo to show as the cover since mp3 has no cover
     }
 }
 
-// TODO @KIANA this will be in a viewModel class
-/*
-fun onDestroy() {
-    mp3Player.onDestroy()
-}
-*/
+
 
