@@ -28,10 +28,6 @@ class MP3PlayerManager(private val context: Context) {
         mediaPlayer.setOnCompletionListener {
             skipToNextSong()
         }
-
-        mediaPlayer.setOnErrorListener { mp, what, extra ->
-            true  // Return true to indicate you've handled the error
-        }
     }
 
     fun play() {
