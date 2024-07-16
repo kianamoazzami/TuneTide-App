@@ -1,5 +1,6 @@
 package com.example.tunetide.ui.timer
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,7 +25,8 @@ class TimerEntryViewModel (
     }
 
     suspend fun insertTimer() {
-        if (validateInput()) {
+        if (timerUIState.isValidEntry) {
+            Log.d("Valid Input", "Yes")
             timerRepository.insertTimer(timerUIState.timerDetails.toTimer())
         }
     }
@@ -61,10 +63,10 @@ data class TimerDetails(
     val numIntervals: Int = 1,
     val spotifyFlowMusicPlaylistId: Int = -1,
     val mp3FlowMusicPlaylistId: Int = -1,
-    val flowMusicDurationSeconds: Int = 1,
+    val flowMusicDurationSeconds: Int = 0,
     val spotifyBreakMusicPlaylistId: Int = -1,
     val mp3BreakMusicPlaylistId: Int = -1,
-    val breakMusicDurationSeconds: Int = 1,
+    val breakMusicDurationSeconds: Int = 0,
     val isSaved: Boolean = false,
 )
 

@@ -1,11 +1,14 @@
 package com.example.tunetide.ui.timer
 
+import android.util.Log
+import android.widget.NumberPicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,6 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Checkbox
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox
@@ -38,14 +43,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.R
 import com.example.tunetide.ui.TuneTideTopAppBar
 import com.example.tunetide.ui.AppViewModelProvider
+import com.example.tunetide.ui.TuneTideTopAppBarBack
 import com.example.tunetide.ui.mp3.LocalFilesViewModel
 import com.example.tunetide.ui.navigation.NavigationDestination
 import com.example.tunetide.ui.theme.PurpleAccent
+import com.example.tunetide.ui.theme.PurpleBackground
 import com.example.tunetide.ui.theme.PurpleDark
 import com.example.tunetide.ui.theme.PurpleLight
 import com.example.tunetide.ui.theme.PurpleLight2
@@ -68,7 +77,7 @@ fun TimerEntryScreen(
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
-            TuneTideTopAppBar()
+            TuneTideTopAppBarBack(navigateBack)
         }
     ) { innerPadding ->
         TimerEntryBody(
@@ -77,7 +86,8 @@ fun TimerEntryScreen(
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.insertTimer()
-                    //navigateBack()
+                    Log.d("Timer: ", viewModel.timerUIState.timerDetails.toString())
+                    navigateBack()
                 }
             },
             modifier = modifier,
@@ -101,16 +111,21 @@ fun TimerEntryBody(
     Box(modifier = modifier) {
         Column(modifier = modifier) {
             Row(modifier = modifier.padding(16.dp)) {
-                flowStateForm(timerUIState, modifier, localFilesViewModel)
+                flowStateForm(timerUIState, modifier, localFilesViewModel, onTimerValueChange)
             }
             Row(modifier = modifier.padding(16.dp)) {
-                breakStateForm(timerUIState, modifier, localFilesViewModel)
+                breakStateForm(timerUIState, modifier, localFilesViewModel, onTimerValueChange)
             }
             Row(modifier = modifier.padding(16.dp)) {
-                nameField(timerUIState, modifier)
+                nameField(timerUIState, modifier, onTimerValueChange)
             }
             Row(modifier = modifier.padding(16.dp)) {
-                intervalOption(timerUIState, modifier, viewModel)
+                intervalOption(timerUIState, modifier, onTimerValueChange)
+            }
+            Row(modifier = modifier
+                .padding(16.dp)
+                .align(Alignment.End)) {
+                saveButton(onSaveClick, modifier)
             }
         }
     }
@@ -120,27 +135,29 @@ fun TimerEntryBody(
 fun flowStateForm(
     timerUIState : TimerUIState,
     modifier: Modifier,
-    localFilesViewModel: LocalFilesViewModel
+    localFilesViewModel: LocalFilesViewModel,
+    onTimerValueChange: (TimerDetails) -> Unit
 ){
     val state = "Flow"
-    stateOptions(state, timerUIState, modifier, localFilesViewModel)
+    stateOptions(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange)
 }
 
 @Composable
 fun breakStateForm(
     timerUIState : TimerUIState,
     modifier: Modifier,
-    localFilesViewModel: LocalFilesViewModel
+    localFilesViewModel: LocalFilesViewModel,
+    onTimerValueChange: (TimerDetails) -> Unit
 ){
     val state = "Break"
-    stateOptions(state, timerUIState, modifier, localFilesViewModel)
+    stateOptions(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange)
 }
 
 @Composable
 fun intervalOption(
     timerUIState : TimerUIState,
     modifier: Modifier,
-    viewModel: TimerEntryViewModel
+    onTimerValueChange: (TimerDetails) -> Unit
 ){
     val focusManager = LocalFocusManager.current
     val textFieldColors = TextFieldDefaults.outlinedTextFieldColors(
@@ -159,53 +176,59 @@ fun intervalOption(
             modifier = Modifier.padding(start = 8.dp)
         )
         Checkbox(
-            checked = viewModel.timerUIState.timerDetails.isInterval,
-            onCheckedChange = { /*UPDATE TIMER*/ }
+            checked = timerUIState.timerDetails.isInterval,
+            onCheckedChange = {
+                onTimerValueChange(timerUIState.timerDetails.copy(isInterval = !timerUIState.timerDetails.isInterval))
+            }
+        )
+    }
+    if (timerUIState.timerDetails.isInterval) {
+        Box(modifier = modifier.height(60.dp),
+            contentAlignment = Alignment.Center) {
+            Text(
+                text = "Number of Intervals: ",
+                color = PurpleDark,
+                modifier = Modifier
+                    .padding(start = 26.dp),
+            )
+        }
+        var intervalNum by remember {mutableStateOf(0)}
+        OutlinedTextField(
+            value = intervalNum.toString(),
+            onValueChange = {
+                intervalNum = it.toInt()
+            },
+            label = { Text("") },
+            colors = textFieldColors,
+            modifier = modifier
+                .width(60.dp)
+                .height(60.dp),
+            //enabled = enabled,
+            singleLine = true,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Number
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                    onTimerValueChange(timerUIState.timerDetails.copy(numIntervals = intervalNum))
+                }
+            )
         )
 
-        if (true) {
-            Row() {
-                Text(
-                    text = "Number of Intervals: ",
-                    color = PurpleDark,
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .align(Alignment.CenterVertically)
-                )
-                OutlinedTextField(
-                    value = "",
-                    onValueChange = {
-                        // UPDATE TIMER
-                    },
-                    label = { Text("") },
-                    colors = textFieldColors,
-                    modifier = modifier
-                        .width(50.dp)
-                        .height(50.dp),
-                    //enabled = enabled,
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
-                        }
-                    )
-                )
-            }
-        }
     }
 }
 
 @Composable
 fun nameField(
     timerUIState : TimerUIState,
-    modifier: Modifier
+    modifier: Modifier,
+    onTimerValueChange: (TimerDetails) -> Unit
 ){
     val focusManager = LocalFocusManager.current
     val textFieldColors = TextFieldDefaults.outlinedTextFieldColors(
-        textColor = MaterialTheme.colors.onSurface,
+        textColor = PurpleDark,
         focusedBorderColor = MaterialTheme.colors.secondary,
         unfocusedBorderColor = MaterialTheme.colors.secondary,
         disabledBorderColor = MaterialTheme.colors.secondary,
@@ -213,22 +236,22 @@ fun nameField(
         cursorColor = MaterialTheme.colors.secondary,
         focusedLabelColor = MaterialTheme.colors.secondary)
 
-        Text(
-            text = "Timer Name: ",
-            color = PurpleDark,
-            modifier = Modifier.padding(start = 8.dp)
-        )
+    Text(
+        text = "Timer Name: ",
+        color = PurpleDark,
+        modifier = Modifier.padding(start = 8.dp)
+    )
         OutlinedTextField(
-            value = "",
+            value = timerUIState.timerDetails.timerName,
             onValueChange = {
-                // UPDATE TIMER
+                onTimerValueChange(timerUIState.timerDetails.copy(timerName = it))
             },
             label = { Text("") },
             colors = textFieldColors,
             modifier = modifier
                 .fillMaxWidth()
-                .height(20.dp),
-            //enabled = enabled,
+                .height(60.dp),
+            enabled = true,
             singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
@@ -247,11 +270,12 @@ fun stateOptions(
     state: String,
     timerUIState : TimerUIState,
     modifier: Modifier,
-    localFilesViewModel : LocalFilesViewModel
+    localFilesViewModel : LocalFilesViewModel,
+    onTimerValueChange: (TimerDetails) -> Unit
 ){
     Column(modifier = modifier) {
-        timeSelect(state, timerUIState, modifier)
-        playlistSelect(state, timerUIState, modifier, localFilesViewModel)
+        timeSelect(state, timerUIState, modifier, onTimerValueChange)
+        playlistSelect(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange)
     }
 }
 
@@ -260,6 +284,7 @@ fun timeSelect(
     state: String,
     timerUIState : TimerUIState,
     modifier: Modifier,
+    onTimerValueChange: (TimerDetails) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     val textFieldColors = TextFieldDefaults.outlinedTextFieldColors(
@@ -283,54 +308,89 @@ fun timeSelect(
             modifier = Modifier.padding(16.dp),
         )
         //HOURS
-        OutlinedTextField(
-            value = "",
-            onValueChange = {
-                // UPDATE TIMER
-            },
-            label = { Text("") },
-            colors = textFieldColors,
-            modifier = modifier
-                .width(50.dp)
-                .height(50.dp),
-            //enabled = enabled,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-                }
+        Column() {
+            var timeVal by remember {mutableStateOf(0)}
+            OutlinedTextField(
+                value = timeVal.toString(),
+                onValueChange = {
+                    timeVal = it.toInt()
+                },
+                label = { Text("") },
+                colors = textFieldColors,
+                modifier = modifier
+                    .width(60.dp)
+                    .height(60.dp),
+                //enabled = enabled,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                        if (state == "Flow") {
+                            onTimerValueChange(timerUIState.timerDetails.copy(
+                                flowMusicDurationSeconds = timerUIState.timerDetails.flowMusicDurationSeconds + (timeVal * 3600)))
+                        }
+                        else {
+                            onTimerValueChange(timerUIState.timerDetails.copy(
+                                breakMusicDurationSeconds = timerUIState.timerDetails.breakMusicDurationSeconds + (timeVal * 3600)))
+                        }
+                    }
+                )
             )
-        )
+            Text(
+                text = "Hours",
+                color = PurpleDark,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
         Text(
             text = " : ",
             color = PurpleDark,
             modifier = Modifier.padding(16.dp)
         )
         //MINUTES
-        OutlinedTextField(
-            value = "",
-            onValueChange = {
-                // UPDATE TIMER
-            },
-            label = { Text("") },
-            colors = textFieldColors,
-            modifier = modifier
-                .width(50.dp)
-                .height(50.dp),
-            //enabled = enabled,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-                }
+        Column() {
+            var timeVal by remember {mutableStateOf(0)}
+            OutlinedTextField(
+                value = timeVal.toString(),
+                onValueChange = {
+                    timeVal = it.toInt()
+                },
+                label = { Text("") },
+                colors = textFieldColors,
+                modifier = modifier
+                    .width(60.dp)
+                    .height(60.dp),
+                //enabled = enabled,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                        if (state == "Flow") {
+                            onTimerValueChange(timerUIState.timerDetails.copy(
+                                flowMusicDurationSeconds = timerUIState.timerDetails.flowMusicDurationSeconds + (timeVal * 60)))
+                        }
+                        else {
+                            onTimerValueChange(timerUIState.timerDetails.copy(
+                                breakMusicDurationSeconds = timerUIState.timerDetails.breakMusicDurationSeconds + (timeVal * 60)))
+                        }
+                    }
+                )
             )
-        )
+            Text(
+                text = "Minutes",
+                color = PurpleDark,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+
     }
 }
 
@@ -340,7 +400,8 @@ fun playlistSelect(
     state: String,
     timerUIState : TimerUIState,
     modifier: Modifier,
-    localFilesViewModel : LocalFilesViewModel
+    localFilesViewModel : LocalFilesViewModel,
+    onTimerValueChange: (TimerDetails) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -363,6 +424,8 @@ fun playlistSelect(
                 modifier = Modifier.padding(8.dp),
             )
             var selectedOption by remember { mutableStateOf(options[0]) }
+            onTimerValueChange(timerUIState.timerDetails.copy(mp3FlowMusicPlaylistId = selectedOption.playlistId))
+            onTimerValueChange(timerUIState.timerDetails.copy(mp3BreakMusicPlaylistId = selectedOption.playlistId))
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = {
@@ -392,7 +455,7 @@ fun playlistSelect(
                             text = { option.playlistName },
                             onClick = {
                                 selectedOption = option
-                                // UPDATE TIMER
+                                onTimerValueChange(timerUIState.timerDetails.copy(mp3FlowMusicPlaylistId = selectedOption.playlistId))
                                 expanded = false
                             },
                         )
@@ -401,4 +464,16 @@ fun playlistSelect(
             }
         }
     }
+}
+
+@Composable
+fun saveButton(onSaveClick: () -> Unit, modifier: Modifier) {
+    Button(onClick = onSaveClick, colors = ButtonDefaults.buttonColors(PurpleDark)) {
+        Text(
+            text = "Save",
+            color = PurpleBackground,
+            modifier = Modifier.padding(8.dp),
+        )
+    }
+
 }
