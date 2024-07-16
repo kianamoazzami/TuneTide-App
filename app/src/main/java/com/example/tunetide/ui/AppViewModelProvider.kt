@@ -33,9 +33,7 @@ object AppViewModelProvider {
 
         initializer {
             HomePageViewModel(
-                TuneTideApplication().applicationContext,
-                TuneTideApplication().container.playbackRepository,
-                TuneTideApplication().container.mp3Repository
+                TuneTideApplication().container.playbackRepository
             )
         }
 
