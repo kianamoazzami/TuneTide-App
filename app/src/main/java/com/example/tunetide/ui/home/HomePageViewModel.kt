@@ -82,9 +82,10 @@ class HomePageViewModel (
     }
 
     fun timeFormat(timeSec: Long): String {
+        val hours = (timeSec) / 3600
         val minutes = (timeSec) / 60
         val seconds = (timeSec) % 60
-        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
+        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds)
     }
 
     init {

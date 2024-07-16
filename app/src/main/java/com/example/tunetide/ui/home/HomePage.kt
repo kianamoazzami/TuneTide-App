@@ -213,7 +213,7 @@ fun TimerDisplay(
         // LIVE TIMER
         text = viewModel.timeFormat(viewModel.currentTimerVal.collectAsState().value.toLong()),
         color = Color.White,
-        fontSize = 48.sp,
+        fontSize = 36.sp,
         textAlign = TextAlign.Center
     )
 }
@@ -326,7 +326,7 @@ fun InfoBody(
                     .wrapContentHeight(align = Alignment.CenterVertically),
             )
         }
-        else if (timer.isInterval) {
+        else {
             CompletedDisplay(
                 viewModel = viewModel,
                 modifier = modifier,
@@ -348,17 +348,6 @@ fun InfoBody(
                 timer = timer
             )
 
-        }
-        else {
-            Text(
-                "Standard Timer",
-                color = Color(Greyish.value),
-                fontSize = 30.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .weight(1f)
-                    .wrapContentHeight(align = Alignment.CenterVertically),
-            )
         }
     }
 
@@ -389,20 +378,22 @@ fun CompletedDisplay(
                 .fillMaxSize()
                 .padding(horizontal = 8.dp)
         ) {
-            Text(
-                "completed",
-                color = Color(0xFF2B217F),
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                max(0, playback.currentInterval - 1).toString(),
-                color = Color(0xFF2B217F),
-                fontSize = 12.sp,
-                textAlign = TextAlign.End,
-                modifier = Modifier.weight(1f)
-            )
+            if (timer.isInterval) {
+                Text(
+                    "completed",
+                    color = Color(0xFF2B217F),
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    max(0, playback.currentInterval - 1).toString(),
+                    color = Color(0xFF2B217F),
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 
@@ -433,20 +424,22 @@ fun RemainingDisplay(
                 .fillMaxSize()
                 .padding(horizontal = 8.dp)
         ) {
-            Text(
-                "remaining",
-                color = Color(0xFF2B217F),
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                (timer.numIntervals - playback.currentInterval).toString(),
-                color = Color(0xFF2B217F),
-                fontSize = 12.sp,
-                textAlign = TextAlign.End,
-                modifier = Modifier.weight(1f)
-            )
+            if (timer.isInterval) {
+                Text(
+                    "remaining",
+                    color = Color(0xFF2B217F),
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    (timer.numIntervals - playback.currentInterval).toString(),
+                    color = Color(0xFF2B217F),
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 
@@ -474,12 +467,14 @@ fun FlowBreakDisplay(
                 .fillMaxSize()
                 .padding(8.dp)
         ) {
-            Text("Interval "
-                    + playback.currentInterval.toString()
-                    + " of " + timer.numIntervals,
-                color = Color(0xFF241673).copy(alpha = 0.5f),
-                fontSize = 12.sp
-            )
+            if (timer.isInterval) {
+                Text("Interval "
+                        + playback.currentInterval.toString()
+                        + " of " + timer.numIntervals,
+                    color = Color(0xFF241673).copy(alpha = 0.5f),
+                    fontSize = 12.sp
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
