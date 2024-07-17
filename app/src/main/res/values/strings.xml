@@ -11,6 +11,11 @@
     <string name="settings">Settings</string>
     <string name="save">Save</string>
 
+    <!-- Bottom Bar Screen String Names -->
+    <string name="home_screen">home</string>
+    <string name="settings_screen">settings</string>
+    <string name="timers_screen">timers</string>
+
     <string name="delete">Delete</string>
     <string name="delete_question">Are you sure you want to delete?</string>
     <string name="no">No</string>
