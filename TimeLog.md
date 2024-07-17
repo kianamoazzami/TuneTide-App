@@ -62,7 +62,7 @@
  | 07/05/24 | Spotify & Kotlin Coroutine Research |           |           | 3.0       |           |           |
  | 07/05/24 | Homepage Restructuring              |           |           |           | 4.0       |           |
  | 07/05/24 | Local Music Files Page              |           |           |           |           | 1.0       |
- | 07/06/24 | Local Files * Top App Bar 2         |           |           |           |           | 2.0       |
+ | 07/06/24 | Local Files + Top App Bar 2         |           |           |           |           | 2.0       |
  | 07/06/24 | Fixing the issue on Android Studio  |           |   2.5     |           |           |           |
  | 07/06/24 | Updating the setting page           |           |   6.0     |           |           |           |
  | 07/08/24 | Meeting                             | 0.75      |           | 0.75      | 0.75      |           | 
@@ -79,7 +79,7 @@
  | 07/10/24 | Playlist Creation                   |           |           |           |           | 2.0       |
  | 07/10/24 | Work on D4                          |           |           |           |           | 1.0       |
  | 07/11/24 | Finished Playlist Creation          |           |           |           |           | 2.0       |
- | 07/11/24 | Work on D4                          |           |           |           | 1.0       | 1.0       |
+ | 07/11/24 | Work on D4                          | 1.0       |           |           | 1.0       | 1.0       |
  | 07/12/24 | Playlist Deletion                   |           |           |           |           | 2.5       |
  | 07/12/24 | Spotify Controller                  |           | 2.0       |           |           |           |
  | 07/12/24 | Dealing with Data Access            |           |           |           | 4.0       |           |
@@ -91,3 +91,13 @@
  | 07/15/24 | Adding Songs to MP3File Table       |           |           |           |           | 3.0       |
  | 07/15/24 | Meeting                             | 1.0       | 1.0       | 1.0       | 1.0       | 1.0       |
  | 07/15/24 | Work on Parsing D6, D7              | 0.75      |           |           |           |           | 
+ | 07/14/24 | Spotify Controller                  |           | 2.0       |           |           |           |
+ | 07/15/24 | Add Timer Page                      |           |           |           | 5.0       |           |
+ | 07/15/24 | Navigation + MP3 Player             |           |           |           |           | 2.5       |
+ | 07/15/24 | Fixing errors on saved timer page   |           | 2.0       |           |           |           |
+ | 07/15/24 |Update the on UI savedtimer (x3Pages)|           | 4.0       |           |           |           |
+ | 07/16/24 | Connecting MP3 music to home page   |           |           |           |           | 7.0       |
+ | 07/16/24 | Add Timer Page                      |           |           |           | 10.0      |           |
+ | 07/16/24 | Work on D5                          | 1.0       |           |           |           |           | 
+ | 07/17/24 | Work on D6                          | 1.0       |           |           |           |           | 
+ 

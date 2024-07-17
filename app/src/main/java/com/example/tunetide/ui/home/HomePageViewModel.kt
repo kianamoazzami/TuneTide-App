@@ -1,35 +1,25 @@
 package com.example.tunetide.ui.home
 
-import android.util.Log
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.database.MusicType
 import com.example.tunetide.database.Playback
 import com.example.tunetide.database.StateType
-import com.example.tunetide.database.Timer
+import com.example.tunetide.mp3player.MP3PlayerManager
+import com.example.tunetide.repository.MP3Repository
 import com.example.tunetide.repository.PlaybackRepository
-import com.example.tunetide.repository.TimerRepository
-import com.example.tunetide.ui.timer.TimerDetails
 import com.example.tunetide.ui.timer.TimerUIState
 import com.example.tunetide.ui.timer.toTimerDetails
-import com.example.tunetide.ui.timer.toTimerUIState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -37,11 +27,15 @@ import java.util.Locale
  * View Model to host state of the timer that is running
  */
 class HomePageViewModel (
-    private val playbackRepository: PlaybackRepository
+    context: Context,
+    private val playbackRepository: PlaybackRepository,
+    private val mP3Repository: MP3Repository
 ): ViewModel() {
 
     private var _timerId: Int = -1
         private set
+
+    private var mp3PlayerManager: MP3PlayerManager = MP3PlayerManager(context)
 
     val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
         .filterNotNull()
@@ -82,15 +76,17 @@ class HomePageViewModel (
     }
 
     fun timeFormat(timeSec: Long): String {
-        val minutes = (timeSec) / 60
+        val hours = (timeSec) / 3600
+        val minutes = (timeSec % 3600) / 60
         val seconds = (timeSec) % 60
-        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
+        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds)
     }
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
             _timerId = playbackRepository.getPlayingTimerId()
             getStartingTimerValue()
+            getStartingMusic()
         }
     }
 
@@ -100,11 +96,9 @@ class HomePageViewModel (
             _isPlaying.value = true
             homeScreenTimer()
 
-            var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
-
             if (_timerId == -1) {
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
-                // TODO @KIANA
+                mp3PlayerManager.play()
 
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
                 // TODO @ERICA
@@ -117,11 +111,9 @@ class HomePageViewModel (
             playbackRepository.pause()
             _isPlaying.value = false
 
-            var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
-
             if (_timerId == -1) {
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
-                // TODO @KIANA
+                mp3PlayerManager.pause()
 
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
                 // TODO @ERICA
@@ -131,11 +123,9 @@ class HomePageViewModel (
 
     fun skipSong() {
         CoroutineScope(Dispatchers.IO).launch {
-            var playlistId: Int = playbackRepository.getPlayingMusicPlaylistId()
-
             if (_timerId == -1) {
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
-                // TODO @KIANA
+                mp3PlayerManager.skipToNextSong()
 
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
                 // TODO @ERICA
@@ -150,10 +140,18 @@ class HomePageViewModel (
             } else if (playbackRepository.getStateType() == StateType.BREAK) {
                 _currentTimerVal.value = playbackRepository.getBreakDurationSeconds()
             } else {
-                //STANDARD TIMER
-                _currentTimerVal.value = playbackRepository.getFlowDurationSeconds()
+                _currentTimerVal.value = 0
             }
+        }
+    }
 
+    private fun getStartingMusic() {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
+                val playlistId = playbackRepository.getPlayingMusicPlaylistId()
+                val playlist = mP3Repository.getMP3FileByPlaylist(playlistId)
+                mp3PlayerManager.switchPlaylist(playlist)
+            }
         }
     }
 
@@ -167,6 +165,7 @@ class HomePageViewModel (
             } else {
                 playbackRepository.startNextInterval()
                 getStartingTimerValue()
+                getStartingMusic()
                 homeScreenTimer()
             }
         }
@@ -175,7 +174,8 @@ class HomePageViewModel (
     // same as cancelling a timer
     fun finish() {
         CoroutineScope(Dispatchers.IO).launch {
-            // TODO @ERICA @KIANA stop music
+            // TODO @ERICA stop music
+            mp3PlayerManager.stopMusic()
             playbackRepository.invalidatePlayback()
             _isPlaying.value = false
             _currentTimerVal.value = 0
@@ -189,6 +189,11 @@ class HomePageViewModel (
             homeScreenTimer()
             // TODO @ERICA @KIANA restart music
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        mp3PlayerManager.releaseMediaPlayer()
     }
 
     companion object {

@@ -41,13 +41,15 @@ fun TuneTideNavHost(
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen(
-                // TODO @KATHERINE @NOUR navigation info here
+                navigateToSettings = { navController.navigate(SettingsDestination.route) },
+                navigateToTimersList = { /* add this when its complete */ }
             )
         }
 
         composable(route = SettingsDestination.route) {
             SettingsScreen(
-                navigateBack = { navController.popBackStack() },
+                navigateToHome = { navController.navigate(HomeDestination.route) },
+                navigateToTimersList = { /* add this when its complete */ },
                 navigateToLocalFiles = {navController.navigate(LocalFilesDestination.route) }
             )
         }
