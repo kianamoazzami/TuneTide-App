@@ -1,37 +1,35 @@
 package com.example.tunetide.spotify
 
 import android.content.Context
-import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.example.tunetide.ui.TuneTideApp
-import com.example.tunetide.ui.theme.TuneTideTheme
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
+import com.spotify.android.appremote.api.ContentApi
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.android.appremote.api.error.SpotifyDisconnectedException
+import com.spotify.protocol.client.CallResult
+import com.spotify.protocol.client.Result
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.Capabilities
+import com.spotify.protocol.types.ListItem
+import com.spotify.protocol.types.ListItems
 import com.spotify.protocol.types.PlayerContext
 import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+
 
 //Controller needs to be initialized with reference context..
 // 'application' should give application context
@@ -65,6 +63,7 @@ class SpotifyController(private val mainContext: Context) {
 
     private suspend fun connectToAppRemote(showAuthView: Boolean): SpotifyAppRemote? =
         suspendCoroutine { cont: Continuation<SpotifyAppRemote> ->
+            SpotifyAppRemote.setDebugMode(true)
             SpotifyAppRemote.connect(
                 mainContext,
                 ConnectionParams.Builder(clientId)
@@ -191,6 +190,61 @@ class SpotifyController(private val mainContext: Context) {
     }
 
     //TODO: below functions.. track updates in-time, track browsing
+
+    private fun convertToList(inputItems: ListItems?): List<ListItem> {
+        return if (inputItems?.items != null) {
+            inputItems.items.toList()
+        } else {
+            emptyList()
+        }
+    }
+
+    private suspend fun loadChildren(appRemote: SpotifyAppRemote?, parent: ListItem): ListItems? =
+        suspendCoroutine { cont ->
+            appRemote?.contentApi?.getChildrenOfItem(parent, 6, 0)?.setResultCallback { listItems -> cont.resume(listItems) }
+                ?.setErrorCallback { throwable ->
+                    errorCallback.invoke(throwable)
+                    cont.resumeWithException(throwable)
+                }
+        }
+
+    private suspend fun loadRootRecommendations(appRemote: SpotifyAppRemote?): ListItems? =
+        suspendCoroutine { cont ->
+                appRemote?.contentApi?.getRecommendedContentItems(ContentApi.ContentType.FITNESS)?.setResultCallback { listItems -> cont.resume(listItems) }
+                    ?.setErrorCallback { throwable ->
+                        errorCallback.invoke(throwable)
+                        cont.resumeWithException(throwable)
+                    }
+
+        }
+
+
+    fun onGetPlaylistsClicked(notUsed: View) {
+        spotifyAppRemote.let {
+            CoroutineScope(Dispatchers.Main).launch {
+                val combined = ArrayList<ListItem>(50)
+                val listItems = loadRootRecommendations(it)
+                listItems?.apply {
+                    for (i in items.indices) {
+                        if (items[i].playable) {
+                            combined.add(items[i])
+                        } else {
+                            val children: ListItems? = loadChildren(it, items[i])
+                            combined.addAll(convertToList(children))
+                        }
+                    }
+                }
+                //TODO: display stuff
+                /*
+                showDialog(
+                    getString(R.string.command_response, getString(R.string.browse_content)),
+                    gson.toJson(combined))
+
+                */
+            }
+        }
+    }
+
 
     private val playerContextEventCallback = Subscription.EventCallback<PlayerContext> { playerContext ->
        //TODO: fill in
