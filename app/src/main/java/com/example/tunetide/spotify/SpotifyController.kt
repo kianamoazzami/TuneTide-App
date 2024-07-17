@@ -5,6 +5,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.example.tunetide.database.SpotifyPlaylist
+import com.example.tunetide.repository.SpotifyDao
+import com.example.tunetide.repository.SpotifyRepository
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.ContentApi
@@ -168,7 +171,7 @@ class SpotifyController(private val mainContext: Context) {
         var waited = 0;
         while (spotifyAppRemote == null && waited < 5) {
             delay(2000)
-            Log.d("Spotify Controller", "Waiting for Connection to play URI..")
+            Log.d("Spotify Controller", "Waiting for Connection to use spotify...")
             waited++
         }
 
@@ -218,33 +221,39 @@ class SpotifyController(private val mainContext: Context) {
 
         }
 
+    // Call at start
+    fun loadPlaylists(spotifyRepository : SpotifyRepository) {
+        CoroutineScope(Dispatchers.Main).launch {
+            waitForConnection()
+            spotifyAppRemote.let {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val combined = ArrayList<ListItem>(50)
+                    val listItems = loadRootRecommendations(it)
+                    listItems?.apply {
+                        for (i in items.indices) {
+                            if (items[i].playable) {
+                                combined.add(items[i])
+                            } else {
+                                val children: ListItems? = loadChildren(it, items[i])
+                                combined.addAll(convertToList(children))
+                                if (i < 21 && children != null && children.items[0].playable) {
+                                    val playlist: SpotifyPlaylist = SpotifyPlaylist(
+                                        i,
+                                        children.items[0].title,
+                                        children.items[0].uri,
+                                        children.items[0].imageUri.toString()
+                                    )
 
-    fun onGetPlaylistsClicked(notUsed: View) {
-        spotifyAppRemote.let {
-            CoroutineScope(Dispatchers.Main).launch {
-                val combined = ArrayList<ListItem>(50)
-                val listItems = loadRootRecommendations(it)
-                listItems?.apply {
-                    for (i in items.indices) {
-                        if (items[i].playable) {
-                            combined.add(items[i])
-                        } else {
-                            val children: ListItems? = loadChildren(it, items[i])
-                            combined.addAll(convertToList(children))
+                                    spotifyRepository.insertPlaylist(playlist)
+                                }
+                            }
+
                         }
                     }
                 }
-                //TODO: display stuff
-                /*
-                showDialog(
-                    getString(R.string.command_response, getString(R.string.browse_content)),
-                    gson.toJson(combined))
-
-                */
             }
         }
     }
-
 
     private val playerContextEventCallback = Subscription.EventCallback<PlayerContext> { playerContext ->
        //TODO: fill in
