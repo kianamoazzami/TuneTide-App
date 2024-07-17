@@ -98,5 +98,5 @@
  | 07/15/24 |Update the on UI savedtimer (x3Pages)|           | 4.0       |           |           |           |
  | 07/16/24 | Connecting MP3 music to home page   |           |           |           |           | 7.0       |
  | 07/16/24 | Add Timer Page                      |           |           |           | 10.0      |           |
- | 07/16/24 | Work on D5                          | 1         |           |           |           |           | 
+ | 07/16/24 | Work on D5                          | 1.0       |           |           |           |           | 
  
