@@ -102,4 +102,5 @@
  | 07/17/24 | Work on D6                          | 1.0       |           |           |           |           | 
  | 07/17/24 | Meeting                             | 2.0       | 1.0       | 2.0       | 2.0       | 1.0       |
  | 07/17/24 | Work on UI, D5                      | 1.0       |           |           |           |           |
+ | 07/17/24 | Studying Navigation + Edit Timer    |           |           |           | 2.0       |           |
  
