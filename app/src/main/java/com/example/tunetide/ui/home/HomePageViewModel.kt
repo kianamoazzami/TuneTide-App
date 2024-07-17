@@ -82,9 +82,10 @@ class HomePageViewModel (
     }
 
     fun timeFormat(timeSec: Long): String {
-        val minutes = (timeSec) / 60
+        val hours = (timeSec) / 3600
+        val minutes = (timeSec % 3600) / 60
         val seconds = (timeSec) % 60
-        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
+        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds)
     }
 
     init {
@@ -150,10 +151,8 @@ class HomePageViewModel (
             } else if (playbackRepository.getStateType() == StateType.BREAK) {
                 _currentTimerVal.value = playbackRepository.getBreakDurationSeconds()
             } else {
-                //STANDARD TIMER
-                _currentTimerVal.value = playbackRepository.getFlowDurationSeconds()
+                _currentTimerVal.value = 0
             }
-
         }
     }
 
