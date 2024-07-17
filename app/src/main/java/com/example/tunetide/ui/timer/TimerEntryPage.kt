@@ -39,6 +39,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -86,7 +87,7 @@ fun TimerEntryScreen(
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.insertTimer()
-                    Log.d("Timer: ", viewModel.timerUIState.timerDetails.toString())
+                    Log.d("Timer: ", viewModel.timerUIState.toString())
                     navigateBack()
                 }
             },
@@ -111,10 +112,10 @@ fun TimerEntryBody(
     Box(modifier = modifier) {
         Column(modifier = modifier) {
             Row(modifier = modifier.padding(16.dp)) {
-                flowStateForm(timerUIState, modifier, localFilesViewModel, onTimerValueChange)
+                flowStateForm(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
             }
             Row(modifier = modifier.padding(16.dp)) {
-                breakStateForm(timerUIState, modifier, localFilesViewModel, onTimerValueChange)
+                breakStateForm(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
             }
             Row(modifier = modifier.padding(16.dp)) {
                 nameField(timerUIState, modifier, onTimerValueChange)
@@ -136,10 +137,11 @@ fun flowStateForm(
     timerUIState : TimerUIState,
     modifier: Modifier,
     localFilesViewModel: LocalFilesViewModel,
-    onTimerValueChange: (TimerDetails) -> Unit
+    onTimerValueChange: (TimerDetails) -> Unit,
+    viewModel: TimerEntryViewModel
 ){
     val state = "Flow"
-    stateOptions(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange)
+    stateOptions(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
 }
 
 @Composable
@@ -147,10 +149,11 @@ fun breakStateForm(
     timerUIState : TimerUIState,
     modifier: Modifier,
     localFilesViewModel: LocalFilesViewModel,
-    onTimerValueChange: (TimerDetails) -> Unit
+    onTimerValueChange: (TimerDetails) -> Unit,
+    viewModel: TimerEntryViewModel
 ){
     val state = "Break"
-    stateOptions(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange)
+    stateOptions(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
 }
 
 @Composable
@@ -271,10 +274,11 @@ fun stateOptions(
     timerUIState : TimerUIState,
     modifier: Modifier,
     localFilesViewModel : LocalFilesViewModel,
-    onTimerValueChange: (TimerDetails) -> Unit
+    onTimerValueChange: (TimerDetails) -> Unit,
+    viewModel: TimerEntryViewModel
 ){
     Column(modifier = modifier) {
-        timeSelect(state, timerUIState, modifier, onTimerValueChange)
+        timeSelect(state, timerUIState, modifier, onTimerValueChange, viewModel)
         playlistSelect(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange)
     }
 }
@@ -284,7 +288,8 @@ fun timeSelect(
     state: String,
     timerUIState : TimerUIState,
     modifier: Modifier,
-    onTimerValueChange: (TimerDetails) -> Unit
+    onTimerValueChange: (TimerDetails) -> Unit,
+    viewModel: TimerEntryViewModel
 ) {
     val focusManager = LocalFocusManager.current
     val textFieldColors = TextFieldDefaults.outlinedTextFieldColors(
@@ -313,7 +318,12 @@ fun timeSelect(
             OutlinedTextField(
                 value = timeVal.toString(),
                 onValueChange = {
-                    timeVal = it.toInt()
+                    if (it.isNotEmpty()) {
+                        timeVal = it.toInt()
+                    }
+                    else {
+                        timeVal = 0
+                    }
                 },
                 label = { Text("") },
                 colors = textFieldColors,
@@ -331,11 +341,11 @@ fun timeSelect(
                         focusManager.clearFocus()
                         if (state == "Flow") {
                             onTimerValueChange(timerUIState.timerDetails.copy(
-                                flowMusicDurationSeconds = timerUIState.timerDetails.flowMusicDurationSeconds + (timeVal * 3600)))
+                                flowMusicDurationSeconds = (timerUIState.timerDetails.flowMusicDurationSeconds % 3600) + (timeVal * 3600)))
                         }
                         else {
                             onTimerValueChange(timerUIState.timerDetails.copy(
-                                breakMusicDurationSeconds = timerUIState.timerDetails.breakMusicDurationSeconds + (timeVal * 3600)))
+                                breakMusicDurationSeconds = (timerUIState.timerDetails.breakMusicDurationSeconds % 3600) + (timeVal * 3600)))
                         }
                     }
                 )
@@ -357,7 +367,12 @@ fun timeSelect(
             OutlinedTextField(
                 value = timeVal.toString(),
                 onValueChange = {
-                    timeVal = it.toInt()
+                    if (it.isNotEmpty()) {
+                        timeVal = it.toInt()
+                    }
+                    else {
+                        timeVal = 0
+                    }
                 },
                 label = { Text("") },
                 colors = textFieldColors,
@@ -375,11 +390,11 @@ fun timeSelect(
                         focusManager.clearFocus()
                         if (state == "Flow") {
                             onTimerValueChange(timerUIState.timerDetails.copy(
-                                flowMusicDurationSeconds = timerUIState.timerDetails.flowMusicDurationSeconds + (timeVal * 60)))
+                                flowMusicDurationSeconds = (timerUIState.timerDetails.flowMusicDurationSeconds / 3600 ) * 3600 + (timeVal * 60)))
                         }
                         else {
                             onTimerValueChange(timerUIState.timerDetails.copy(
-                                breakMusicDurationSeconds = timerUIState.timerDetails.breakMusicDurationSeconds + (timeVal * 60)))
+                                breakMusicDurationSeconds = (timerUIState.timerDetails.breakMusicDurationSeconds / 3600 ) * 3600 + (timeVal * 60)))
                         }
                     }
                 )
@@ -403,13 +418,31 @@ fun playlistSelect(
     localFilesViewModel : LocalFilesViewModel,
     onTimerValueChange: (TimerDetails) -> Unit
 ) {
+    var spotify by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .padding(vertical = 8.dp)
     ) {
+        Column( modifier = Modifier.padding(0.dp)) {
+            Text(
+                text = "Spotify",
+                color = PurpleDark,
+                modifier = Modifier.padding(end = 8.dp),
+            )
+            Checkbox(
+                checked = spotify,
+                onCheckedChange = {
+                    spotify = !spotify
+                }
+            )
+        }
 
         var expanded by remember { mutableStateOf(false) }
-        val options = localFilesViewModel.localFilesUIState.collectAsState().value.mp3Playlists
+        var options = localFilesViewModel.localFilesUIState.collectAsState().value.mp3Playlists
+        if (spotify) {
+            // TODO: options = list of spotify playlists
+            options = emptyList()
+        }
         if (options.isEmpty()) {
             Text(
                 text = "No Playlists Available",
@@ -418,14 +451,8 @@ fun playlistSelect(
             )
         }
         else {
-            Text(
-                text = "Playlist",
-                color = PurpleDark,
-                modifier = Modifier.padding(8.dp),
-            )
             var selectedOption by remember { mutableStateOf(options[0]) }
-            onTimerValueChange(timerUIState.timerDetails.copy(mp3FlowMusicPlaylistId = selectedOption.playlistId))
-            onTimerValueChange(timerUIState.timerDetails.copy(mp3BreakMusicPlaylistId = selectedOption.playlistId))
+            var chosenOptionName by remember { mutableStateOf("Choose a Playlist") }
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = {
@@ -436,7 +463,7 @@ fun playlistSelect(
                     .height(50.dp)
             ) {
                 TextField(
-                    value = selectedOption.playlistName,
+                    value = chosenOptionName,
                     onValueChange = {},
                     readOnly = true,
                     trailingIcon = {
@@ -452,10 +479,26 @@ fun playlistSelect(
                 ) {
                     options.forEach { option ->
                         DropdownMenuItem(
-                            text = { option.playlistName },
+                            text = { Text(option.playlistName) },
                             onClick = {
                                 selectedOption = option
-                                onTimerValueChange(timerUIState.timerDetails.copy(mp3FlowMusicPlaylistId = selectedOption.playlistId))
+                                chosenOptionName = selectedOption.playlistName
+                                if (state == "Flow") {
+                                    if (spotify) {
+                                        onTimerValueChange(timerUIState.timerDetails.copy(spotifyFlowMusicPlaylistId = selectedOption.playlistId))
+                                    }
+                                    else {
+                                        onTimerValueChange(timerUIState.timerDetails.copy(mp3FlowMusicPlaylistId = selectedOption.playlistId))
+                                    }
+                                }
+                                else {
+                                    if (spotify) {
+                                        onTimerValueChange(timerUIState.timerDetails.copy(spotifyBreakMusicPlaylistId = selectedOption.playlistId))
+                                    }
+                                    else {
+                                        onTimerValueChange(timerUIState.timerDetails.copy(mp3BreakMusicPlaylistId = selectedOption.playlistId))
+                                    }
+                                }
                                 expanded = false
                             },
                         )

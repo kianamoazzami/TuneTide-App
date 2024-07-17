@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.tunetide.database.Timer
 import com.example.tunetide.repository.TimerRepository
+import com.example.tunetide.ui.mp3.toMP3Playlist
+import kotlinx.coroutines.flow.toList
 
 /**
  * View Model to host state
@@ -26,8 +28,8 @@ class TimerEntryViewModel (
 
     suspend fun insertTimer() {
         if (timerUIState.isValidEntry) {
-            Log.d("Valid Input", "Yes")
-            timerRepository.insertTimer(timerUIState.timerDetails.toTimer())
+            updateUIState(timerUIState.timerDetails.copy(isSaved = true))
+           timerRepository.insertTimer(timerUIState.timerDetails.toTimer())
         }
     }
 
@@ -57,7 +59,7 @@ data class TimerUIState(
  * represents the "UI" for timer
  */
 data class TimerDetails(
-    val timerId: Int = -1,
+    val timerId: Int = 0,
     val timerName: String = "",
     val isInterval: Boolean = false,
     val numIntervals: Int = 1,
