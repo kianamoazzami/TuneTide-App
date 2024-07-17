@@ -99,4 +99,5 @@
  | 07/16/24 | Connecting MP3 music to home page   |           |           |           |           | 7.0       |
  | 07/16/24 | Add Timer Page                      |           |           |           | 10.0      |           |
  | 07/16/24 | Work on D5                          | 1.0       |           |           |           |           | 
+ | 07/17/24 | Work on D6                          | 1.0       |           |           |           |           | 
  
