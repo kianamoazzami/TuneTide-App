@@ -87,7 +87,6 @@ fun TimerEntryScreen(
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.insertTimer()
-                    Log.d("Timer: ", viewModel.timerUIState.toString())
                     navigateBack()
                 }
             },
@@ -126,7 +125,7 @@ fun TimerEntryBody(
             Row(modifier = modifier
                 .padding(16.dp)
                 .align(Alignment.End)) {
-                saveButton(onSaveClick, modifier)
+                saveButton(timerUIState, onSaveClick, modifier)
             }
         }
     }
@@ -510,7 +509,14 @@ fun playlistSelect(
 }
 
 @Composable
-fun saveButton(onSaveClick: () -> Unit, modifier: Modifier) {
+fun saveButton(timerUIState: TimerUIState, onSaveClick: () -> Unit, modifier: Modifier) {
+    if (!timerUIState.isValidEntry) {
+        Text(
+            text = "Incomplete Input",
+            color = Color.Red,
+            modifier = Modifier.padding(8.dp),
+        )
+    }
     Button(onClick = onSaveClick, colors = ButtonDefaults.buttonColors(PurpleDark)) {
         Text(
             text = "Save",
