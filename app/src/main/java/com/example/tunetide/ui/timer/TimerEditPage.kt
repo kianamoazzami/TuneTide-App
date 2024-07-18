@@ -268,7 +268,7 @@ fun stateOptionsEdit(
 ){
     Column(modifier = modifier) {
         timeSelectEdit(state, timerUIState, modifier, onTimerValueChange, viewModel)
-        playlistSelectEdit(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange)
+        playlistSelectEdit(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
     }
 }
 
@@ -405,7 +405,8 @@ fun playlistSelectEdit(
     timerUIState : TimerUIState,
     modifier: Modifier,
     localFilesViewModel : LocalFilesViewModel,
-    onTimerValueChange: (TimerDetails) -> Unit
+    onTimerValueChange: (TimerDetails) -> Unit,
+    viewModel: TimerEditViewModel
 ) {
     var spotify by remember { mutableStateOf(false) }
     Row(
@@ -426,71 +427,118 @@ fun playlistSelectEdit(
             )
         }
 
-        var expanded by remember { mutableStateOf(false) }
-        var options = localFilesViewModel.localFilesUIState.collectAsState().value.mp3Playlists
         if (spotify) {
-            // TODO: options = list of spotify playlists
-            options = emptyList()
-        }
-        if (options.isEmpty()) {
-            Text(
-                text = "No Playlists Available",
-                color = PurpleDark,
-                modifier = Modifier.padding(8.dp),
-            )
+            // SPOTIFY VIEW
+            var expanded by remember { mutableStateOf(false) }
+            var options = viewModel.spotifyRepository.getSpotifyPlaylists().collectAsState(initial = emptyList()).value
+            if (options.isEmpty()) {
+                Text(
+                    text = "No Playlists Available",
+                    color = PurpleDark,
+                    modifier = Modifier.padding(8.dp),
+                )
+            }
+            else {
+                var selectedOption by remember { mutableStateOf(options[0]) }
+                var chosenOptionName by remember { mutableStateOf("Choose a Playlist") }
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = {
+                        expanded = !expanded
+                    },
+                    modifier = modifier
+                        .background(PurpleLight)
+                        .height(50.dp)
+                ) {
+                    TextField(
+                        value = chosenOptionName,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = expanded
+                            )
+                        },
+                        modifier = Modifier
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        options.forEach { option ->
+                            DropdownMenuItem(
+                                text = { option.playlistName.toString() },
+                                onClick = {
+                                    selectedOption = option
+                                    chosenOptionName = selectedOption.playlistName.toString()
+                                    if (state == "Flow") {
+                                        onTimerValueChange(timerUIState.timerDetails.copy(spotifyFlowMusicPlaylistId = selectedOption.playlistId, mp3FlowMusicPlaylistId = -1))
+                                    }
+                                    else {
+                                        onTimerValueChange(timerUIState.timerDetails.copy(spotifyBreakMusicPlaylistId = selectedOption.playlistId, mp3BreakMusicPlaylistId = -1))
+                                    }
+                                    expanded = false
+                                },
+                            )
+                        }
+                    }
+                }
+            }
         }
         else {
-            var selectedOption by remember { mutableStateOf(options[0]) }
-            var chosenOptionName by remember { mutableStateOf("Choose a Playlist") }
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = {
-                    expanded = !expanded
-                },
-                modifier = modifier
-                    .background(PurpleLight)
-                    .height(50.dp)
-            ) {
-                TextField(
-                    value = chosenOptionName,
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(
-                            expanded = expanded
-                        )
-                    },
-                    modifier = Modifier
+            // MP3 VIEW
+            var expanded by remember { mutableStateOf(false) }
+            var options = localFilesViewModel.localFilesUIState.collectAsState().value.mp3Playlists
+            if (options.isEmpty()) {
+                Text(
+                    text = "No Playlists Available",
+                    color = PurpleDark,
+                    modifier = Modifier.padding(8.dp),
                 )
-                ExposedDropdownMenu(
+            }
+            else {
+                var selectedOption by remember { mutableStateOf(options[0]) }
+                var chosenOptionName by remember { mutableStateOf("Choose a Playlist") }
+                ExposedDropdownMenuBox(
                     expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    onExpandedChange = {
+                        expanded = !expanded
+                    },
+                    modifier = modifier
+                        .background(PurpleLight)
+                        .height(50.dp)
                 ) {
-                    options.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option.playlistName) },
-                            onClick = {
-                                selectedOption = option
-                                chosenOptionName = selectedOption.playlistName
-                                if (state == "Flow") {
-                                    if (spotify) {
-                                        onTimerValueChange(timerUIState.timerDetails.copy(spotifyFlowMusicPlaylistId = selectedOption.playlistId))
+                    TextField(
+                        value = chosenOptionName,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = expanded
+                            )
+                        },
+                        modifier = Modifier
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        options.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option.playlistName) },
+                                onClick = {
+                                    selectedOption = option
+                                    chosenOptionName = selectedOption.playlistName
+                                    if (state == "Flow") {
+                                        onTimerValueChange(timerUIState.timerDetails.copy(mp3FlowMusicPlaylistId = selectedOption.playlistId, spotifyFlowMusicPlaylistId = -1))
                                     }
                                     else {
-                                        onTimerValueChange(timerUIState.timerDetails.copy(mp3FlowMusicPlaylistId = selectedOption.playlistId))
+                                        onTimerValueChange(timerUIState.timerDetails.copy(mp3BreakMusicPlaylistId = selectedOption.playlistId, spotifyBreakMusicPlaylistId = -1))
                                     }
-                                }
-                                else {
-                                    if (spotify) {
-                                        onTimerValueChange(timerUIState.timerDetails.copy(spotifyBreakMusicPlaylistId = selectedOption.playlistId))
-                                    }
-                                    else {
-                                        onTimerValueChange(timerUIState.timerDetails.copy(mp3BreakMusicPlaylistId = selectedOption.playlistId))
-                                    }
-                                }
-                                expanded = false
-                            },
-                        )
+                                    expanded = false
+                                },
+                            )
+                        }
                     }
                 }
             }

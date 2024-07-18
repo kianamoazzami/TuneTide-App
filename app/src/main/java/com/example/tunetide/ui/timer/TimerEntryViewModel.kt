@@ -5,16 +5,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.tunetide.database.SpotifyPlaylist
 import com.example.tunetide.database.Timer
 import com.example.tunetide.repository.TimerRepository
 import com.example.tunetide.ui.mp3.toMP3Playlist
 import kotlinx.coroutines.flow.toList
+import com.example.tunetide.repository.SpotifyRepository
+import kotlinx.coroutines.flow.map
 
 /**
  * View Model to host state
  */
 class TimerEntryViewModel (
-    private val timerRepository: TimerRepository
+    private val timerRepository: TimerRepository,
+    val spotifyRepository : SpotifyRepository
 ): ViewModel() {
 
     // holds current timer UI state
