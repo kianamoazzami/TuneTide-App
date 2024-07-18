@@ -100,8 +100,9 @@
  | 07/16/24 | Add Timer Page                      |           |           |           | 10.0      |           |
  | 07/16/24 | Work on D5                          | 1.0       |           |           |           |           | 
  | 07/17/24 | Work on D6                          | 1.0       |           |           |           |           | 
- | 07/17/24 | Meeting                             | 2.0       | 1.0       | 2.0       | 2.0       | 1.0       |
+ | 07/17/24 | Meeting                             | 2.0       | 1.5       | 2.0       | 2.0       | 1.5       |
  | 07/17/24 | Work on UI, D5                      | 1.0       |           |           |           |           |
  | 07/17/24 | Navigation + Edit Timer + Spotify   |           |           |           | 3.0       |           |
  | 07/17/24 | Spotify Database population + enviro|           |           | 2.0       |           |           |
  | 07/18/24 | D5 Design Pattern 3                 |           |           | 1.5       |           |           |
+ | 07/18/24 | Navigation saved timer pages        |           |  4.o      |           |           |           |
