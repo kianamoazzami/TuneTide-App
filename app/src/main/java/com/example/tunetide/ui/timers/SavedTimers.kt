@@ -76,6 +76,8 @@ fun SavedTimersBody(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         IconRow(navController)
+        Spacer(modifier = Modifier.height(16.dp)) // Add space between the rows
+        BoxWithImage()
         // Add content for saved timers here
     }
 }
@@ -116,4 +118,42 @@ fun CustomIcon(
             .size(100.dp)
             .clickable(onClick = onClick)
     )
+}
+
+@Composable
+fun BoxWithImage() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .height(100.dp), // Adjust the height as needed
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.rec),
+            contentDescription = "Rec",
+            modifier = Modifier.fillMaxSize()
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(end = 16.dp), // Adjust padding as needed
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(32.dp) // Adjust the size as needed
+                    .clickable {
+                        // Handle click action here
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.playbutton),
+                    contentDescription = "Play Button"
+                )
+            }
+        }
+    }
 }
