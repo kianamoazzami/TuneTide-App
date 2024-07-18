@@ -103,4 +103,5 @@
  | 07/17/24 | Meeting                             | 2.0       | 1.0       | 2.0       | 2.0       | 1.0       |
  | 07/17/24 | Work on UI, D5                      | 1.0       |           |           |           |           |
  | 07/17/24 | Navigation + Edit Timer + Spotify   |           |           |           | 3.0       |           |
- | 07/14/24 | Spotify Database population + enviro|           |           | 2.0       |           |           |
+ | 07/17/24 | Spotify Database population + enviro|           |           | 2.0       |           |           |
+ | 07/18/24 | D5 Design Pattern 3                 |           |           | 1.5       |           |           |
