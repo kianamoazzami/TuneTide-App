@@ -16,6 +16,8 @@ private val LightColorPalette = lightColors(
     onSecondary = PurpleDark,
     onBackground = PurpleBackground,
     onSurface = Black,
+
+
 )
 
 // TODO: Add dark mode

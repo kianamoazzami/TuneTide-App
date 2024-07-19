@@ -22,6 +22,20 @@
     <string name="yes">Yes</string>
     <string name="attention">Attention</string>
     <string name="add_songs">Add Songs</string>
+    <string name="saved_timers_page_name">Saved Timers</string>
+    <string name="standard_page_name">Standard Page</string>
+    <string name="all_timers_page_name">All Timers</string>
+    <string name="interval_page_name">Interval Page</string>
+    <string name="instrumental_studying">Instrumental Studying</string>
+    <string name="instrumental_studying_time">Duration: 1 hour</string>
+    <string name="finishing_project">Finishing Project</string>
+    <string name="finishing_project_time">Duration: 2 hours</string>
+    <string name="chill_work">Chill Work</string>
+    <string name="chill_work_time">Duration: 30 minutes</string>
+    <string name="speedy">Speedy</string>
+    <string name="speedy_time">Duration: 15 minutes</string>
+    <string name="get_ready">Get Ready</string>
+    <string name="get_ready_time">Duration: 20 minutes</string>
 
     <!-- New strings for Settings screen -->
     <string name="back">Back</string>
@@ -34,4 +48,6 @@
     <!-- New strings for MP3 Playlist Entry screen -->
     <string name="playlist_name_req">Playlist Name*</string>
     <string name="required_fields">* Required Fields</string>
+    <string name="timer_edit_page_name">Edit Timer</string>
+
 </resources>

@@ -1,14 +1,7 @@
 package com.example.tunetide.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -94,6 +87,7 @@ fun TuneTideBottomAppBar(
     navigateToHome: () -> Unit,
     navigateToTimersList: () -> Unit
 ) {
+    val darkerTint = Color(0xFF3D3B8E) // Define a darker tint color
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
@@ -139,7 +133,7 @@ fun TuneTideBottomAppBar(
                     painter = painterResource(id = R.drawable.timer),
                     contentDescription = "Timer",
                     tint =
-                    if (currentScreen == R.string.timers_screen) {
+                    if (currentScreen == R.string.all_timers_page_name) {
                         PurpleAccent
                     } else {
                         PurpleBackground },
