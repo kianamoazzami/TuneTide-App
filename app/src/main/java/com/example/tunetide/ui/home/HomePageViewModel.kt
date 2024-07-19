@@ -1,7 +1,6 @@
 package com.example.tunetide.ui.home
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tunetide.database.MusicType
