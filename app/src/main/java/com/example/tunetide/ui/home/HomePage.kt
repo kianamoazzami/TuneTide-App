@@ -26,6 +26,7 @@ import com.example.tunetide.ui.navigation.NavigationDestination
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.tunetide.ui.theme.Greyish
+import com.example.tunetide.ui.theme.PurpleDark
 import com.example.tunetide.ui.timer.TimerDetails
 import kotlinx.coroutines.launch
 import kotlin.math.max
@@ -583,11 +584,14 @@ fun FlowBreakDisplay(
 @Composable
 fun MusicPlayerBody(
     viewModel: HomePageViewModel,
-    modifier: Modifier) {
-    // TODO @KIANA will be injected another way (more top level/singleton)? (not sure how)
-    /*
-    var mp3Player: MP3Player = MP3Player(context)
-    */
+    modifier: Modifier = Modifier
+) {
+    val currentSongName by viewModel.currentSongName.collectAsState()
+    val currentPlaylistName by viewModel.currentPlaylistName.collectAsState()
+
+    //IF WE ONLY WANT THE SONG NAME TO SHOW WHEN PLAYING:
+    val isPlaying by viewModel.isPlaying.collectAsState()
+
     Box(
         modifier = Modifier
             .width(344.dp)
@@ -595,8 +599,37 @@ fun MusicPlayerBody(
             .background(Color(0xFFE6E5F2), shape = RoundedCornerShape(16.dp)),
         contentAlignment = Alignment.Center
     ) {
-        //TODO: @KIANA show song name and playlist and add button to go to next song
-        //TODO: @KIANA add a photo to show as the cover since mp3 has no cover
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                //IF WE ONLY WANT THE SONG NAME TO SHOW WHEN PLAYING:
+                text = if (isPlaying) {
+                    currentSongName
+                } else {
+                    "Not Playing"
+                },
+                //text = currentSongName,
+                color = PurpleDark,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = currentPlaylistName,
+                color = PurpleDark,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = { viewModel.skipSong() }) {
+                Text(
+                    text = "Next Song",
+                    color = PurpleDark)
+            }
+        }
     }
 }
 

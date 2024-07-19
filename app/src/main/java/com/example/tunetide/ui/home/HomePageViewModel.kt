@@ -64,6 +64,12 @@ class HomePageViewModel (
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying
 
+    private val _currentSongName = MutableStateFlow<String>("Not Playing")
+    val currentSongName: StateFlow<String> = _currentSongName
+
+    private val _currentPlaylistName = MutableStateFlow("No Playlist")
+    val currentPlaylistName: StateFlow<String> = _currentPlaylistName
+
     fun homeScreenTimer() {
         CoroutineScope(Dispatchers.IO).launch {
             while (isPlaying.value && currentTimerVal.value > 0) {
@@ -88,6 +94,25 @@ class HomePageViewModel (
             _timerId = playbackRepository.getPlayingTimerId()
             getStartingTimerValue()
             getStartingMusic()
+            observeCurrentSong()
+        }
+    }
+
+    private fun observeCurrentSong() {
+        CoroutineScope(Dispatchers.IO).launch {
+            mp3PlayerManager.currentSongName.collect { songName ->
+                _currentSongName.value = songName
+            }
+        }
+    }
+
+    private fun observeCurrentPlaylist(playlistId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            mP3Repository.getMP3PlaylistById(playlistId).collect { playlist ->
+                if (playlist != null) {
+                    _currentPlaylistName.value = playlist.playlistName
+                }
+            }
         }
     }
 
@@ -152,6 +177,7 @@ class HomePageViewModel (
         CoroutineScope(Dispatchers.IO).launch {
             if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
                 val playlistId = playbackRepository.getPlayingMusicPlaylistId()
+                observeCurrentPlaylist(playlistId)
                 val playlist = mP3Repository.getMP3FileByPlaylist(playlistId)
                 mp3PlayerManager.switchPlaylist(playlist)
             }

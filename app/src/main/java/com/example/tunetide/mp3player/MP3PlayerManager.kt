@@ -10,6 +10,8 @@ import androidx.compose.runtime.setValue
 import com.example.tunetide.database.MP3File
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 
 class MP3PlayerManager(private val context: Context) {
@@ -18,6 +20,9 @@ class MP3PlayerManager(private val context: Context) {
     private var currentSongIndex: Int = 0
     private var isPlaying by mutableStateOf(false)
     private var playlistJob: Job? = null
+
+    private val _currentSongName = MutableStateFlow<String>("Not Playing")
+    val currentSongName: StateFlow<String> = _currentSongName
 
     init {
         mediaPlayer.setOnPreparedListener {
@@ -49,10 +54,11 @@ class MP3PlayerManager(private val context: Context) {
 
     private fun playCurrentSong() {
         if (playlist.isNotEmpty() && currentSongIndex < playlist.size) {
-            val currentSong = playlist[currentSongIndex].filePath
+            val currentSong = playlist[currentSongIndex]
+            _currentSongName.value = currentSong.fileName.toString()
             mediaPlayer.reset()
 
-            val uri = Uri.parse(currentSong)
+            val uri = Uri.parse(currentSong.filePath)
             mediaPlayer.setDataSource(context, uri)
 
             mediaPlayer.prepareAsync()
