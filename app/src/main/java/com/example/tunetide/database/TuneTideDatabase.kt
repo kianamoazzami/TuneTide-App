@@ -13,7 +13,8 @@ import com.example.tunetide.repository.TimerDao
                       MP3Playlist::class,
                       SpotifyPlaylist::class,
                       Playback::class], version = 1)
-abstract class TuneTideDatabase : RoomDatabase() {
+abstract class
+TuneTideDatabase : RoomDatabase() {
     abstract fun mp3Dao(): MP3Dao
     abstract fun timerDao(): TimerDao
     abstract fun spotifyDao(): SpotifyDao
