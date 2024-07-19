@@ -1,28 +1,26 @@
 package com.example.tunetide.ui.timers
 
 import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tunetide.R
 import com.example.tunetide.ui.TuneTideBottomAppBar
 import com.example.tunetide.ui.TuneTideTopAppBar
 import com.example.tunetide.ui.navigation.NavigationDestination
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import com.example.tunetide.ui.home.HomeDestination
 
 object SavedTimersDestination : NavigationDestination {
@@ -83,9 +81,24 @@ fun SavedTimersBody(
     ) {
         IconRow(navController)
         Spacer(modifier = Modifier.height(16.dp)) // Add space between the rows
-        BoxWithImage(title = stringResource(id = R.string.instrumental_studying), subTitle = stringResource(R.string.instrumental_studying_time), onClick = {navController.navigate(HomeDestination.route)})
-        BoxWithImage(title = stringResource(R.string.finishing_project), subTitle = stringResource(R.string.finishing_project_time),onClick = {navController.navigate(HomeDestination.route)})
-        BoxWithImage(title = stringResource(R.string.chill_work), subTitle = stringResource(R.string.chill_work_time),onClick = {navController.navigate(HomeDestination.route)})
+        BoxWithImage(
+            title = stringResource(id = R.string.instrumental_studying),
+            subTitle = stringResource(R.string.instrumental_studying_time),
+            onClick = { navController.navigate(HomeDestination.route) },
+            onEditClick = { navController.navigate("${TimerEditDestination.route}/1") } // Pass the timer ID
+        )
+        BoxWithImage(
+            title = stringResource(R.string.finishing_project),
+            subTitle = stringResource(R.string.finishing_project_time),
+            onClick = { navController.navigate(HomeDestination.route) },
+            onEditClick = { navController.navigate("${TimerEditDestination.route}/2") } // Pass the timer ID
+        )
+        BoxWithImage(
+            title = stringResource(R.string.chill_work),
+            subTitle = stringResource(R.string.chill_work_time),
+            onClick = { navController.navigate(HomeDestination.route) },
+            onEditClick = { navController.navigate("${TimerEditDestination.route}/3") } // Pass the timer ID
+        )
 
         // Add content for saved timers here
     }
@@ -128,7 +141,3 @@ fun CustomIcon(
             .clickable(onClick = onClick)
     )
 }
-
-
-
-

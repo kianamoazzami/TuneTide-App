@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -22,6 +21,9 @@ import com.example.tunetide.ui.TuneTideBottomAppBar
 import com.example.tunetide.ui.TuneTideTopAppBar
 import com.example.tunetide.ui.home.HomeDestination
 import com.example.tunetide.ui.navigation.NavigationDestination
+import com.example.tunetide.ui.timer.TimerEditDestination
+import androidx.compose.ui.graphics.painter.Painter
+
 
 object AllTimersPageDestination : NavigationDestination {
     override val route = "allTimersPage"
@@ -129,33 +131,39 @@ fun AllTimersBody(
         // Add content for saved timers here
     }
 }
+
 @Composable
 fun BoxWithImageList(navController: NavController) {
     val boxWithImageItems = listOf(
         BoxWithImageItem(
             title = R.string.instrumental_studying,
             subTitle = R.string.instrumental_studying_time,
-            onClick = { navController.navigate(HomeDestination.route) }
+            onClick = { navController.navigate(HomeDestination.route) },
+            onEditClick = { navController.navigate("${TimerEditDestination.route}/1") } // Pass the timer ID
         ),
         BoxWithImageItem(
             title = R.string.finishing_project,
             subTitle = R.string.finishing_project_time,
-            onClick = { navController.navigate(HomeDestination.route) }
+            onClick = { navController.navigate(HomeDestination.route) },
+            onEditClick = { navController.navigate("${TimerEditDestination.route}/2") } // Pass the timer ID
         ),
         BoxWithImageItem(
             title = R.string.chill_work,
             subTitle = R.string.chill_work_time,
-            onClick = { navController.navigate(HomeDestination.route) }
+            onClick = { navController.navigate(HomeDestination.route) },
+            onEditClick = { navController.navigate("${TimerEditDestination.route}/3") } // Pass the timer ID
         ),
         BoxWithImageItem(
             title = R.string.speedy,
             subTitle = R.string.speedy_time,
-            onClick = { navController.navigate(HomeDestination.route) }
+            onClick = { navController.navigate(HomeDestination.route) },
+            onEditClick = { navController.navigate("${TimerEditDestination.route}/4") } // Pass the timer ID
         ),
         BoxWithImageItem(
             title = R.string.get_ready,
             subTitle = R.string.get_ready_time,
-            onClick = { navController.navigate(HomeDestination.route) }
+            onClick = { navController.navigate(HomeDestination.route) },
+            onEditClick = { navController.navigate("${TimerEditDestination.route}/5") } // Pass the timer ID
         )
     )
 
@@ -164,7 +172,8 @@ fun BoxWithImageList(navController: NavController) {
             BoxWithImage(
                 title = stringResource(id = item.title),
                 subTitle = stringResource(id = item.subTitle),
-                onClick = item.onClick
+                onClick = item.onClick,
+                onEditClick = item.onEditClick
             )
         }
     }

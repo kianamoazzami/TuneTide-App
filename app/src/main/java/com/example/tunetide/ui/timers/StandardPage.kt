@@ -1,6 +1,8 @@
 package com.example.tunetide.ui.timers
 
 import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.painter.Painter
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -109,12 +110,14 @@ fun BoxWithImageListStandard(navController: NavController) {
         BoxWithImageItem(
             title = R.string.speedy,
             subTitle = R.string.speedy_time,
-            onClick = { navController.navigate(HomeDestination.route) }
+            onClick = { navController.navigate(HomeDestination.route) },
+            onEditClick = { navController.navigate("${TimerEditDestination.route}/4") } // Pass the timer ID
         ),
         BoxWithImageItem(
             title = R.string.get_ready,
             subTitle = R.string.get_ready_time,
-            onClick = { navController.navigate(HomeDestination.route) }
+            onClick = { navController.navigate(HomeDestination.route) },
+            onEditClick = { navController.navigate("${TimerEditDestination.route}/5") } // Pass the timer ID
         )
     )
 
@@ -123,7 +126,8 @@ fun BoxWithImageListStandard(navController: NavController) {
             BoxWithImage(
                 title = stringResource(id = item.title),
                 subTitle = stringResource(id = item.subTitle),
-                onClick = item.onClick
+                onClick = item.onClick,
+                onEditClick = item.onEditClick
             )
         }
     }

@@ -30,4 +30,6 @@
     <string name="spotify">Spotify</string>
     <string name="manage_local_music_files">Manage Local Music Files</string>
     <string name="schedule_settings">Schedule Settings</string>
+    <string name="timer_edit_page_name">Edit Timer</string>
+
 </resources>
