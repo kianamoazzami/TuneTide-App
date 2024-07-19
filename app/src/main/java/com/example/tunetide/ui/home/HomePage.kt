@@ -82,7 +82,7 @@ fun HomeBody(
             .fillMaxSize()
             .background(PurpleBackground)
             .padding(contentPadding),
-        verticalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TideFlow()
@@ -90,10 +90,13 @@ fun HomeBody(
             viewModel = viewModel,
             modifier = modifier,
             playback = playback,
-            timer = timer)
+            timer = timer
+        )
         Spacer(modifier = Modifier.height(16.dp))
-        MusicPlayerBody(viewModel = viewModel(factory = AppViewModelProvider.Factory),
-            modifier = modifier) // TODO @KIANA @ERICA inject musicUIState here
+        MusicPlayerBody(
+            viewModel = viewModel(factory = AppViewModelProvider.Factory),
+            modifier = modifier
+        )
     }
 }
 

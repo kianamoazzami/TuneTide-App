@@ -90,6 +90,7 @@ class MP3PlayerManager(private val context: Context) {
     }
 
     fun releaseMediaPlayer() {
+        isPlaying = false;
         mediaPlayer.release()
     }
 }

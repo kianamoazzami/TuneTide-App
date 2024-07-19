@@ -1,6 +1,7 @@
 package com.example.tunetide.ui.home
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tunetide.database.MusicType
@@ -135,9 +136,11 @@ class HomePageViewModel (
 
     fun getStartingTimerValue() {
         CoroutineScope(Dispatchers.IO).launch {
-            if (playbackRepository.getStateType() == StateType.FLOW) {
+            val state = playbackRepository.getStateType()
+
+            if (state == StateType.FLOW) {
                 _currentTimerVal.value = playbackRepository.getFlowDurationSeconds()
-            } else if (playbackRepository.getStateType() == StateType.BREAK) {
+            } else if (state == StateType.BREAK) {
                 _currentTimerVal.value = playbackRepository.getBreakDurationSeconds()
             } else {
                 _currentTimerVal.value = 0
@@ -192,8 +195,8 @@ class HomePageViewModel (
     }
 
     override fun onCleared() {
-        super.onCleared()
         mp3PlayerManager.releaseMediaPlayer()
+        super.onCleared()
     }
 
     companion object {
