@@ -108,3 +108,4 @@
  | 07/18/24 | Navigation saved timer pages        |           |  4.0      |           |           |           |
  | 07/19/24 | Merge + Testing                     |           |           |           | 1.5       |           |
  | 07/19/24 | Trying to Fix Bugs, Adding Names    |           |           |           |           | 3.5       |
+ | 07/19/24 |Fixing bugs on the app               |           |  4.5      |           |           |           |
