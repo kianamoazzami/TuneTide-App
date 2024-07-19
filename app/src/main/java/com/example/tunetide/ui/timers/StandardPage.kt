@@ -1,22 +1,27 @@
 package com.example.tunetide.ui.timers
 
 import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.painter.Painter
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tunetide.R
 import com.example.tunetide.ui.TuneTideBottomAppBar
 import com.example.tunetide.ui.TuneTideTopAppBar
+import com.example.tunetide.ui.home.HomeDestination
 import com.example.tunetide.ui.navigation.NavigationDestination
 
 object StandardPageDestination : NavigationDestination {
@@ -85,7 +90,55 @@ fun StandardPageBodyContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         StandardPageIconRow(navController)
+        StandardBody(navController)
         // Add content for the Standard page here
+    }
+}
+@Composable
+fun StandardBody(
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(16.dp)
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PurpleBackground),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+        BoxWithImageListStandard(navController)
+        // Add content for saved timers here
+    }
+}
+
+@Composable
+fun BoxWithImageListStandard(navController: NavController) {
+    val boxWithImageItems = listOf(
+        BoxWithImageItem(
+            title = R.string.speedy,
+            subTitle = R.string.speedy_time,
+            onClick = { navController.navigate(HomeDestination.route) },
+            onEditClick = { navController.navigate("${TimerEditDestination.route}/4") } // Pass the timer ID
+        ),
+        BoxWithImageItem(
+            title = R.string.get_ready,
+            subTitle = R.string.get_ready_time,
+            onClick = { navController.navigate(HomeDestination.route) },
+            onEditClick = { navController.navigate("${TimerEditDestination.route}/5") } // Pass the timer ID
+        )
+    )
+
+    LazyColumn {
+        items(boxWithImageItems) { item ->
+            BoxWithImage(
+                title = stringResource(id = item.title),
+                subTitle = stringResource(id = item.subTitle),
+                onClick = item.onClick,
+                onEditClick = item.onEditClick
+            )
+        }
     }
 }
 
