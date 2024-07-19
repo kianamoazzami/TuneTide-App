@@ -33,20 +33,20 @@ fun TuneTideNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = SavedTimersDestination.route,
+        startDestination = HomeDestination.route,
         modifier = modifier
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen(
                 navigateToSettings = { navController.navigate(SettingsDestination.route) },
-                navigateToTimersList = { /* add this when its complete */ }
+                navigateToTimersList = { navController.navigate(AllTimersPageDestination.route) }
             )
         }
 
         composable(route = SettingsDestination.route) {
             SettingsScreen(
                 navigateToHome = { navController.navigate(HomeDestination.route) },
-                navigateToTimersList = { /* add this when its complete */ },
+                navigateToTimersList = { navController.navigate(AllTimersPageDestination.route) },
                 navigateToLocalFiles = {navController.navigate(LocalFilesDestination.route) }
             )
         }
@@ -106,13 +106,36 @@ fun TuneTideNavHost(
             )
         }
         composable(route = SavedTimersDestination.route) {
-            SavedTimersScreen(navController = navController)
+            SavedTimersScreen(navController = navController,
+                navigateToSettings = { navController.navigate(SettingsDestination.route) },
+                navigateToHome = { navController.navigate(HomeDestination.route) },
+                navigateToTimersList = { navController.navigate(AllTimersPageDestination.route) },
+                navigateToTimerEntry = { navController.navigate(TimerEntryDestination.route) },
+                navigateToTimerEdit = {
+                    navController.navigate("${TimerEditDestination.route}/${it}")
+                })
         }
         composable(route = StandardPageDestination.route) {
-            StandardPageScreen(navController = navController)
+            StandardPageScreen(navController = navController,
+                navigateToSettings = { navController.navigate(SettingsDestination.route) },
+                navigateToHome = { navController.navigate(HomeDestination.route) },
+                navigateToTimersList = { navController.navigate(AllTimersPageDestination.route) },
+                navigateToTimerEntry = { navController.navigate(TimerEntryDestination.route) },
+                navigateToTimerEdit = {
+                    navController.navigate("${TimerEditDestination.route}/${it}")
+                })
         }
         composable(route = AllTimersPageDestination.route) {
-            AllTimersPageScreen(navController = navController)
+            AllTimersPageScreen(
+                navController = navController,
+                navigateToSettings = { navController.navigate(SettingsDestination.route) },
+                navigateToHome = { navController.navigate(HomeDestination.route) },
+                navigateToTimersList = { navController.navigate(AllTimersPageDestination.route) },
+                navigateToTimerEntry = { navController.navigate(TimerEntryDestination.route) },
+                navigateToTimerEdit = {
+                    navController.navigate("${TimerEditDestination.route}/${it}")
+                }
+                )
         }
     }
 }

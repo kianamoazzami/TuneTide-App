@@ -29,18 +29,28 @@ val AllTimersPageBackground = Color(0xC0BFE0)
 @Composable
 fun AllTimersPageScreen(
     navController: NavController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigateToSettings: () -> Unit,
+    navigateToHome: () -> Unit,
+    navigateToTimersList: () -> Unit,
+    navigateToTimerEntry: () -> Unit,
+    navigateToTimerEdit: () -> Unit
 ) {
     Scaffold(
         topBar = {
             TuneTideTopAppBar()
         },
         bottomBar = {
-            TuneTideBottomAppBar()
+            TuneTideBottomAppBar(
+                currentScreen = R.string.all_timers_page_name,
+                navigateToSettings = navigateToSettings,
+                navigateToHome = navigateToHome,
+                navigateToTimersList = navigateToTimersList
+            )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* No action for now */ },
+                onClick = { navigateToTimerEntry() },
                 shape = CircleShape,
                 backgroundColor = Color.Transparent,
                 elevation = FloatingActionButtonDefaults.elevation(0.dp)

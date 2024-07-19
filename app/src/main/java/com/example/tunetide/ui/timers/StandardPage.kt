@@ -29,18 +29,27 @@ val StandardPageBackground = Color(0xC0BFE0)
 @Composable
 fun StandardPageScreen(
     navController: NavController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigateToSettings: () -> Unit,
+    navigateToHome: () -> Unit,
+    navigateToTimersList: () -> Unit,
+    navigateToTimerEntry: () -> Unit,
+    navigateToTimerEdit: () -> Unit
 ) {
     Scaffold(
         topBar = {
             TuneTideTopAppBar()
         },
         bottomBar = {
-            TuneTideBottomAppBar()
+            TuneTideBottomAppBar(
+                currentScreen = R.string.standard_page_name,
+                navigateToSettings = navigateToSettings,
+                navigateToHome = navigateToHome,
+                navigateToTimersList = navigateToTimersList)
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* No action for now */ },
+                onClick = { navigateToTimerEntry() },
                 shape = CircleShape,
                 backgroundColor = Color.Transparent,
                 elevation = FloatingActionButtonDefaults.elevation(0.dp)
