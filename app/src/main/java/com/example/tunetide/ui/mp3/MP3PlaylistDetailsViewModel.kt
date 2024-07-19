@@ -47,5 +47,5 @@ class MP3PlaylistDetailsViewModel(
 
 data class MP3PlaylistDetailsUIState(
     val mp3PlaylistDetails: MP3PlaylistDetails = MP3PlaylistDetails(),
-    val mp3Files: List<MP3File> = emptyList() // This line remains the same
+    val mp3Files: List<MP3File> = emptyList()
 )

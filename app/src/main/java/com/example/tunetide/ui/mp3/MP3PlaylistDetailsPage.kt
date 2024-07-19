@@ -50,11 +50,6 @@ object MP3PlaylistDetailsDestination : NavigationDestination {
     val routeWithArgs = "$route/{$mp3PlaylistIdArg}"
 }
 
-//TODO: display songs and playlist name (details)
-
-//TODO IF TIME: MP3PlaylistEditPage - add ability to change name of playlist and maybe change songs?
-//this could break things
-
 @Composable
 fun MP3PlaylistDetailsScreen(
     navigateBack: () -> Unit,
@@ -101,7 +96,7 @@ private fun MP3PlaylistDetailsBody(
         var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
         MP3PlaylistDetails(
             mp3Playlist = mp3PlaylistDetailsUIState.mp3PlaylistDetails.toMP3Playlist(),
-            mp3Files = mp3PlaylistDetailsUIState.mp3Files, // Pass the list of MP3 files
+            mp3Files = mp3PlaylistDetailsUIState.mp3Files,
             modifier = Modifier.fillMaxWidth()
         )
         IconButton(
@@ -130,7 +125,7 @@ private fun MP3PlaylistDetailsBody(
 @Composable
 fun MP3PlaylistDetails(
     mp3Playlist: MP3Playlist,
-    mp3Files: List<MP3File>, // Add this parameter
+    mp3Files: List<MP3File>,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -151,13 +146,11 @@ fun MP3PlaylistDetails(
             )
 
             if (mp3Files.isNotEmpty()) {
-                // Display the first song
                 ItemDetailsRow(
                     labelResID = R.string.songs,
                     textInfo = mp3Files[0].fileName.toString(),
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
-                // Display the rest of the songs
                 for (i in 1 until mp3Files.size) {
                     ItemDetailsRow(
                         labelResID = R.string.empty,
