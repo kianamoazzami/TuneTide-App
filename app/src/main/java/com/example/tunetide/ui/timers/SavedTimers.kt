@@ -5,11 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -18,6 +21,9 @@ import com.example.tunetide.ui.TuneTideBottomAppBar
 import com.example.tunetide.ui.TuneTideTopAppBar
 import com.example.tunetide.ui.navigation.NavigationDestination
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import com.example.tunetide.ui.home.HomeDestination
 
 object SavedTimersDestination : NavigationDestination {
     override val route = "savedtimers"
@@ -77,7 +83,10 @@ fun SavedTimersBody(
     ) {
         IconRow(navController)
         Spacer(modifier = Modifier.height(16.dp)) // Add space between the rows
-        BoxWithImage()
+        BoxWithImage(title = stringResource(id = R.string.instrumental_studying), subTitle = stringResource(R.string.instrumental_studying_time), onClick = {navController.navigate(HomeDestination.route)})
+        BoxWithImage(title = stringResource(R.string.finishing_project), subTitle = stringResource(R.string.finishing_project_time),onClick = {navController.navigate(HomeDestination.route)})
+        BoxWithImage(title = stringResource(R.string.chill_work), subTitle = stringResource(R.string.chill_work_time),onClick = {navController.navigate(HomeDestination.route)})
+
         // Add content for saved timers here
     }
 }
@@ -120,40 +129,6 @@ fun CustomIcon(
     )
 }
 
-@Composable
-fun BoxWithImage() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .height(100.dp), // Adjust the height as needed
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.rec),
-            contentDescription = "Rec",
-            modifier = Modifier.fillMaxSize()
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(end = 16.dp), // Adjust padding as needed
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(32.dp) // Adjust the size as needed
-                    .clickable {
-                        // Handle click action here
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.playbutton),
-                    contentDescription = "Play Button"
-                )
-            }
-        }
-    }
-}
+
+
+
