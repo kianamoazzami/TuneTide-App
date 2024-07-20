@@ -156,7 +156,7 @@ fun AllTimersBody(
 
 @Composable
 fun BoxWithImageList(navController: NavController, timers: List<Timer>) {
-    LazyColumn {
+    LazyColumn(modifier = Modifier.padding(0.dp,0.dp,0.dp,60.dp)) {
         items(timers) { timer ->
             BoxWithImage(
                 title = timer.timerName,

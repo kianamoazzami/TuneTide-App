@@ -20,8 +20,7 @@ class MainActivity : ComponentActivity() {
     lateinit var database: TuneTideDatabase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        database = TuneTideDatabase.getDatabase(this)
-        DummyDataPopulator.populate(database)
+
         setContent {
             TuneTideTheme {
                 Log.d("TuneTideMainActivity", "calling app")

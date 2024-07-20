@@ -9,6 +9,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,11 +19,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.R
 import com.example.tunetide.ui.TuneTideBottomAppBar
 import com.example.tunetide.ui.TuneTideTopAppBar
 import com.example.tunetide.ui.navigation.NavigationDestination
 import com.example.tunetide.ui.home.HomeDestination
+import com.example.tunetide.ui.AppViewModelProvider
+import com.example.tunetide.database.Timer
 
 object SavedTimersDestination : NavigationDestination {
     override val route = "savedtimers"
@@ -38,7 +43,8 @@ fun SavedTimersScreen(
     navigateToHome: () -> Unit,
     navigateToTimersList: () -> Unit,
     navigateToTimerEntry: () -> Unit,
-    navigateToTimerEdit: () -> Unit
+    navigateToTimerEdit: () -> Unit,
+    viewModel: TimersListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     Scaffold(
         topBar = {
@@ -79,8 +85,12 @@ fun SavedTimersScreen(
 fun SavedTimersBody(
     navController: NavController,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(16.dp)
+    contentPadding: PaddingValues = PaddingValues(16.dp),
+    viewModel: TimersListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val timerListUIState by viewModel.timerListUIState.collectAsState()
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -91,28 +101,24 @@ fun SavedTimersBody(
     ) {
         IconRow(navController)
         Spacer(modifier = Modifier.height(16.dp)) // Add space between the rows
-        BoxWithImage(
-            title = stringResource(id = R.string.instrumental_studying),
-            subTitle = stringResource(R.string.instrumental_studying_time),
-            onClick = { navController.navigate(HomeDestination.route) },
-            onEditClick = { navController.navigate("${TimerEditDestination.route}/1") } // Pass the timer ID
-        )
-        BoxWithImage(
-            title = stringResource(R.string.finishing_project),
-            subTitle = stringResource(R.string.finishing_project_time),
-            onClick = { navController.navigate(HomeDestination.route) },
-            onEditClick = { navController.navigate("${TimerEditDestination.route}/2") } // Pass the timer ID
-        )
-        BoxWithImage(
-            title = stringResource(R.string.chill_work),
-            subTitle = stringResource(R.string.chill_work_time),
-            onClick = { navController.navigate(HomeDestination.route) },
-            onEditClick = { navController.navigate("${TimerEditDestination.route}/3") } // Pass the timer ID
-        )
-
-        // Add content for saved timers here
+        BoxWithImageList(navController, timerListUIState.timers)
     }
 }
+
+//@Composable
+//fun BoxWithImageList(navController: NavController, timers: List<Timer>) {
+//    LazyColumn {
+//        items(timers) { timer ->
+//            BoxWithImage(
+//                title = timer.timerName,
+//                subTitle = "${timer.numIntervals} intervals",
+//                onClick = { navController.navigate(HomeDestination.route) },
+//                onEditClick = { navController.navigate("${TimerEditDestination.route}/${timer.timerId}") }
+//            )
+//        }
+//    }
+//}
+
 
 @Composable
 fun IconRow(navController: NavController) {
