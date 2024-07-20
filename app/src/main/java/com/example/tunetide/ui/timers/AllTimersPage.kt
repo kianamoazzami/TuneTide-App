@@ -1,5 +1,6 @@
 package com.example.tunetide.ui.timers
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +10,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +26,9 @@ import com.example.tunetide.ui.home.HomeDestination
 import com.example.tunetide.ui.navigation.NavigationDestination
 import com.example.tunetide.ui.timer.TimerEditDestination
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tunetide.database.DummyDataPopulator
+import com.example.tunetide.ui.AppViewModelProvider
 
 
 object AllTimersPageDestination : NavigationDestination {
@@ -40,7 +46,9 @@ fun AllTimersPageScreen(
     navigateToHome: () -> Unit,
     navigateToTimersList: () -> Unit,
     navigateToTimerEntry: () -> Unit,
-    navigateToTimerEdit: () -> Unit
+    navigateToTimerEdit: () -> Unit,
+    viewModel: TimersListViewModel = viewModel(factory = AppViewModelProvider.Factory)
+
 ) {
     Scaffold(
         topBar = {
@@ -70,10 +78,13 @@ fun AllTimersPageScreen(
         },
         modifier = modifier
     ) { innerPadding ->
-        AllTimersPageBodyContent(
-            navController = navController,
-            modifier = modifier.padding(innerPadding)
-        )
+
+            AllTimersPageBodyContent(
+                navController = navController,
+                modifier = modifier.padding(innerPadding)
+            )
+
+
     }
 }
 
@@ -81,8 +92,16 @@ fun AllTimersPageScreen(
 fun AllTimersPageBodyContent(
     navController: NavController,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(16.dp)
+    contentPadding: PaddingValues = PaddingValues(16.dp),
+    viewModel: TimersListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    Log.w("AllTimersPageBodyContent", "Inside AllTimersPageBodyContent")
+    val timerListUIState by viewModel.timerListUIState.collectAsState()
+
+    // Print the timers to the console using a normal for loop
+    for (timer in timerListUIState.timers) {
+        Log.d("AllTimersPageScreen", "Timer: ${timer.timerId}, Name: ${timer.timerName}, Duration: ${timer.numIntervals}")
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
