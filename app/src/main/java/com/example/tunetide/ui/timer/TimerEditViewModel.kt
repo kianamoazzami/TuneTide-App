@@ -18,11 +18,19 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+interface ITimerEditViewModel {
+
+    fun updateUIState(timerDetails: TimerDetails)
+    suspend fun updateTimer()
+    fun validateInput(uiState: TimerDetails) : Boolean
+
+}
+
 class TimerEditViewModel (
     private val savedStateHandle: SavedStateHandle,
     private val timerRepository: TimerRepository,
     val spotifyRepository: SpotifyRepository
-): ViewModel() {
+): ViewModel(), ITimerEditViewModel {
 
     var timerUIState by mutableStateOf(TimerUIState())
         private set
@@ -39,18 +47,18 @@ class TimerEditViewModel (
     }
 
     // updates item UI
-    fun updateUIState(timerDetails: TimerDetails) {
+    override fun updateUIState(timerDetails: TimerDetails) {
         timerUIState = TimerUIState(timerDetails = timerDetails, isValidEntry = validateInput(timerDetails))
     }
 
-    suspend fun updateTimer() {
-        if (validateInput()) {
+    override suspend fun updateTimer() {
+        if (validateInput(timerUIState.timerDetails)) {
             timerRepository.updateTimer(timerUIState.timerDetails.toTimer())
         }
     }
 
     // NOTE: UI configuration will prevent some invalid inputs
-    private fun validateInput(uiState: TimerDetails = timerUIState.timerDetails): Boolean {
+    override fun validateInput(uiState: TimerDetails): Boolean {
         return with(uiState) {
             timerName.isNotBlank() &&
                     numIntervals > 0 &&
