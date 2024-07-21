@@ -81,17 +81,17 @@
  | 07/11/24 | Finished Playlist Creation          |           |           |           |           | 2.0       |
  | 07/11/24 | Work on D4                          | 1.0       |           |           | 1.0       | 1.0       |
  | 07/12/24 | Playlist Deletion                   |           |           |           |           | 2.5       |
- | 07/12/24 | Spotify Controller                  |           | 2.0       |           |           |           |
+ | 07/12/24 | Spotify Controller                  |           |           | 2.0       |           |           |
  | 07/12/24 | Dealing with Data Access            |           |           |           | 4.0       |           |
  | 07/13/24 | Solving Data Access/Timer Problems  |           |           |           | 3.0       |           |
  | 07/13/24 | Opening File Explorer + Get URI     |           |           |           |           | 4.0       |
- | 07/14/24 | Spotify Controller                  |           | 1.0       |           |           |           |
+ | 07/14/24 | Spotify Controller                  |           |           | 1.0       |           |           |
  | 07/14/24 | Homepage Work                       |           |           |           | 2.0       |           |
  | 07/14/24 | Saved timer page                    |           |  4.0      |           |           |           |
  | 07/15/24 | Adding Songs to MP3File Table       |           |           |           |           | 3.0       |
  | 07/15/24 | Meeting                             | 1.0       | 1.0       | 1.0       | 1.0       | 1.0       |
  | 07/15/24 | Work on Parsing D6, D7              | 0.75      |           |           |           |           | 
- | 07/14/24 | Spotify Controller                  |           | 2.0       |           |           |           |
+ | 07/14/24 | Spotify Controller                  |           |           | 2.0       |           |           |
  | 07/15/24 | Add Timer Page                      |           |           |           | 5.0       |           |
  | 07/15/24 | Navigation + MP3 Player             |           |           |           |           | 2.5       |
  | 07/15/24 | Fixing errors on saved timer page   |           | 2.0       |           |           |           |
@@ -100,4 +100,13 @@
  | 07/16/24 | Add Timer Page                      |           |           |           | 10.0      |           |
  | 07/16/24 | Work on D5                          | 1.0       |           |           |           |           | 
  | 07/17/24 | Work on D6                          | 1.0       |           |           |           |           | 
- 
+ | 07/17/24 | Meeting                             | 2.0       | 1.5       | 2.0       | 2.0       | 1.5       |
+ | 07/17/24 | Work on UI, D5                      | 1.0       |           |           |           |           |
+ | 07/17/24 | Navigation + Edit Timer + Spotify   |           |           |           | 3.0       |           |
+ | 07/17/24 | Spotify Database population + enviro|           |           | 2.0       |           |           |
+ | 07/18/24 | D5 Design Pattern 3                 |           |           | 1.5       |           |           |
+ | 07/18/24 | Navigation saved timer pages        |           |  4.0      |           |           |           |
+ | 07/19/24 | Merge + Testing                     |           |           |           | 1.5       |           |
+ | 07/19/24 | Trying to Fix Bugs, Adding Names    |           |           |           |           | 3.5       |
+ | 07/19/24 |Fixing bugs on the app               |           |  4.5      |           |           |           |
+ | 07/19/24 | Trying to get MP3 to play from files|           |           |           |           | 3.5       |
