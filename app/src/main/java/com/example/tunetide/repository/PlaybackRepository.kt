@@ -1,5 +1,6 @@
 package com.example.tunetide.repository
 
+import android.util.Log
 import androidx.room.Query
 import com.example.tunetide.database.MusicType
 import com.example.tunetide.database.Playback
@@ -112,11 +113,24 @@ class PlaybackRepository(private val playbackDao: PlaybackDao): IPlaybackReposit
     override fun getCurrentInterval(): Int = playbackDao.getCurrentInterval()
 
     override fun startNextInterval() {
-        if (getPlayingTimerId() == -1 ||
-            getStateType() == StateType.BREAK && playbackDao.getPlayingTimerNumIntervals() == playbackDao.getCurrentInterval()) {
-        } else {
-            if (getStateType() == StateType.BREAK) playbackDao.startNextFlow()
-            else if (getStateType() == StateType.FLOW) playbackDao.startNextBreak()
+        val currentState = getStateType()
+        val totalIntervals = playbackDao.getPlayingTimerNumIntervals()
+        val currentInterval = playbackDao.getCurrentInterval()
+
+        if (getPlayingTimerId() == -1) {
+            Log.d("IntervalTimer", "FINISHED!")
+            return
+        }
+
+        // Only proceed if there are remaining intervals
+        if (currentInterval <= totalIntervals) {
+            if (currentState == StateType.BREAK) {
+                playbackDao.startNextFlow()
+                Log.d("IntervalTimer", "Switching to FLOW")
+            } else if (currentState == StateType.FLOW) {
+                playbackDao.startNextBreak()
+                Log.d("IntervalTimer", "Switching to BREAK")
+            }
         }
     }
 }
