@@ -230,7 +230,7 @@ class SpotifyController(private val mainContext: Context) {
         }
     }
 
-    fun toggleShuffle(notUsed: View) {
+    fun toggleShuffle() {
         CoroutineScope(Dispatchers.Main).launch {
             waitForConnection()
             spotifyAppRemote?.playerApi
