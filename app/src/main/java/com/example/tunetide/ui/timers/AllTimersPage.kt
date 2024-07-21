@@ -101,7 +101,6 @@ fun AllTimersBody(
     Log.w("AllTimersPageBodyContent", "Inside AllTimersPageBodyContent")
     val timerListUIState by viewModel.timerListUIState.collectAsState()
 
-    // Print the timers to the console using a normal for loop
     for (timer in timerListUIState.timers) {
         Log.d("AllTimersPageScreen", "Timer: ${timer.timerId}, Name: ${timer.timerName}, Duration: ${timer.numIntervals}")
     }
@@ -148,31 +147,10 @@ fun AllTimersIconRow(
         )
         TimerTypeIcon(
             painter = painterResource(R.drawable.interval_standard),
-            onClick = navigateToInterval // Navigate back to the same screen
+            onClick = navigateToInterval
         )
     }
 }
-
-//@Composable
-//fun AllTimersBody(
-//    navController: NavController,
-//    timers: List<Timer>,
-//    modifier: Modifier = Modifier,
-//    contentPadding: PaddingValues = PaddingValues(16.dp)
-//) {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(PurpleBackground),
-//        verticalArrangement = Arrangement.Top,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        Spacer(modifier = Modifier.height(16.dp))
-//        BoxWithImageList(navController, timers)
-//        // Add content for saved timers here
-//    }
-//}
-
 
 //USED FOR ALL TIMER PAGES:
 

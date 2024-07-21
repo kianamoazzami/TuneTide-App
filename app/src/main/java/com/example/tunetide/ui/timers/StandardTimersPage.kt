@@ -155,36 +155,3 @@ fun StandardIconRow(
         )
     }
 }
-
-//@Composable
-//fun StandardBody(
-//    navController: NavController,
-//    timers: List<Timer>,
-//    modifier: Modifier = Modifier,
-//    contentPadding: PaddingValues = PaddingValues(16.dp)
-//) {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(PurpleBackground),
-//        verticalArrangement = Arrangement.Top,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        Spacer(modifier = Modifier.height(16.dp))
-//        BoxWithImageListStandard(navController, timers)
-//    }
-//}
-
-//@Composable
-//fun BoxWithImageListStandard(navController: NavController, timers: List<Timer>) {
-//    LazyColumn(modifier = Modifier.padding(0.dp,0.dp,0.dp,60.dp)) {
-//        items(timers) { timer ->
-//            BoxWithImage(
-//                title = timer.timerName,
-//                subTitle = "${timer.numIntervals} intervals",
-//                onClick = { navController.navigate(HomeDestination.route) },
-//                onEditClick = { navController.navigate("${TimerEditDestination.route}/${timer.timerId}") }
-//            )
-//        }
-//    }
-//}

@@ -119,21 +119,6 @@ fun IntervalTimersBody(
     }
 }
 
-//@Composable
-//fun BoxWithImageList(navController: NavController, timers: List<Timer>) {
-//    LazyColumn {
-//        items(timers) { timer ->
-//            BoxWithImage(
-//                title = timer.timerName,
-//                subTitle = "${timer.numIntervals} intervals",
-//                onClick = { navController.navigate(HomeDestination.route) },
-//                onEditClick = { navController.navigate("${TimerEditDestination.route}/${timer.timerId}") }
-//            )
-//        }
-//    }
-//}
-
-
 @Composable
 fun IntervalIconRow(
     navigateToStandard: () -> Unit,
