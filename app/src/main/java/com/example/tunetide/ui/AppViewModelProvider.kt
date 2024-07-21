@@ -20,14 +20,16 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             TimerEntryViewModel(
-                TuneTideApplication().container.timerRepository
+                TuneTideApplication().container.timerRepository,
+                TuneTideApplication().container.spotifyRepository
             )
         }
 
         initializer {
             TimerEditViewModel(
                 this.createSavedStateHandle(),
-                TuneTideApplication().container.timerRepository
+                TuneTideApplication().container.timerRepository,
+                TuneTideApplication().container.spotifyRepository
             )
         }
 
