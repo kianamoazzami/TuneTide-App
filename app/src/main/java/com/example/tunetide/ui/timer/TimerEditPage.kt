@@ -43,6 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.R
 import com.example.tunetide.ui.TuneTideTopAppBar
 import com.example.tunetide.ui.AppViewModelProvider
+import com.example.tunetide.ui.TuneTideTopAppBarBack
 import com.example.tunetide.ui.mp3.LocalFilesViewModel
 import com.example.tunetide.ui.navigation.NavigationDestination
 import com.example.tunetide.ui.theme.PurpleBackground
@@ -60,7 +61,6 @@ object TimerEditDestination : NavigationDestination {
 @Composable
 fun TimerEditScreen(
     navigateBack: () -> Unit,
-    navigateToEditTimer: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TimerEditViewModel = viewModel(factory = AppViewModelProvider.Factory),
     localFilesViewModel: LocalFilesViewModel = viewModel(factory = AppViewModelProvider.Factory),
@@ -68,7 +68,7 @@ fun TimerEditScreen(
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
-            TuneTideTopAppBar()
+            TuneTideTopAppBarBack(navigateBack)
         }
     ) { innerPadding ->
         TimerEditBody(

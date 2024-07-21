@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -27,16 +28,32 @@ import java.util.Locale
 /**
  * View Model to host state of the timer that is running
  */
+
+interface IHomePageViewModel {
+    suspend fun homeScreenTimer()
+    fun timeFormat(timeSec: Long) : String
+    fun play()
+    fun pause()
+    fun skipSong()
+    suspend fun getStartingTimerValue()
+    fun getStartingMusic()
+    fun startNextInterval()
+    fun finish()
+    fun restart()
+    fun onCleared()
+}
 class HomePageViewModel (
     context: Context,
     private val playbackRepository: PlaybackRepository,
     private val mP3Repository: MP3Repository
-): ViewModel() {
+): ViewModel(), IHomePageViewModel {
 
     private var _timerId: Int = -1
         private set
 
     private var mp3PlayerManager: MP3PlayerManager = MP3PlayerManager(context)
+
+    private var finishedFlag: Boolean = false
 
     val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
         .filterNotNull()
@@ -70,7 +87,7 @@ class HomePageViewModel (
     private val _currentPlaylistName = MutableStateFlow("No Playlist")
     val currentPlaylistName: StateFlow<String> = _currentPlaylistName
 
-    fun homeScreenTimer() {
+    override suspend fun homeScreenTimer() {
         CoroutineScope(Dispatchers.IO).launch {
             while (isPlaying.value && currentTimerVal.value > 0) {
                 delay(1000)
@@ -83,7 +100,7 @@ class HomePageViewModel (
         }
     }
 
-    fun timeFormat(timeSec: Long): String {
+    override fun timeFormat(timeSec: Long): String {
         val hours = (timeSec) / 3600
         val minutes = (timeSec % 3600) / 60
         val seconds = (timeSec) % 60
@@ -117,7 +134,7 @@ class HomePageViewModel (
         }
     }
 
-    fun play() {
+    override fun play() {
         CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.play()
             _isPlaying.value = true
@@ -133,7 +150,7 @@ class HomePageViewModel (
         }
     }
 
-    fun pause() {
+    override fun pause() {
         CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.pause()
             _isPlaying.value = false
@@ -148,7 +165,7 @@ class HomePageViewModel (
         }
     }
 
-    fun skipSong() {
+    override fun skipSong() {
         CoroutineScope(Dispatchers.IO).launch {
             if (_timerId == -1) {
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
@@ -160,21 +177,16 @@ class HomePageViewModel (
         }
     }
 
-    fun getStartingTimerValue() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val state = playbackRepository.getStateType()
-
-            if (state == StateType.FLOW) {
-                _currentTimerVal.value = playbackRepository.getFlowDurationSeconds()
-            } else if (state == StateType.BREAK) {
-                _currentTimerVal.value = playbackRepository.getBreakDurationSeconds()
-            } else {
-                _currentTimerVal.value = 0
-            }
+    override suspend fun getStartingTimerValue() {
+        val state = playbackRepository.getStateType()
+        _currentTimerVal.value = when (state) {
+            StateType.FLOW -> playbackRepository.getFlowDurationSeconds()
+            StateType.BREAK -> playbackRepository.getBreakDurationSeconds()
+            else -> 0
         }
     }
 
-    private fun getStartingMusic() {
+    override fun getStartingMusic() {
         CoroutineScope(Dispatchers.IO).launch {
             if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
                 val playlistId = playbackRepository.getPlayingMusicPlaylistId()
@@ -185,26 +197,42 @@ class HomePageViewModel (
         }
     }
 
-    fun startNextInterval() {
+    override fun startNextInterval() {
         CoroutineScope(Dispatchers.IO).launch {
+            Log.d("HomePageTimer", "calling start next interval")
             // if last interval finishes, finish
-            if (playbackRepository.getCurrentInterval() == playbackRepository.getPlayingTimerNumIntervals() &&
-                playbackRepository.getStateType() == StateType.BREAK
-            ) {
+
+            if (finishedFlag) {
                 finish()
+
+                finishedFlag = false
             } else {
-                playbackRepository.startNextInterval()
-                getStartingTimerValue()
-                getStartingMusic()
-                homeScreenTimer()
+                if (playbackRepository.getCurrentInterval() == playbackRepository.getPlayingTimerNumIntervals()) {
+                    //LAST INTERVAL
+                    playbackRepository.startNextInterval()
+                    getStartingTimerValue()
+                    currentTimerVal.first { it == _currentTimerVal.value }
+                    getStartingMusic()
+                    homeScreenTimer()
+
+                    finishedFlag = true
+                    //play one more interval??
+                } else {
+                    playbackRepository.startNextInterval()
+                    getStartingTimerValue()
+                    currentTimerVal.first { it == _currentTimerVal.value }
+                    getStartingMusic()
+                    homeScreenTimer()
+                }
             }
         }
     }
 
     // same as cancelling a timer
-    fun finish() {
+    override fun finish() {
         CoroutineScope(Dispatchers.IO).launch {
             // TODO @ERICA stop music
+            Log.d("HomePageTimer", "inside finish")
             mp3PlayerManager.stopMusic()
             playbackRepository.invalidatePlayback()
             _isPlaying.value = false
@@ -212,7 +240,7 @@ class HomePageViewModel (
         }
     }
 
-    fun restart() {
+    override fun restart() {
         CoroutineScope(Dispatchers.IO).launch {
             playbackRepository.restartTimer()
             _isPlaying.value = true

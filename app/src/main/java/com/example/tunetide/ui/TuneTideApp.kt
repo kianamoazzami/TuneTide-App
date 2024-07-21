@@ -133,7 +133,7 @@ fun TuneTideBottomAppBar(
                     painter = painterResource(id = R.drawable.timer),
                     contentDescription = "Timer",
                     tint =
-                    if (currentScreen == R.string.all_timers_page_name) {
+                    if (currentScreen == R.string.timers_screen) {
                         PurpleAccent
                     } else {
                         PurpleBackground },
