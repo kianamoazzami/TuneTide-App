@@ -100,8 +100,6 @@ class HomePageViewModel (
             getStartingMusic()
             observeCurrentSong()
         }
-        spotifyController.setPlaylistUrl("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL")
-        spotifyController.play()
     }
 
     private fun observeCurrentSong() {
