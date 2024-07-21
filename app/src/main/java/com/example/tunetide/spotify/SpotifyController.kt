@@ -17,6 +17,7 @@ import com.spotify.protocol.client.CallResult
 import com.spotify.protocol.client.Result
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.Capabilities
+import com.spotify.protocol.types.Image
 import com.spotify.protocol.types.ListItem
 import com.spotify.protocol.types.ListItems
 import com.spotify.protocol.types.PlayerContext
@@ -24,9 +25,11 @@ import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -149,17 +152,39 @@ class SpotifyController(private val mainContext: Context) {
     }
 
     //TODO: have recall of title reflect without delay from coroutine
-    fun getCurrentTrackName() : String {
+    suspend fun getCurrentTrackName() : String {
+        var waited = 0
+        while (playerStateSubscription == null && waited < 6) {
+            Log.d("SpotifyController", "Waiting for subscription to PlayerState...")
+            delay(2000)
+            waited++
+        }
+
+        if (waited >= 6) {
+            Log.e("SpotifyController", "Connection to PlayerState Timed out.")
+            return ""
+        }
         return currentTrack.title
     }
 
-    fun getCurrentTrackArtist() : String {
-        return currentTrack.artist
+    suspend fun getCurrentTrackArtist() : String {
+        var waited = 0
+        while (playerStateSubscription == null && waited < 6) {
+            Log.d("SpotifyController", "Waiting for subscription to PlayerState...")
+            delay(2000)
+            waited++
+        }
+
+        if (waited >= 6) {
+            Log.e("SpotifyController", "Connection to PlayerState Timed out.")
+            return ""
+        }
+        return currentTrack.title
     }
 
     private fun onConnected() {
         Log.d("Spotify Controller", "Connection alive")
-        //onSubscribedToPlayerState()
+        onSubscribedToPlayerState()
         //onSubscribedToPlayerContext()
     }
 
@@ -189,7 +214,7 @@ class SpotifyController(private val mainContext: Context) {
 
     private fun logError(throwable: Throwable) {
         Toast.makeText(mainContext, "An Error Has occured.", Toast.LENGTH_SHORT).show()
-        Log.e("Spotify Controller", "", throwable)
+        Log.e("SpotifyController", "", throwable)
     }
 
     //TODO: below functions.. track updates in-time, track browsing
@@ -259,12 +284,45 @@ class SpotifyController(private val mainContext: Context) {
        //TODO: fill in
     }
 
-    private fun onSubscribedToPlayerContext() {
+    private fun onSubscribedToPlayerState() {
+        playerStateSubscription = cancelAndResetSubscription(playerStateSubscription)
+
+        fun inlineSubscribe() {
+            playerStateSubscription = spotifyAppRemote
+                ?.playerApi
+                ?.subscribeToPlayerState()
+                ?.setEventCallback(playerStateEventCallback)
+                ?.setLifecycleCallback(
+                    object : Subscription.LifecycleCallback {
+                        override fun onStart() {
+                            //logMessage("Event: start")
+                            Log.d("SpotifyController", "Subscribed to playerState")
+                        }
+
+                        override fun onStop() {
+                            Log.d("SpotifyController", "Unsubscribed from playerState")
+                        }
+                    })
+                ?.setErrorCallback {
+                    Log.e("SpotifyController", "Error subscribing to playerstate")
+                } as Subscription<PlayerState>
+        }
+
+        if (spotifyAppRemote != null) {
+            inlineSubscribe()
+        } else {
+            CoroutineScope(Dispatchers.Main).launch{
+                waitForConnection()
+                inlineSubscribe()
+            }
+        }
 
     }
 
     private val playerStateEventCallback = Subscription.EventCallback<PlayerState> { playerState ->
-        //TODO: @erica fill in
+        currentTrack.title = playerState.track.name
+        currentTrack.artist = playerState.track.artist.name
+        currentTrack.paused = playerState.isPaused
     }
 
     private fun <T : Any?> cancelAndResetSubscription(subscription: Subscription<T>?): Subscription<T>? {
@@ -276,5 +334,17 @@ class SpotifyController(private val mainContext: Context) {
         }
     }
 
+    //TODO: Upload image:
+    private fun updateTrackCoverArt(playerState: PlayerState) {
+        // Get image from track
+        spotifyAppRemote
+            ?.imagesApi
+            ?.getImage(playerState.track.imageUri, Image.Dimension.LARGE)
+            ?.setResultCallback { bitmap ->
+                //binding.image.setImageBitmap(bitmap)
+                //binding.imageLabel.text = String.format(
+                  //  Locale.ENGLISH, "%d x %d", bitmap.width, bitmap.height)
+            }
+    }
 
 }
