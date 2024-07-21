@@ -28,21 +28,22 @@ import com.example.tunetide.ui.home.HomeDestination
 import com.example.tunetide.ui.navigation.NavigationDestination
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.database.Timer
+import com.example.tunetide.ui.timer.TimerEditDestination
 
-object StandardPageDestination : NavigationDestination {
-    override val route = "standardPage"
-    override val titleRes = R.string.standard_page_name
+object StandardTimersDestination : NavigationDestination {
+    override val route = "standard_timers"
+    override val titleRes = R.string.standard_timers_page_name
 }
 
-val StandardPageBackground = Color(0xC0BFE0)
+val StandardTimersBackground = Color(0xC0BFE0)
 
 @Composable
-fun StandardPageScreen(
-    navController: NavController,
+fun StandardTimersScreen(
     modifier: Modifier = Modifier,
     navigateToSettings: () -> Unit,
     navigateToHome: () -> Unit,
-    navigateToTimersList: () -> Unit,
+    navigateToInterval: () -> Unit,
+    navigateToAll: () -> Unit,
     navigateToTimerEntry: () -> Unit,
     navigateToTimerEdit: () -> Unit,
     viewModel: TimersListViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -53,10 +54,10 @@ fun StandardPageScreen(
         },
         bottomBar = {
             TuneTideBottomAppBar(
-                currentScreen = R.string.standard_page_name,
+                currentScreen = R.string.timers_screen,
                 navigateToSettings = navigateToSettings,
                 navigateToHome = navigateToHome,
-                navigateToTimersList = navigateToTimersList
+                navigateToTimersList = { }
             )
         },
         floatingActionButton = {
@@ -75,18 +76,24 @@ fun StandardPageScreen(
         },
         modifier = modifier
     ) { innerPadding ->
-        StandardPageBodyContent(
-            navController = navController,
-            modifier = modifier.padding(innerPadding)
+        StandardBody(
+            modifier = modifier.padding(innerPadding),
+            navigateToHome = navigateToHome,
+            navigateToTimerEdit = navigateToTimerEdit,
+            navigateToInterval = navigateToInterval,
+            navigateToAll = navigateToAll,
         )
     }
 }
 
 @Composable
-fun StandardPageBodyContent(
-    navController: NavController,
+fun StandardBody(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(16.dp),
+    navigateToHome: () -> Unit,
+    navigateToTimerEdit: () -> Unit,
+    navigateToInterval: () -> Unit,
+    navigateToAll: () -> Unit,
     viewModel: TimersListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val timerListUIState by viewModel.timerListUIState.collectAsState()
@@ -97,18 +104,28 @@ fun StandardPageBodyContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(StandardPageBackground)
+            .background(StandardTimersBackground)
             .padding(contentPadding),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        StandardPageIconRow(navController)
-        StandardBody(navController, timerListUIState.timers)
+        StandardIconRow(
+            navigateToInterval = navigateToInterval,
+            navigateToAll = navigateToAll
+        )
+        BoxWithImageList(
+            navigateToHome = navigateToHome,
+            navigateToTimerEdit = navigateToTimerEdit,
+            timerListUIState.timers
+        )
     }
 }
 
 @Composable
-fun StandardPageIconRow(navController: NavController) {
+fun StandardIconRow(
+    navigateToInterval: () -> Unit,
+    navigateToAll: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -116,66 +133,50 @@ fun StandardPageIconRow(navController: NavController) {
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TimerIcon(
+        TimerTypeIcon(
             painter = painterResource(R.drawable.old_all_timers),
-            onClick = { navController.navigate(AllTimersPageDestination.route) }
+            onClick = navigateToAll
         )
-        TimerIcon(
+        TimerTypeIcon(
             painter = painterResource(R.drawable.standard_page),
-            onClick = { navController.navigate(StandardPageDestination.route) }
+            onClick = { }
         )
-        TimerIcon(
+        TimerTypeIcon(
             painter = painterResource(R.drawable.interval_standard),
-            onClick = { navController.navigate(SavedTimersDestination.route) } // Navigate back to the same screen
+            onClick = navigateToInterval
         )
     }
 }
 
-@Composable
-fun StandardBody(
-    navController: NavController,
-    timers: List<Timer>,
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(16.dp)
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(PurpleBackground),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        BoxWithImageListStandard(navController, timers)
-    }
-}
+//@Composable
+//fun StandardBody(
+//    navController: NavController,
+//    timers: List<Timer>,
+//    modifier: Modifier = Modifier,
+//    contentPadding: PaddingValues = PaddingValues(16.dp)
+//) {
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(PurpleBackground),
+//        verticalArrangement = Arrangement.Top,
+//        horizontalAlignment = Alignment.CenterHorizontally
+//    ) {
+//        Spacer(modifier = Modifier.height(16.dp))
+//        BoxWithImageListStandard(navController, timers)
+//    }
+//}
 
-@Composable
-fun BoxWithImageListStandard(navController: NavController, timers: List<Timer>) {
-    LazyColumn(modifier = Modifier.padding(0.dp,0.dp,0.dp,60.dp)) {
-        items(timers) { timer ->
-            BoxWithImage(
-                title = timer.timerName,
-                subTitle = "${timer.numIntervals} intervals",
-                onClick = { navController.navigate(HomeDestination.route) },
-                onEditClick = { navController.navigate("${TimerEditDestination.route}/${timer.timerId}") }
-            )
-        }
-    }
-}
-
-
-
-@Composable
-fun TimerIcon(
-    painter: Painter,
-    onClick: () -> Unit
-) {
-    Image(
-        painter = painter,
-        contentDescription = null,
-        modifier = Modifier
-            .size(100.dp)
-            .clickable(onClick = onClick)
-    )
-}
+//@Composable
+//fun BoxWithImageListStandard(navController: NavController, timers: List<Timer>) {
+//    LazyColumn(modifier = Modifier.padding(0.dp,0.dp,0.dp,60.dp)) {
+//        items(timers) { timer ->
+//            BoxWithImage(
+//                title = timer.timerName,
+//                subTitle = "${timer.numIntervals} intervals",
+//                onClick = { navController.navigate(HomeDestination.route) },
+//                onEditClick = { navController.navigate("${TimerEditDestination.route}/${timer.timerId}") }
+//            )
+//        }
+//    }
+//}
