@@ -13,6 +13,8 @@ interface ISpotifyRepository {
     suspend fun deletePlaylist(spotifyPlaylist: SpotifyPlaylist)
 
     fun getSpotifyPlaylists(): Flow<List<SpotifyPlaylist>>
+
+    fun getSpotifyPlaylistById(playlistId: Int): Flow<SpotifyPlaylist?>
 }
 
 class SpotifyRepository(private val spotifyDao: SpotifyDao): ISpotifyRepository {
@@ -24,4 +26,7 @@ class SpotifyRepository(private val spotifyDao: SpotifyDao): ISpotifyRepository 
 
     override fun getSpotifyPlaylists(): Flow<List<SpotifyPlaylist>>
         = spotifyDao.getSpotifyPlaylists()
+
+    override fun getSpotifyPlaylistById(playlistId: Int): Flow<SpotifyPlaylist?>
+            = spotifyDao.getSpotifyPlaylistById(playlistId)
 }

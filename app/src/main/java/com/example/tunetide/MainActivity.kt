@@ -12,7 +12,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.tunetide.ui.TuneTideApp
 import com.example.tunetide.ui.theme.TuneTideTheme
 
+
 class MainActivity : ComponentActivity() {
+
+
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -36,21 +39,36 @@ class MainActivity : ComponentActivity() {
             permissionGranted = true
         }
 
+
+
         setContent {
             TuneTideTheme {
                 if (permissionGranted) {
-                    Log.d("MainActivity", "calling app")
+                    Log.d("TuneTideMainActivity", "calling app")
                     TuneTideApp()
                 } else {
-                    Log.d("MainActivity", "Waiting for permission")
+                    Log.d("TuneTideMainActivity", "Waiting for permission")
                 }
             }
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
     companion object {
         private const val REQUEST_CODE = 123
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
 }
 
 @Preview(showBackground = true)

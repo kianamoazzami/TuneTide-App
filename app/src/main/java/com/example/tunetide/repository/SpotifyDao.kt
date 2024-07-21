@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.tunetide.database.MP3File
+import com.example.tunetide.database.MP3Playlist
 import com.example.tunetide.database.SpotifyPlaylist
 import kotlinx.coroutines.flow.Flow
 
@@ -19,4 +20,7 @@ interface SpotifyDao {
 
     @Query("SELECT * FROM SpotifyPlaylist")
     fun getSpotifyPlaylists(): Flow<List<SpotifyPlaylist>>
+
+    @Query("SELECT * FROM SpotifyPlaylist WHERE playlist_id == :playlistId")
+    fun getSpotifyPlaylistById(playlistId: Int): Flow<SpotifyPlaylist?>
 }
