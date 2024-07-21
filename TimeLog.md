@@ -112,4 +112,4 @@
  | 07/19/24 | Trying to get MP3 to play from files|           |           |           |           | 3.5       |
  | 07/21/24 | Integrating Spotify Changes         |           |           | 4.0       |           |           |
  | 07/21/24 | Permission, Set Playback and Bug Fix|           |           |           |           | 5.0       |
- | 07/21/24 | Playing MP3 From FileSystem         |           |           |           |           | 2.0       |
+ | 07/21/24 | Playing MP3 From FileSystem         |           |           |           |           | 1.5       |
