@@ -16,8 +16,8 @@ class Application : Application() {
         Log.d("TuneTideApplication", "Initializing container")
         container = AppDataContainer(this)
         mainSpotifyController.loadPlaylists(container.spotifyRepository)
-
-
+        //disconnect to allow homepage exclusive access
+        mainSpotifyController.disconnect()
 
     }
 }

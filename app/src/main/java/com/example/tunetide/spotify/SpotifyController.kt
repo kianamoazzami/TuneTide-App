@@ -53,8 +53,9 @@ class SpotifyController(private val mainContext: Context) {
     val trackLock : Mutex = Mutex(false)
 
     class NowPlaying {
-        var title : String = ""
-        var artist : String = ""
+        var playlistUrl: String = "No Playlist Selected"
+        var title : String = "No Song Playing"
+        var artist : String = "No Song Playing"
         var imgURL : String = ""
         var paused : Boolean = true;
         /* to add: track bar?*/
@@ -101,6 +102,14 @@ class SpotifyController(private val mainContext: Context) {
                 Log.d("TestErica", "Connection alive")
             }
         }
+    }
+
+    fun setPlaylistUrl(url : String){
+        currentTrack.playlistUrl = url
+    }
+
+    fun play() {
+        playUri(currentTrack.playlistUrl)
     }
 
     fun playUri(uri: String) {
@@ -151,7 +160,41 @@ class SpotifyController(private val mainContext: Context) {
         }
     }
 
-    //TODO: have recall of title reflect without delay from coroutine
+    fun resumePlayback() {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (spotifyAppRemote == null) {
+                waitForConnection()
+            }
+            spotifyAppRemote?.let {
+
+                it.playerApi
+                    .playerState
+                    .setResultCallback { playerState ->
+                        if (playerState.isPaused) {
+                            it.playerApi
+                                .resume()
+                                .setResultCallback { Log.d("Spotify Controller", "Resumed playback") }
+                                .setErrorCallback(errorCallback)
+                        } else {
+                            Log.e("Spotify Controller", "Error resuming playback, no music qeued or music still playing")
+                        }
+                    }
+            }
+        }
+    }
+
+    fun skipToNextSong() {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (spotifyAppRemote == null) {
+                waitForConnection()
+            }
+            spotifyAppRemote?.let {
+                it.playerApi.skipNext()
+                Log.d("Spotify Controller", "Skipped track")
+            }
+        }
+    }
+
     suspend fun getCurrentTrackName() : String {
         var waited = 0
         while (playerStateSubscription == null && waited < 6) {
@@ -188,7 +231,6 @@ class SpotifyController(private val mainContext: Context) {
         //onSubscribedToPlayerContext()
     }
 
-
     // Suspending function to wait for connection before API call
     // Can be used publicly to suspend and wait for spotify and/or check connection
     // may want private in future
@@ -201,8 +243,20 @@ class SpotifyController(private val mainContext: Context) {
         }
 
         if (waited >= 5) {
-            Log.e("Spotify Controller", "Connection to Spotify timed out")
-            throw(SpotifyDisconnectedException())
+            Log.e("Spotify Controller", "Connection to Spotify timed out, trying again...")
+            connectPersist()
+
+            var waited = 0;
+            while (spotifyAppRemote == null && waited < 5) {
+                delay(2000)
+                Log.d("Spotify Controller", "Waiting for Connection to use spotify...")
+                waited++
+            }
+
+            if (waited >= 5) {
+                Log.e("Spotify Controller", "Still could not connect")
+                throw(SpotifyDisconnectedException())
+            }
         }
     }
 

@@ -9,6 +9,9 @@ import com.example.tunetide.database.StateType
 import com.example.tunetide.mp3player.MP3PlayerManager
 import com.example.tunetide.repository.MP3Repository
 import com.example.tunetide.repository.PlaybackRepository
+import com.example.tunetide.repository.SpotifyRepository
+import com.example.tunetide.spotify.SpotifyController
+import com.example.tunetide.ui.TuneTideApp
 import com.example.tunetide.ui.timer.TimerUIState
 import com.example.tunetide.ui.timer.toTimerDetails
 import kotlinx.coroutines.CoroutineScope
@@ -29,13 +32,15 @@ import java.util.Locale
 class HomePageViewModel (
     context: Context,
     private val playbackRepository: PlaybackRepository,
-    private val mP3Repository: MP3Repository
+    private val mP3Repository: MP3Repository,
+    private val spotifyRepository: SpotifyRepository
 ): ViewModel() {
 
     private var _timerId: Int = -1
         private set
 
     private var mp3PlayerManager: MP3PlayerManager = MP3PlayerManager(context)
+    private var spotifyController: SpotifyController = SpotifyController(context)
 
     val playbackUIState: StateFlow<PlaybackUIState> = playbackRepository.getPlayback()
         .filterNotNull()
@@ -88,6 +93,7 @@ class HomePageViewModel (
             getStartingTimerValue()
             getStartingMusic()
         }
+
     }
 
     fun play() {
@@ -101,7 +107,7 @@ class HomePageViewModel (
                 mp3PlayerManager.play()
 
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
-                // TODO @ERICA
+                spotifyController.play()
             }
         }
     }
@@ -116,7 +122,7 @@ class HomePageViewModel (
                 mp3PlayerManager.pause()
 
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
-                // TODO @ERICA
+                spotifyController.pause()
             }
         }
     }
@@ -128,7 +134,7 @@ class HomePageViewModel (
                 mp3PlayerManager.skipToNextSong()
 
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
-                // TODO @ERICA
+                spotifyController.skipToNextSong()
             }
         }
     }
@@ -151,6 +157,13 @@ class HomePageViewModel (
                 val playlistId = playbackRepository.getPlayingMusicPlaylistId()
                 val playlist = mP3Repository.getMP3FileByPlaylist(playlistId)
                 mp3PlayerManager.switchPlaylist(playlist)
+            } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
+                val playlistId = playbackRepository.getPlayingMusicPlaylistId()
+                spotifyRepository.getSpotifyPlaylistById(playlistId).collect {playlist ->
+                    if (playlist != null) {
+                        spotifyController.setPlaylistUrl(playlist.uriPath)
+                    }
+                }
             }
         }
     }
@@ -174,8 +187,11 @@ class HomePageViewModel (
     // same as cancelling a timer
     fun finish() {
         CoroutineScope(Dispatchers.IO).launch {
-            // TODO @ERICA stop music
-            mp3PlayerManager.stopMusic()
+            if (playbackRepository.getPlayingMusicSource()  == MusicType.MP3) {
+                mp3PlayerManager.stopMusic()
+            } else if (playbackRepository.getPlayingMusicSource()  == MusicType.SPOTIFY) {
+                spotifyController.pause()
+            }
             playbackRepository.invalidatePlayback()
             _isPlaying.value = false
             _currentTimerVal.value = 0
@@ -188,12 +204,16 @@ class HomePageViewModel (
             _isPlaying.value = true
             homeScreenTimer()
             // TODO @ERICA @KIANA restart music
+            // TODO is below how we want to restart??
+            getStartingMusic()
+            play()
         }
     }
 
     override fun onCleared() {
         super.onCleared()
         mp3PlayerManager.releaseMediaPlayer()
+        spotifyController.disconnect()
     }
 
     companion object {
