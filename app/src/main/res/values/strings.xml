@@ -48,6 +48,9 @@
     <!-- New strings for MP3 Playlist Entry screen -->
     <string name="playlist_name_req">Playlist Name*</string>
     <string name="required_fields">* Required Fields</string>
-    <string name="timer_edit_page_name">Edit Timer</string>
+    <string name="playlist">Playlist:</string>
+    <string name="songs">Songs:</string>
+    <string name="empty"> </string>
 
+    <string name="timer_edit_page_name">Edit Timer</string>
 </resources>
