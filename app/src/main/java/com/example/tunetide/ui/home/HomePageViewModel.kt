@@ -103,18 +103,40 @@ class HomePageViewModel (
     }
 
     private fun observeCurrentSong() {
-        CoroutineScope(Dispatchers.IO).launch {
-            mp3PlayerManager.currentSongName.collect { songName ->
-                _currentSongName.value = songName
+        if (_timerId == -1) {
+        } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
+            CoroutineScope(Dispatchers.IO).launch {
+                mp3PlayerManager.currentSongName.collect { songName ->
+                    _currentSongName.value = songName
+                }
+            }
+        } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
+            CoroutineScope(Dispatchers.Main).launch {
+                _currentSongName.value = spotifyController.getCurrentTrackName()
             }
         }
     }
 
     private fun observeCurrentPlaylist(playlistId: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
-            mP3Repository.getMP3PlaylistById(playlistId).collect { playlist ->
-                if (playlist != null) {
-                    _currentPlaylistName.value = playlist.playlistName
+        if (_timerId == -1) {
+        } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
+            CoroutineScope(Dispatchers.IO).launch {
+                mP3Repository.getMP3PlaylistById(playlistId).collect { playlist ->
+                    if (playlist != null) {
+                        _currentPlaylistName.value = playlist.playlistName
+                    }
+                }
+            }
+        } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY)
+        {
+            CoroutineScope(Dispatchers.IO).launch {
+                spotifyRepository.getSpotifyPlaylistById(playlistId).collect { playlist ->
+                    if (playlist != null) {
+                        spotifyController.setPlaylistUrl(playlist.uriPath)
+                        if (playlist.playlistName != null) {
+                            _currentPlaylistName.value = playlist.playlistName
+                        }
+                    }
                 }
             }
         }
@@ -186,11 +208,13 @@ class HomePageViewModel (
                 mp3PlayerManager.switchPlaylist(playlist)
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
                 val playlistId = playbackRepository.getPlayingMusicPlaylistId()
+                observeCurrentPlaylist(playlistId)
                 spotifyRepository.getSpotifyPlaylistById(playlistId).collect {playlist ->
                     if (playlist != null) {
                         spotifyController.setPlaylistUrl(playlist.uriPath)
                     }
                 }
+
             }
         }
     }

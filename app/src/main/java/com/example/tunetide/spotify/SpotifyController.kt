@@ -104,6 +104,41 @@ class SpotifyController(private val mainContext: Context) {
         }
     }
 
+    private fun onConnected() {
+        Log.d("Spotify Controller", "Connection alive")
+        onSubscribedToPlayerState()
+        //onSubscribedToPlayerContext()
+    }
+
+    // Suspending function to wait for connection before API call
+    // Can be used publicly to suspend and wait for spotify and/or check connection
+    // may want private in future
+    suspend fun waitForConnection() {
+        var waited = 0;
+        while (spotifyAppRemote == null && waited < 5) {
+            delay(2000)
+            Log.d("Spotify Controller", "Waiting for Connection to use spotify...")
+            waited++
+        }
+
+        if (waited >= 5) {
+            Log.e("Spotify Controller", "Connection to Spotify timed out, trying again...")
+            connectPersist()
+
+            var waited = 0;
+            while (spotifyAppRemote == null && waited < 5) {
+                delay(2000)
+                Log.d("Spotify Controller", "Waiting for Connection to use spotify...")
+                waited++
+            }
+
+            if (waited >= 5) {
+                Log.e("Spotify Controller", "Still could not connect")
+                throw(SpotifyDisconnectedException())
+            }
+        }
+    }
+
     fun setPlaylistUrl(url : String){
         currentTrack.playlistUrl = url
     }
@@ -195,6 +230,18 @@ class SpotifyController(private val mainContext: Context) {
         }
     }
 
+    fun toggleShuffle(notUsed: View) {
+        CoroutineScope(Dispatchers.Main).launch {
+            waitForConnection()
+            spotifyAppRemote?.playerApi
+            ?.toggleShuffle()
+            ?.setResultCallback {
+                Log.d("Spotify Controller", "Set Shuffle")
+            }
+            ?.setErrorCallback(errorCallback)
+        }
+    }
+
     suspend fun getCurrentTrackName() : String {
         var waited = 0
         while (playerStateSubscription == null && waited < 6) {
@@ -225,40 +272,7 @@ class SpotifyController(private val mainContext: Context) {
         return currentTrack.title
     }
 
-    private fun onConnected() {
-        Log.d("Spotify Controller", "Connection alive")
-        onSubscribedToPlayerState()
-        //onSubscribedToPlayerContext()
-    }
 
-    // Suspending function to wait for connection before API call
-    // Can be used publicly to suspend and wait for spotify and/or check connection
-    // may want private in future
-    suspend fun waitForConnection() {
-        var waited = 0;
-        while (spotifyAppRemote == null && waited < 5) {
-            delay(2000)
-            Log.d("Spotify Controller", "Waiting for Connection to use spotify...")
-            waited++
-        }
-
-        if (waited >= 5) {
-            Log.e("Spotify Controller", "Connection to Spotify timed out, trying again...")
-            connectPersist()
-
-            var waited = 0;
-            while (spotifyAppRemote == null && waited < 5) {
-                delay(2000)
-                Log.d("Spotify Controller", "Waiting for Connection to use spotify...")
-                waited++
-            }
-
-            if (waited >= 5) {
-                Log.e("Spotify Controller", "Still could not connect")
-                throw(SpotifyDisconnectedException())
-            }
-        }
-    }
 
     public fun disconnect() {
         spotifyAppRemote?.let {
