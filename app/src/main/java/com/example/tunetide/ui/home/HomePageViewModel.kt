@@ -50,9 +50,8 @@ class HomePageViewModel (
     private val playbackRepository: PlaybackRepository,
     private val mP3Repository: MP3Repository,
     private val spotifyRepository: SpotifyRepository
-): ViewModel() {
-    private val mP3Repository: MP3Repository
 ): ViewModel(), IHomePageViewModel {
+
 
     private var _timerId: Int = -1
         private set
@@ -268,14 +267,13 @@ class HomePageViewModel (
     // same as cancelling a timer
     override fun finish() {
         CoroutineScope(Dispatchers.IO).launch {
-            // TODO @ERICA stop music
-            Log.d("HomePageTimer", "inside finish")
-            mp3PlayerManager.stopMusic()
-            if (playbackRepository.getPlayingMusicSource()  == MusicType.MP3) {
+            if (_timerId == -1) {
+            } else if (playbackRepository.getPlayingMusicSource()  == MusicType.MP3) {
                 mp3PlayerManager.stopMusic()
             } else if (playbackRepository.getPlayingMusicSource()  == MusicType.SPOTIFY) {
                 spotifyController.pause()
             }
+            Log.d("HomePageTimer", "inside finish")
             playbackRepository.invalidatePlayback()
             _isPlaying.value = false
             _currentTimerVal.value = 0
