@@ -39,8 +39,6 @@ class MainActivity : ComponentActivity() {
             permissionGranted = true
         }
 
-
-
         setContent {
             TuneTideTheme {
                 if (permissionGranted) {
