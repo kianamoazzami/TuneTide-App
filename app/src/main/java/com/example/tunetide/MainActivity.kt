@@ -15,7 +15,7 @@ import com.example.tunetide.spotify.SpotifyController
 class MainActivity : ComponentActivity() {
 
     //private val mainSpotifyController : SpotifyController = SpotifyController();
-
+ 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
