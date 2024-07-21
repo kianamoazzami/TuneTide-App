@@ -1,6 +1,7 @@
 package com.example.tunetide.ui.home
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tunetide.database.MusicType
@@ -76,6 +77,7 @@ class HomePageViewModel (
                 _currentTimerVal.value -= 1
             }
             if (isPlaying.value && currentTimerVal.value <= 0) {
+                Log.d("TestingHomePage", "Next Interval: ${currentTimerVal.value}")
                 startNextInterval()
             }
         }

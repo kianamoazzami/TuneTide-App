@@ -1,51 +1,56 @@
 package com.example.tunetide
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.tunetide.ui.TuneTideApp
 import com.example.tunetide.ui.theme.TuneTideTheme
-/*
-import com.example.tunetide.spotify.SpotifyController
-*/
 
 class MainActivity : ComponentActivity() {
 
-    //private val mainSpotifyController : SpotifyController = SpotifyController();
-  
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Log.d("MainActivity", "Permission granted")
+            permissionGranted = true
+        } else {
+            Log.d("MainActivity", "Permission denied")
+        }
+    }
+
+    private var permissionGranted by mutableStateOf(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
-            TuneTideTheme {
-                Log.d("TuneTideMainActivity", "calling app")
-                TuneTideApp()
-            }
+        if (checkSelfPermission(Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_AUDIO)
+        } else {
+            permissionGranted = true
         }
 
+        setContent {
+            TuneTideTheme {
+                if (permissionGranted) {
+                    Log.d("MainActivity", "calling app")
+                    TuneTideApp()
+                } else {
+                    Log.d("MainActivity", "Waiting for permission")
+                }
+            }
+        }
     }
 
-    // TODO @ERICA likely need to inject this via a dependency in it's own repo (see AppContainer.kt)
-    override fun onStart() {
-        // probably don't want to prompt for spotify connection right as app starts
-        // could put as separate option
-        super.onStart()
-        //mainSpotifyController.connect(this);
-        //mainSpotifyController.playSamplePlaylist();
+    companion object {
+        private const val REQUEST_CODE = 123
     }
-
-    override fun onStop() {
-        super.onStop()
-       // mainSpotifyController.disconnect();
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
 }
 
 @Preview(showBackground = true)
