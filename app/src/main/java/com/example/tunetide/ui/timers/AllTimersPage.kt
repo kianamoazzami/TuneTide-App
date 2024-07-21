@@ -47,7 +47,7 @@ fun AllTimersScreen(
     navigateToStandard: () -> Unit,
     navigateToInterval: () -> Unit,
     navigateToTimerEntry: () -> Unit,
-    navigateToTimerEdit: () -> Unit,
+    navigateToTimerEdit: (Int) -> Unit,
     viewModel: TimersListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     Scaffold(
@@ -93,7 +93,7 @@ fun AllTimersBody(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     navigateToHome: () -> Unit,
-    navigateToTimerEdit: () -> Unit,
+    navigateToTimerEdit: (Int) -> Unit,
     navigateToStandard: () -> Unit,
     navigateToInterval: () -> Unit,
     viewModel: TimersListViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -157,7 +157,7 @@ fun AllTimersIconRow(
 @Composable
 fun BoxWithImageList(
     navigateToHome: () -> Unit,
-    navigateToTimerEdit: () -> Unit,
+    navigateToTimerEdit: (Int) -> Unit,
     timers: List<Timer>,
     viewModel: TimersListViewModel) {
 
@@ -174,7 +174,7 @@ fun BoxWithImageList(
                         navigateToHome()
                     }
                 },
-                onEditClick = navigateToTimerEdit
+                onEditClick = { navigateToTimerEdit(timer.timerId) }
             )
         }
     }

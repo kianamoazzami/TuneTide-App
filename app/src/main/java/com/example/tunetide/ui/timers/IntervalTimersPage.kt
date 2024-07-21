@@ -41,7 +41,7 @@ fun IntervalTimersScreen(
     navigateToStandard: () -> Unit,
     navigateToAll: () -> Unit,
     navigateToTimerEntry: () -> Unit,
-    navigateToTimerEdit: () -> Unit,
+    navigateToTimerEdit: (Int) -> Unit,
     viewModel: TimersListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     Scaffold(
@@ -87,7 +87,7 @@ fun IntervalTimersBody(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     navigateToHome: () -> Unit,
-    navigateToTimerEdit: () -> Unit,
+    navigateToTimerEdit: (Int) -> Unit,
     navigateToStandard: () -> Unit,
     navigateToAll: () -> Unit,
     viewModel: TimersListViewModel = viewModel(factory = AppViewModelProvider.Factory)

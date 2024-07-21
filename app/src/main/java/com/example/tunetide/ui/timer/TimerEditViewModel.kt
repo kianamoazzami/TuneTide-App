@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TimerEditViewModel (
     private val savedStateHandle: SavedStateHandle,
@@ -31,16 +32,22 @@ class TimerEditViewModel (
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
-            timerUIState = timerRepository.getTimerById(timerId)
+             val timer = timerRepository.getTimerById(timerId)
                 .filterNotNull()
                 .first()
                 .toTimerUIState(true)
+
+            withContext(Dispatchers.Main) {
+                timerUIState = timer
+            }
         }
     }
 
     // updates item UI
     fun updateUIState(timerDetails: TimerDetails) {
-        timerUIState = TimerUIState(timerDetails = timerDetails, isValidEntry = validateInput(timerDetails))
+        viewModelScope.launch(Dispatchers.Main) {
+            timerUIState = TimerUIState(timerDetails = timerDetails, isValidEntry = validateInput(timerDetails))
+        }
     }
 
     suspend fun updateTimer() {

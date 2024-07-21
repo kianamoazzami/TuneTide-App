@@ -90,7 +90,6 @@ fun TuneTideNavHost(
             })
         ) {
             TimerEditScreen(
-                navigateToEditTimer = { navController.navigate("${TimerEditDestination.route}/$it") },
                 navigateBack = { navController.navigateUp() }
             )
         }
@@ -102,9 +101,8 @@ fun TuneTideNavHost(
                 navigateToStandard = { navController.navigate(StandardTimersDestination.route) },
                 navigateToAll = { navController.navigate(AllTimersDestination.route) },
                 navigateToTimerEntry = { navController.navigate(TimerEntryDestination.route) },
-                navigateToTimerEdit = {
-                    navController.navigate("${TimerEditDestination.route}/${it}")
-                })
+                navigateToTimerEdit = { navController.navigate("${TimerEditDestination.route}/$it") }
+            )
         }
         composable(route = StandardTimersDestination.route) {
             StandardTimersScreen(
@@ -113,9 +111,8 @@ fun TuneTideNavHost(
                 navigateToInterval = { navController.navigate(IntervalTimersDestination.route) },
                 navigateToAll = { navController.navigate(AllTimersDestination.route) },
                 navigateToTimerEntry = { navController.navigate(TimerEntryDestination.route) },
-                navigateToTimerEdit = {
-                    navController.navigate("${TimerEditDestination.route}/${it}")
-                })
+                navigateToTimerEdit = { navController.navigate("${TimerEditDestination.route}/$it") }
+            )
         }
         composable(route = AllTimersDestination.route) {
             AllTimersScreen(
@@ -124,9 +121,7 @@ fun TuneTideNavHost(
                 navigateToStandard = { navController.navigate(StandardTimersDestination.route) },
                 navigateToInterval = { navController.navigate(IntervalTimersDestination.route) },
                 navigateToTimerEntry = { navController.navigate(TimerEntryDestination.route) },
-                navigateToTimerEdit = {
-                    navController.navigate("${TimerEditDestination.route}/${it}")
-                }
+                navigateToTimerEdit = { navController.navigate("${TimerEditDestination.route}/$it") }
             )
         }
     }
