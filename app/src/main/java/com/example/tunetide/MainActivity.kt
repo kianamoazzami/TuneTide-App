@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.tunetide.database.TuneTideDatabase
 import com.example.tunetide.ui.TuneTideApp
 import com.example.tunetide.ui.theme.TuneTideTheme
 /*
@@ -16,6 +15,7 @@ import com.example.tunetide.spotify.SpotifyController
 class MainActivity : ComponentActivity() {
 
     //private val mainSpotifyController : SpotifyController = SpotifyController();
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
