@@ -1,5 +1,6 @@
 package com.example.tunetide.ui.timers
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.foundation.background
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -18,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.R
+import com.example.tunetide.database.FilterType
 import com.example.tunetide.ui.TuneTideBottomAppBar
 import com.example.tunetide.ui.TuneTideTopAppBar
 import com.example.tunetide.ui.navigation.NavigationDestination
@@ -89,8 +92,11 @@ fun IntervalTimersBody(
     navigateToAll: () -> Unit,
     viewModel: TimersListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val timerListUIState by viewModel.timerListUIState.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.filterTimers(FilterType.INTERVAL)
+    }
 
+    val timerListUIState by viewModel.timerListUIState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -107,7 +113,8 @@ fun IntervalTimersBody(
         BoxWithImageList(
             navigateToHome = navigateToHome,
             navigateToTimerEdit = navigateToTimerEdit,
-            timerListUIState.timers
+            timers = timerListUIState.timers,
+            viewModel = viewModel
         )
     }
 }

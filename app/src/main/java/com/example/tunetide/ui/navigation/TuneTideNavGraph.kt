@@ -95,14 +95,6 @@ fun TuneTideNavHost(
             )
         }
 
-//        composable(route = TimersListDestination.route) {
-//            TimersListScreen(
-//                navigateToTimerEntry = { navController.navigate(TimerEntryDestination.route) },
-//                navigateToTimerEdit = {
-//                    navController.navigate("${TimerEditDestination.route}/${it}")
-//                }
-//            )
-//        }
         composable(route = IntervalTimersDestination.route) {
             IntervalTimersScreen(
                 navigateToSettings = { navController.navigate(SettingsDestination.route) },

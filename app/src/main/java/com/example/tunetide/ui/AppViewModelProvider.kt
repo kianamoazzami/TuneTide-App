@@ -63,7 +63,8 @@ object AppViewModelProvider {
 
         initializer {
             TimersListViewModel( // Added initializer
-                TuneTideApplication().container.timerRepository
+                TuneTideApplication().container.timerRepository,
+                TuneTideApplication().container.playbackRepository
             )
         }
 

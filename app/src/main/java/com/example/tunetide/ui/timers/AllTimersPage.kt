@@ -12,6 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +30,7 @@ import com.example.tunetide.ui.navigation.NavigationDestination
 import com.example.tunetide.ui.timer.TimerEditDestination
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.database.Timer
+import kotlinx.coroutines.launch
 
 object AllTimersDestination : NavigationDestination {
     override val route = "all_timers"
@@ -118,7 +120,8 @@ fun AllTimersBody(
         BoxWithImageList(
             navigateToHome = navigateToHome,
             navigateToTimerEdit = navigateToTimerEdit,
-            timerListUIState.timers
+            timers = timerListUIState.timers,
+            viewModel = viewModel
         )
     }
 }
@@ -177,19 +180,27 @@ fun AllTimersIconRow(
 fun BoxWithImageList(
     navigateToHome: () -> Unit,
     navigateToTimerEdit: () -> Unit,
-    timers: List<Timer>) {
+    timers: List<Timer>,
+    viewModel: TimersListViewModel) {
+
+    val coroutineScope = rememberCoroutineScope()
+
     LazyColumn(modifier = Modifier.padding(0.dp,0.dp,0.dp,60.dp)) {
         items(timers) { timer ->
             BoxWithImage(
                 title = timer.timerName,
                 subTitle = "${timer.numIntervals} intervals",
-                onClick = navigateToHome,
+                onClick = {
+                    coroutineScope.launch {
+                        viewModel.setPlayback(timer)
+                        navigateToHome()
+                    }
+                },
                 onEditClick = navigateToTimerEdit
             )
         }
     }
 }
-
 
 @Composable
 fun TimerTypeIcon(
