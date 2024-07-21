@@ -459,6 +459,7 @@ fun playlistSelect(
                     modifier = modifier
                         .background(PurpleLight)
                         .height(50.dp)
+                        .width(225.dp)
                 ) {
                     TextField(
                         value = chosenOptionName,
@@ -493,6 +494,20 @@ fun playlistSelect(
                         }
                     }
                 }
+                var shuffle by remember { mutableStateOf(false) }
+                Column( modifier = Modifier.padding(start = 8.dp)) {
+                    Text(
+                        text = "Shuffle",
+                        color = PurpleDark,
+                        modifier = Modifier.padding(end = 8.dp),
+                    )
+                    Checkbox(
+                        checked = shuffle,
+                        onCheckedChange = {
+                            shuffle = !shuffle
+                        }
+                    )
+                }
             }
         }
         else {
@@ -517,6 +532,7 @@ fun playlistSelect(
                     modifier = modifier
                         .background(PurpleLight)
                         .height(50.dp)
+                        .width(225.dp)
                 ) {
                     TextField(
                         value = chosenOptionName,
