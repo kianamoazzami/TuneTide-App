@@ -110,3 +110,4 @@
  | 07/19/24 | Trying to Fix Bugs, Adding Names    |           |           |           |           | 3.5       |
  | 07/19/24 |Fixing bugs on the app               |           |  4.5      |           |           |           |
  | 07/19/24 | Trying to get MP3 to play from files|           |           |           |           | 3.5       |
+ | 07/17/24 | Integrating Spotify Changes         |           |           | 4.0       |           |           |
