@@ -1,12 +1,29 @@
 package com.example.tunetide.ui.home
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Button
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,15 +34,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.R
+import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.TuneTideBottomAppBar
 import com.example.tunetide.ui.TuneTideTopAppBar
-import com.example.tunetide.ui.theme.PurpleBackground
-import kotlinx.coroutines.delay
-import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.navigation.NavigationDestination
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.tunetide.ui.theme.Greyish
+import com.example.tunetide.ui.theme.PurpleBackground
+import com.example.tunetide.ui.theme.PurpleDark
 import com.example.tunetide.ui.timer.TimerDetails
 import kotlinx.coroutines.launch
 import kotlin.math.max
@@ -82,7 +97,7 @@ fun HomeBody(
             .fillMaxSize()
             .background(PurpleBackground)
             .padding(contentPadding),
-        verticalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TideFlow()
@@ -90,10 +105,13 @@ fun HomeBody(
             viewModel = viewModel,
             modifier = modifier,
             playback = playback,
-            timer = timer)
+            timer = timer
+        )
         Spacer(modifier = Modifier.height(16.dp))
-        MusicPlayerBody(viewModel = viewModel(factory = AppViewModelProvider.Factory),
-            modifier = modifier) // TODO @KIANA @ERICA inject musicUIState here
+        MusicPlayerBody(
+            viewModel = viewModel(factory = AppViewModelProvider.Factory),
+            modifier = modifier
+        )
     }
 }
 
@@ -580,11 +598,14 @@ fun FlowBreakDisplay(
 @Composable
 fun MusicPlayerBody(
     viewModel: HomePageViewModel,
-    modifier: Modifier) {
-    // TODO @KIANA will be injected another way (more top level/singleton)? (not sure how)
-    /*
-    var mp3Player: MP3Player = MP3Player(context)
-    */
+    modifier: Modifier = Modifier
+) {
+    val currentSongName by viewModel.currentSongName.collectAsState()
+    val currentPlaylistName by viewModel.currentPlaylistName.collectAsState()
+
+    //IF WE ONLY WANT THE SONG NAME TO SHOW WHEN PLAYING:
+    val isPlaying by viewModel.isPlaying.collectAsState()
+
     Box(
         modifier = Modifier
             .width(344.dp)
@@ -592,8 +613,37 @@ fun MusicPlayerBody(
             .background(Color(0xFFE6E5F2), shape = RoundedCornerShape(16.dp)),
         contentAlignment = Alignment.Center
     ) {
-        //TODO: @KIANA show song name and playlist and add button to go to next song
-        //TODO: @KIANA add a photo to show as the cover since mp3 has no cover
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                //IF WE ONLY WANT THE SONG NAME TO SHOW WHEN PLAYING:
+                text = if (isPlaying) {
+                    currentSongName
+                } else {
+                    "Not Playing"
+                },
+                //text = currentSongName,
+                color = PurpleDark,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = currentPlaylistName,
+                color = PurpleDark,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = { viewModel.skipSong() }) {
+                Text(
+                    text = "Next Song",
+                    color = PurpleDark)
+            }
+        }
     }
 }
 
