@@ -46,6 +46,8 @@ class SpotifyController(private val mainContext: Context) {
     private val redirectUri = "tunetide://test"
     private var spotifyAppRemote: SpotifyAppRemote? = null
 
+    private var isSpotifyInstalled = true;
+
     private var playerStateSubscription: Subscription<PlayerState>? = null
     private var playerContextSubscription: Subscription<PlayerContext>? = null
     private var capabilitiesSubscription: Subscription<Capabilities>? = null
@@ -83,8 +85,9 @@ class SpotifyController(private val mainContext: Context) {
                     }
 
                     override fun onFailure(error: Throwable) {
-                        cont.resumeWithException(error)
                         logError(error)
+                        isSpotifyInstalled = false
+                        cont.resumeWithException(error)
                     }
                 })
         }
@@ -114,29 +117,34 @@ class SpotifyController(private val mainContext: Context) {
     // Can be used publicly to suspend and wait for spotify and/or check connection
     // may want private in future
     suspend fun waitForConnection() {
-        var waited = 0;
-        while (spotifyAppRemote == null && waited < 5) {
-            delay(2000)
-            Log.d("Spotify Controller", "Waiting for Connection to use spotify...")
-            waited++
-        }
+       if (isSpotifyInstalled == true) {
 
-        if (waited >= 5) {
-            Log.e("Spotify Controller", "Connection to Spotify timed out, trying again...")
-            connectPersist()
+           var waited = 0;
+           while (spotifyAppRemote == null && waited < 5) {
+               delay(2000)
+               Log.d("Spotify Controller", "Waiting for Connection to use spotify...")
+               waited++
+           }
 
-            var waited = 0;
-            while (spotifyAppRemote == null && waited < 5) {
-                delay(2000)
-                Log.d("Spotify Controller", "Waiting for Connection to use spotify...")
-                waited++
-            }
+           if (waited >= 5) {
+               Log.e("Spotify Controller", "Connection to Spotify timed out, trying again...")
+               connectPersist()
 
-            if (waited >= 5) {
-                Log.e("Spotify Controller", "Still could not connect")
-                throw(SpotifyDisconnectedException())
-            }
-        }
+               var waited = 0;
+               while (spotifyAppRemote == null && waited < 5) {
+                   delay(2000)
+                   Log.d("Spotify Controller", "Waiting for Connection to use spotify...")
+                   waited++
+               }
+
+               if (waited >= 5) {
+                   Log.e("Spotify Controller", "Still could not connect")
+                   throw (SpotifyDisconnectedException())
+               }
+           }
+       } else {
+           Log.e("Spotify Controller", "Spotify is not installed on this device")
+       }
     }
 
     fun setPlaylistUrl(url : String){
@@ -281,7 +289,7 @@ class SpotifyController(private val mainContext: Context) {
     }
 
     private fun logError(throwable: Throwable) {
-        Toast.makeText(mainContext, "An Error Has occured.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(mainContext, "Could not connect to Spotify", Toast.LENGTH_SHORT).show()
         Log.e("SpotifyController", "", throwable)
     }
 
