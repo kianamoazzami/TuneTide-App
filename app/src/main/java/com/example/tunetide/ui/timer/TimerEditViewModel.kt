@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.tunetide.repository.SpotifyRepository
 import com.example.tunetide.repository.TimerRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +20,8 @@ import kotlinx.coroutines.launch
 
 class TimerEditViewModel (
     private val savedStateHandle: SavedStateHandle,
-    private val timerRepository: TimerRepository
+    private val timerRepository: TimerRepository,
+    val spotifyRepository: SpotifyRepository
 ): ViewModel() {
 
     var timerUIState by mutableStateOf(TimerUIState())
