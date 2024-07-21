@@ -1,37 +1,41 @@
 package com.example.tunetide.spotify
 
 import android.content.Context
-import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.example.tunetide.ui.TuneTideApp
-import com.example.tunetide.ui.theme.TuneTideTheme
+import com.example.tunetide.database.SpotifyPlaylist
+import com.example.tunetide.repository.SpotifyDao
+import com.example.tunetide.repository.SpotifyRepository
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
+import com.spotify.android.appremote.api.ContentApi
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.android.appremote.api.error.SpotifyDisconnectedException
+import com.spotify.protocol.client.CallResult
+import com.spotify.protocol.client.Result
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.Capabilities
+import com.spotify.protocol.types.Image
+import com.spotify.protocol.types.ListItem
+import com.spotify.protocol.types.ListItems
 import com.spotify.protocol.types.PlayerContext
 import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+
 
 //Controller needs to be initialized with reference context..
 // 'application' should give application context
@@ -42,6 +46,8 @@ class SpotifyController(private val mainContext: Context) {
     private val redirectUri = "tunetide://test"
     private var spotifyAppRemote: SpotifyAppRemote? = null
 
+    private var isSpotifyInstalled = true;
+
     private var playerStateSubscription: Subscription<PlayerState>? = null
     private var playerContextSubscription: Subscription<PlayerContext>? = null
     private var capabilitiesSubscription: Subscription<Capabilities>? = null
@@ -49,8 +55,9 @@ class SpotifyController(private val mainContext: Context) {
     val trackLock : Mutex = Mutex(false)
 
     class NowPlaying {
-        var title : String = ""
-        var artist : String = ""
+        var playlistUrl: String = "No Playlist Selected"
+        var title : String = "No Song Playing"
+        var artist : String = "No Song Playing"
         var imgURL : String = ""
         var paused : Boolean = true;
         /* to add: track bar?*/
@@ -65,6 +72,7 @@ class SpotifyController(private val mainContext: Context) {
 
     private suspend fun connectToAppRemote(showAuthView: Boolean): SpotifyAppRemote? =
         suspendCoroutine { cont: Continuation<SpotifyAppRemote> ->
+            SpotifyAppRemote.setDebugMode(true)
             SpotifyAppRemote.connect(
                 mainContext,
                 ConnectionParams.Builder(clientId)
@@ -77,8 +85,9 @@ class SpotifyController(private val mainContext: Context) {
                     }
 
                     override fun onFailure(error: Throwable) {
-                        cont.resumeWithException(error)
                         logError(error)
+                        isSpotifyInstalled = false
+                        cont.resumeWithException(error)
                     }
                 })
         }
@@ -96,6 +105,54 @@ class SpotifyController(private val mainContext: Context) {
                 Log.d("TestErica", "Connection alive")
             }
         }
+    }
+
+    private fun onConnected() {
+        Log.d("Spotify Controller", "Connection alive")
+        onSubscribedToPlayerState()
+        //onSubscribedToPlayerContext()
+    }
+
+    // Suspending function to wait for connection before API call
+    // Can be used publicly to suspend and wait for spotify and/or check connection
+    // may want private in future
+    suspend fun waitForConnection() {
+       if (isSpotifyInstalled == true) {
+
+           var waited = 0;
+           while (spotifyAppRemote == null && waited < 5) {
+               delay(2000)
+               Log.d("Spotify Controller", "Waiting for Connection to use spotify...")
+               waited++
+           }
+
+           if (waited >= 5) {
+               Log.e("Spotify Controller", "Connection to Spotify timed out, trying again...")
+               connectPersist()
+
+               var waited = 0;
+               while (spotifyAppRemote == null && waited < 5) {
+                   delay(2000)
+                   Log.d("Spotify Controller", "Waiting for Connection to use spotify...")
+                   waited++
+               }
+
+               if (waited >= 5) {
+                   Log.e("Spotify Controller", "Still could not connect")
+                   throw (SpotifyDisconnectedException())
+               }
+           }
+       } else {
+           Log.e("Spotify Controller", "Spotify is not installed on this device")
+       }
+    }
+
+    fun setPlaylistUrl(url : String){
+        currentTrack.playlistUrl = url
+    }
+
+    fun play() {
+        playUri(currentTrack.playlistUrl)
     }
 
     fun playUri(uri: String) {
@@ -146,38 +203,84 @@ class SpotifyController(private val mainContext: Context) {
         }
     }
 
-    //TODO: have recall of title reflect without delay from coroutine
-    fun getCurrentTrackName() : String {
-        return currentTrack.title
+    fun resumePlayback() {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (spotifyAppRemote == null) {
+                waitForConnection()
+            }
+            spotifyAppRemote?.let {
+
+                it.playerApi
+                    .playerState
+                    .setResultCallback { playerState ->
+                        if (playerState.isPaused) {
+                            it.playerApi
+                                .resume()
+                                .setResultCallback { Log.d("Spotify Controller", "Resumed playback") }
+                                .setErrorCallback(errorCallback)
+                        } else {
+                            Log.e("Spotify Controller", "Error resuming playback, no music qeued or music still playing")
+                        }
+                    }
+            }
+        }
     }
 
-    fun getCurrentTrackArtist() : String {
-        return currentTrack.artist
+    fun skipToNextSong() {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (spotifyAppRemote == null) {
+                waitForConnection()
+            }
+            spotifyAppRemote?.let {
+                it.playerApi.skipNext()
+                Log.d("Spotify Controller", "Skipped track")
+            }
+        }
     }
 
-    private fun onConnected() {
-        Log.d("Spotify Controller", "Connection alive")
-        //onSubscribedToPlayerState()
-        //onSubscribedToPlayerContext()
+    fun toggleShuffle() {
+        CoroutineScope(Dispatchers.Main).launch {
+            waitForConnection()
+            spotifyAppRemote?.playerApi
+            ?.toggleShuffle()
+            ?.setResultCallback {
+                Log.d("Spotify Controller", "Set Shuffle")
+            }
+            ?.setErrorCallback(errorCallback)
+        }
     }
 
-
-    // Suspending function to wait for connection before API call
-    // Can be used publicly to suspend and wait for spotify and/or check connection
-    // may want private in future
-    suspend fun waitForConnection() {
-        var waited = 0;
-        while (spotifyAppRemote == null && waited < 5) {
+    suspend fun getCurrentTrackName() : String {
+        var waited = 0
+        while (playerStateSubscription == null && waited < 6) {
+            Log.d("SpotifyController", "Waiting for subscription to PlayerState...")
             delay(2000)
-            Log.d("Spotify Controller", "Waiting for Connection to play URI..")
             waited++
         }
 
-        if (waited >= 5) {
-            Log.e("Spotify Controller", "Connection to Spotify timed out")
-            throw(SpotifyDisconnectedException())
+        if (waited >= 6) {
+            Log.e("SpotifyController", "Connection to PlayerState Timed out.")
+            return ""
         }
+        return currentTrack.title
     }
+
+    suspend fun getCurrentTrackArtist() : String {
+        var waited = 0
+        while (playerStateSubscription == null && waited < 6) {
+            Log.d("SpotifyController", "Waiting for subscription to PlayerState...")
+            delay(2000)
+            waited++
+        }
+
+        if (waited >= 6) {
+            Log.e("SpotifyController", "Connection to PlayerState Timed out.")
+            return ""
+        }
+        return currentTrack.title
+    }
+
+
 
     public fun disconnect() {
         spotifyAppRemote?.let {
@@ -186,22 +289,116 @@ class SpotifyController(private val mainContext: Context) {
     }
 
     private fun logError(throwable: Throwable) {
-        Toast.makeText(mainContext, "An Error Has occured.", Toast.LENGTH_SHORT).show()
-        Log.e("Spotify Controller", "", throwable)
+        Toast.makeText(mainContext, "Could not connect to Spotify", Toast.LENGTH_SHORT).show()
+        Log.e("SpotifyController", "", throwable)
     }
 
     //TODO: below functions.. track updates in-time, track browsing
+
+    private fun convertToList(inputItems: ListItems?): List<ListItem> {
+        return if (inputItems?.items != null) {
+            inputItems.items.toList()
+        } else {
+            emptyList()
+        }
+    }
+
+    private suspend fun loadChildren(appRemote: SpotifyAppRemote?, parent: ListItem): ListItems? =
+        suspendCoroutine { cont ->
+            appRemote?.contentApi?.getChildrenOfItem(parent, 6, 0)?.setResultCallback { listItems -> cont.resume(listItems) }
+                ?.setErrorCallback { throwable ->
+                    errorCallback.invoke(throwable)
+                    cont.resumeWithException(throwable)
+                }
+        }
+
+    private suspend fun loadRootRecommendations(appRemote: SpotifyAppRemote?): ListItems? =
+        suspendCoroutine { cont ->
+                appRemote?.contentApi?.getRecommendedContentItems(ContentApi.ContentType.FITNESS)?.setResultCallback { listItems -> cont.resume(listItems) }
+                    ?.setErrorCallback { throwable ->
+                        errorCallback.invoke(throwable)
+                        cont.resumeWithException(throwable)
+                    }
+
+        }
+
+    // Call at start
+    fun loadPlaylists(spotifyRepository : SpotifyRepository) {
+        CoroutineScope(Dispatchers.Main).launch {
+            waitForConnection()
+            spotifyAppRemote.let {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val combined = ArrayList<ListItem>(50)
+                    val listItems = loadRootRecommendations(it)
+                    listItems?.apply {
+                        for (i in items.indices) {
+                            if (items[i].playable) {
+                                combined.add(items[i])
+                            } else {
+                                val children: ListItems? = loadChildren(it, items[i])
+                                combined.addAll(convertToList(children))
+                                if (i < 21 && children != null && children.items[0].playable) {
+                                    val playlist: SpotifyPlaylist = SpotifyPlaylist(
+                                        i,
+                                        children.items[0].title,
+                                        children.items[0].uri,
+                                        children.items[0].imageUri.toString()
+                                    )
+
+                                    spotifyRepository.insertPlaylist(playlist)
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     private val playerContextEventCallback = Subscription.EventCallback<PlayerContext> { playerContext ->
        //TODO: fill in
     }
 
-    private fun onSubscribedToPlayerContext() {
+    private fun onSubscribedToPlayerState() {
+        playerStateSubscription = cancelAndResetSubscription(playerStateSubscription)
+
+        fun inlineSubscribe() {
+            playerStateSubscription = spotifyAppRemote
+                ?.playerApi
+                ?.subscribeToPlayerState()
+                ?.setEventCallback(playerStateEventCallback)
+                ?.setLifecycleCallback(
+                    object : Subscription.LifecycleCallback {
+                        override fun onStart() {
+                            //logMessage("Event: start")
+                            Log.d("SpotifyController", "Subscribed to playerState")
+                        }
+
+                        override fun onStop() {
+                            Log.d("SpotifyController", "Unsubscribed from playerState")
+                        }
+                    })
+                ?.setErrorCallback {
+                    Log.e("SpotifyController", "Error subscribing to playerstate")
+                } as Subscription<PlayerState>
+        }
+
+        if (spotifyAppRemote != null) {
+            inlineSubscribe()
+        } else {
+            CoroutineScope(Dispatchers.Main).launch{
+                waitForConnection()
+                inlineSubscribe()
+            }
+        }
 
     }
 
     private val playerStateEventCallback = Subscription.EventCallback<PlayerState> { playerState ->
-        //TODO: @erica fill in
+        currentTrack.title = playerState.track.name
+        currentTrack.artist = playerState.track.artist.name
+        currentTrack.paused = playerState.isPaused
     }
 
     private fun <T : Any?> cancelAndResetSubscription(subscription: Subscription<T>?): Subscription<T>? {
@@ -213,5 +410,17 @@ class SpotifyController(private val mainContext: Context) {
         }
     }
 
+    //TODO: Upload image:
+    private fun updateTrackCoverArt(playerState: PlayerState) {
+        // Get image from track
+        spotifyAppRemote
+            ?.imagesApi
+            ?.getImage(playerState.track.imageUri, Image.Dimension.LARGE)
+            ?.setResultCallback { bitmap ->
+                //binding.image.setImageBitmap(bitmap)
+                //binding.imageLabel.text = String.format(
+                  //  Locale.ENGLISH, "%d x %d", bitmap.width, bitmap.height)
+            }
+    }
 
 }
