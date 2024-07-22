@@ -114,7 +114,15 @@ fun TimerEntryBody(
 ){
     Box(modifier = modifier) {
         Column(modifier = modifier) {
-            Row(modifier = modifier.padding(16.dp)) {
+            Row(modifier = modifier.padding(0.dp)) {
+                Text(
+                    text = "Press Enter on the keyboard upon entering input",
+                    fontSize = 16.sp,
+                    color = PurpleDark,
+                    modifier = Modifier
+                )
+            }
+            Row(modifier = modifier.padding(bottom = 16.dp)) {
                 flowStateForm(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
             }
             Row(modifier = modifier.padding(16.dp)) {
@@ -127,7 +135,8 @@ fun TimerEntryBody(
                 intervalOption(timerUIState, modifier, onTimerValueChange)
             }
             Row(modifier = modifier
-                .padding(16.dp)
+                .padding(bottom = 16.dp)
+                .padding(end = 16.dp)
                 .align(Alignment.End)) {
                 saveButton(timerUIState, onSaveClick, modifier)
             }
@@ -204,7 +213,7 @@ fun intervalOption(
         OutlinedTextField(
             value = intervalNum.toString(),
             onValueChange = {
-                if (it.isNotEmpty()) {
+                if (it.isNotEmpty() && (it.toIntOrNull() != null)) {
                     intervalNum = it.toInt()
                 }
                 else {
@@ -329,7 +338,7 @@ fun timeSelect(
             OutlinedTextField(
                 value = timeVal.toString(),
                 onValueChange = {
-                    if (it.isNotEmpty()) {
+                    if (it.isNotEmpty() && (it.toIntOrNull() != null)) {
                         timeVal = it.toInt()
                     }
                     else {
@@ -378,7 +387,7 @@ fun timeSelect(
             OutlinedTextField(
                 value = timeVal.toString(),
                 onValueChange = {
-                    if (it.isNotEmpty()) {
+                    if (it.isNotEmpty() && (it.toIntOrNull() != null)) {
                         timeVal = it.toInt()
                     }
                     else {
@@ -575,14 +584,14 @@ fun saveButton(timerUIState: TimerUIState, onSaveClick: () -> Unit, modifier: Mo
         Text(
             text = "Incomplete Input",
             color = Color.Red,
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(6.dp),
         )
     }
     Button(onClick = onSaveClick, colors = ButtonDefaults.buttonColors(PurpleDark)) {
         Text(
             text = "Save",
             color = PurpleBackground,
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(0.dp),
         )
     }
 

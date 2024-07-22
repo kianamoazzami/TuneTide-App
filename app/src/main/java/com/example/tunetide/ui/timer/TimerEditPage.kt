@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.R
 import com.example.tunetide.spotify.SpotifyPlaylistsViewModel
@@ -107,6 +108,14 @@ fun TimerEditBody(
 ){
     Box(modifier = modifier) {
         Column(modifier = modifier) {
+            Row(modifier = modifier.padding(0.dp)) {
+                Text(
+                    text = "Press Enter on the keyboard upon entering input",
+                    fontSize = 16.sp,
+                    color = PurpleDark,
+                    modifier = Modifier
+                )
+            }
             Row(modifier = modifier.padding(16.dp)) {
                 flowStateFormEdit(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
             }
@@ -120,7 +129,8 @@ fun TimerEditBody(
                 intervalOptionEdit(timerUIState, modifier, onTimerValueChange)
             }
             Row(modifier = modifier
-                .padding(16.dp)
+                .padding(bottom = 16.dp)
+                .padding(end = 16.dp)
                 .align(Alignment.End)) {
                 saveButtonEdit(timerUIState, onSaveClick, modifier)
             }
@@ -197,7 +207,7 @@ fun intervalOptionEdit(
         OutlinedTextField(
             value = intervalNum.toString(),
             onValueChange = {
-                if (it.isNotEmpty()) {
+                if (it.isNotEmpty() && (it.toIntOrNull() != null)) {
                     intervalNum = it.toInt()
                 }
                 else {
@@ -334,7 +344,7 @@ fun timeSelectEdit(
             OutlinedTextField(
                 value = timeVal.toString(),
                 onValueChange = {
-                    if (it.isNotEmpty()) {
+                    if (it.isNotEmpty() && (it.toIntOrNull() != null)) {
                         timeVal = it.toInt()
                     }
                     else {
@@ -396,7 +406,7 @@ fun timeSelectEdit(
             OutlinedTextField(
                 value = timeVal.toString(),
                 onValueChange = {
-                    if (it.isNotEmpty()) {
+                    if (it.isNotEmpty() && (it.toIntOrNull() != null)) {
                         timeVal = it.toInt()
                     }
                     else {
@@ -601,14 +611,14 @@ fun saveButtonEdit(timerUIState: TimerUIState, onSaveClick: () -> Unit, modifier
         Text(
             text = "Incomplete Input",
             color = Color.Red,
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(6.dp),
         )
     }
     Button(onClick = onSaveClick, colors = ButtonDefaults.buttonColors(PurpleDark)) {
         Text(
             text = "Save",
             color = PurpleBackground,
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(0.dp),
         )
     }
 
