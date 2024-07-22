@@ -137,7 +137,6 @@ class SpotifyController(private val mainContext: Context) {
 
                if (waited >= 5) {
                    Log.e("Spotify Controller", "Still could not connect")
-                   throw (SpotifyDisconnectedException())
                }
            }
        } else {
