@@ -113,3 +113,4 @@
  | 07/21/24 | Integrating Spotify Changes         |           |           | 4.0       |           |           |
  | 07/21/24 | Permission, Set Playback and Bug Fix|           |           |           |           | 5.0       |
  | 07/21/24 | Playing MP3 From FileSystem         |           |           |           |           | 1.5       |
+ | 07/21/24 | Bug fixes                           |           |           |           | 3.0       |           |
