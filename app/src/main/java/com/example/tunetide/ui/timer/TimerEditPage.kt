@@ -207,7 +207,7 @@ fun intervalOptionEdit(
         OutlinedTextField(
             value = intervalNum.toString(),
             onValueChange = {
-                if (it.isNotEmpty()) {
+                if (it.isNotEmpty() && (it.toIntOrNull() != null)) {
                     intervalNum = it.toInt()
                 }
                 else {
@@ -344,7 +344,7 @@ fun timeSelectEdit(
             OutlinedTextField(
                 value = timeVal.toString(),
                 onValueChange = {
-                    if (it.isNotEmpty()) {
+                    if (it.isNotEmpty() && (it.toIntOrNull() != null)) {
                         timeVal = it.toInt()
                     }
                     else {
@@ -406,7 +406,7 @@ fun timeSelectEdit(
             OutlinedTextField(
                 value = timeVal.toString(),
                 onValueChange = {
-                    if (it.isNotEmpty()) {
+                    if (it.isNotEmpty() && (it.toIntOrNull() != null)) {
                         timeVal = it.toInt()
                     }
                     else {
