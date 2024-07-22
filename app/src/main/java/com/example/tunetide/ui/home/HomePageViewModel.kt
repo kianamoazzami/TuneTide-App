@@ -133,7 +133,10 @@ class HomePageViewModel (
             }
         } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
             CoroutineScope(Dispatchers.Main).launch {
-                _currentSongName.value = spotifyController.getCurrentTrackName()
+                spotifyController.currentTrack.title.collect {songName ->
+                    _currentSongName.value = songName
+                }
+
             }
         }
     }
@@ -172,6 +175,7 @@ class HomePageViewModel (
             if (_timerId == -1) {
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
                 mp3PlayerManager.play()
+                spotifyController.pause()
 
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
                 spotifyController.play()
@@ -298,7 +302,9 @@ class HomePageViewModel (
             // TODO @ERICA @KIANA restart music
             // TODO is below how we want to restart??
             getStartingMusic()
-            play()
+            if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
+                spotifyController.resumePlayback()
+            }
         }
     }
 

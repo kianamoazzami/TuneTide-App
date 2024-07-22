@@ -22,6 +22,7 @@ import com.spotify.protocol.types.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import java.util.concurrent.TimeUnit
@@ -49,16 +50,18 @@ class SpotifyController(private val mainContext: Context) {
 
     val trackLock : Mutex = Mutex(false)
 
+
+
     class NowPlaying {
-        var playlistUrl: String = "No Playlist Selected"
-        var title : String = "No Song Playing"
-        var artist : String = "No Song Playing"
+        var playlistUrl: MutableStateFlow<String> = MutableStateFlow<String>("No Playlist Selected")
+        var title : MutableStateFlow<String> = MutableStateFlow<String>("No Song Playing")
+        var artist : MutableStateFlow<String> = MutableStateFlow<String>("No Song Playing")
         var imgURL : String = ""
         var paused : Boolean = true;
         /* to add: track bar?*/
     }
 
-    private var currentTrack : NowPlaying = NowPlaying()
+    var currentTrack : NowPlaying = NowPlaying()
     private val errorCallback = { throwable: Throwable -> logError(throwable) }
 
     init {
@@ -143,11 +146,11 @@ class SpotifyController(private val mainContext: Context) {
     }
 
     fun setPlaylistUrl(url : String){
-        currentTrack.playlistUrl = url
+        currentTrack.playlistUrl.value = url
     }
 
     fun play() {
-        playUri(currentTrack.playlistUrl)
+        playUri(currentTrack.playlistUrl.value)
     }
 
     fun playUri(uri: String) {
@@ -159,8 +162,8 @@ class SpotifyController(private val mainContext: Context) {
                 it.playerApi.subscribeToPlayerState().setEventCallback {
                     val track: Track = it.track
 
-                    currentTrack.title = track.name
-                    currentTrack.artist = track.artist.name
+                    currentTrack.title.value = track.name
+                    currentTrack.artist.value = track.artist.name
                     currentTrack.imgURL = track.imageUri.toString()
                     currentTrack.paused = false
 
@@ -214,7 +217,8 @@ class SpotifyController(private val mainContext: Context) {
                                 .setResultCallback { Log.d("Spotify Controller", "Resumed playback") }
                                 .setErrorCallback(errorCallback)
                         } else {
-                            Log.e("Spotify Controller", "Error resuming playback, no music qeued or music still playing")
+                            play()
+                            //Log.e("Spotify Controller", "Error resuming playback, no music qeued or music still playing")
                         }
                     }
             }
@@ -257,7 +261,7 @@ class SpotifyController(private val mainContext: Context) {
             Log.e("SpotifyController", "Connection to PlayerState Timed out.")
             return ""
         }
-        return currentTrack.title
+        return currentTrack.title.value
     }
 
     suspend fun getCurrentTrackArtist() : String {
@@ -272,7 +276,7 @@ class SpotifyController(private val mainContext: Context) {
             Log.e("SpotifyController", "Connection to PlayerState Timed out.")
             return ""
         }
-        return currentTrack.title
+        return currentTrack.title.value
     }
 
 
@@ -391,8 +395,8 @@ class SpotifyController(private val mainContext: Context) {
     }
 
     private val playerStateEventCallback = Subscription.EventCallback<PlayerState> { playerState ->
-        currentTrack.title = playerState.track.name
-        currentTrack.artist = playerState.track.artist.name
+        currentTrack.title.value = playerState.track.name
+        currentTrack.artist.value = playerState.track.artist.name
         currentTrack.paused = playerState.isPaused
         isShuffling = playerState.playbackOptions.isShuffling
     }

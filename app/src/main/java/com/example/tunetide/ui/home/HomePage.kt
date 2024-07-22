@@ -260,18 +260,17 @@ fun ShuffleButton(
     playback: PlaybackDetails,
     timer: TimerDetails,
 ) {
-    var selected by remember { mutableStateOf(false) }
-    val color = if (selected) Color.Black else Color.Transparent
+    //var selected by remember { mutableStateOf(false) }
+    //val color = if (selected) Color.Black else Color.Transparent
 
     val coroutineScope = rememberCoroutineScope()
 
     IconButton(onClick = {
-        selected = !selected
-        viewModel.toggleShuffle() },
-        modifier.background(if (selected) Color.Black else Color.Transparent, shape = RoundedCornerShape(100.dp)))
+        //selected = !selected
+        viewModel.toggleShuffle() })
+        //modifier.background(if (selected) Color.Black else Color.Transparent, shape = RoundedCornerShape(100.dp))
     {
 
-        // TODO: test the below check works for spotify
         if (viewModel.isPlaying.collectAsState().value && timer.spotifyFlowMusicPlaylistId != -1) {
             Image(
                 painter = painterResource(id = R.drawable.shufflebutton),
