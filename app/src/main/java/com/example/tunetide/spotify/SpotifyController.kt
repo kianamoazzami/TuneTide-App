@@ -2,11 +2,8 @@ package com.example.tunetide.spotify
 
 import android.content.Context
 import android.util.Log
-import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
 import com.example.tunetide.database.SpotifyPlaylist
-import com.example.tunetide.repository.SpotifyDao
 import com.example.tunetide.repository.SpotifyRepository
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
@@ -14,7 +11,6 @@ import com.spotify.android.appremote.api.ContentApi
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.android.appremote.api.error.SpotifyDisconnectedException
 import com.spotify.protocol.client.CallResult
-import com.spotify.protocol.client.Result
 import com.spotify.protocol.client.Subscription
 import com.spotify.protocol.types.Capabilities
 import com.spotify.protocol.types.Image
@@ -25,11 +21,9 @@ import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
-import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -47,6 +41,7 @@ class SpotifyController(private val mainContext: Context) {
     private var spotifyAppRemote: SpotifyAppRemote? = null
 
     private var isSpotifyInstalled = true;
+    var isShuffling = false;
 
     private var playerStateSubscription: Subscription<PlayerState>? = null
     private var playerContextSubscription: Subscription<PlayerContext>? = null
@@ -399,6 +394,7 @@ class SpotifyController(private val mainContext: Context) {
         currentTrack.title = playerState.track.name
         currentTrack.artist = playerState.track.artist.name
         currentTrack.paused = playerState.isPaused
+        isShuffling = playerState.playbackOptions.isShuffling
     }
 
     private fun <T : Any?> cancelAndResetSubscription(subscription: Subscription<T>?): Subscription<T>? {

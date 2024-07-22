@@ -44,6 +44,8 @@ interface IHomePageViewModel {
     fun finish()
     fun restart()
     fun onCleared()
+    fun toggleShuffle()
+    fun isShuffling() : Boolean
 }
 class HomePageViewModel (
     context: Context,
@@ -51,7 +53,6 @@ class HomePageViewModel (
     private val mP3Repository: MP3Repository,
     private val spotifyRepository: SpotifyRepository
 ): ViewModel(), IHomePageViewModel {
-
 
     private var _timerId: Int = -1
         private set
@@ -202,6 +203,14 @@ class HomePageViewModel (
                 spotifyController.skipToNextSong()
             }
         }
+    }
+
+    override fun toggleShuffle() {
+        spotifyController.toggleShuffle()
+    }
+
+    override fun isShuffling(): Boolean {
+        return spotifyController.isShuffling
     }
 
     override suspend fun getStartingTimerValue() {

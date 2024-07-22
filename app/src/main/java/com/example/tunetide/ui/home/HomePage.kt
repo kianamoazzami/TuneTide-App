@@ -2,6 +2,7 @@ package com.example.tunetide.ui.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +24,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -209,6 +213,12 @@ fun TimerRightPanel(
                 modifier = modifier,
                 playback = playback,
                 timer = timer)
+
+            ShuffleButton(
+                viewModel = viewModel,
+                modifier = modifier,
+                playback = playback,
+                timer = timer)
         }
 
         Box(
@@ -244,6 +254,45 @@ fun TimerDisplay(
 }
 
 @Composable
+fun ShuffleButton(
+    viewModel: HomePageViewModel,
+    modifier: Modifier,
+    playback: PlaybackDetails,
+    timer: TimerDetails,
+) {
+    var selected by remember { mutableStateOf(false) }
+    val color = if (selected) Color.Black else Color.Transparent
+
+    val coroutineScope = rememberCoroutineScope()
+
+    IconButton(onClick = {
+        selected = !selected
+        viewModel.toggleShuffle() },
+        modifier.background(if (selected) Color.Black else Color.Transparent, shape = RoundedCornerShape(100.dp)))
+    {
+
+        // TODO: test the below check works for spotify
+        if (viewModel.isPlaying.collectAsState().value && timer.spotifyFlowMusicPlaylistId != -1) {
+            Image(
+                painter = painterResource(id = R.drawable.shufflebutton),
+                contentDescription = "Shuffle Button",
+                modifier = Modifier
+                    .size(50.dp)
+                    .padding(5.dp)
+            )
+
+            Image(
+                painter = painterResource(id = R.drawable.shuffle),
+                contentDescription = "Shuffle symbol",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp)
+            )
+        }
+    }
+}
+
+@Composable
 fun PlayButton(
     viewModel: HomePageViewModel,
     modifier: Modifier,
@@ -268,13 +317,17 @@ fun PlayButton(
         Image(
             painter = painterResource(id = R.drawable.pausebutton),
             contentDescription = "Pause Button",
-            modifier = Modifier.size(30.dp)
+            modifier = Modifier
+                .size(50.dp)
+                .padding(5.dp)
         )
         } else {
             Image(
                 painter = painterResource(id = R.drawable.playbutton),
                 contentDescription = "Play Button",
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier
+                    .size(50.dp)
+                    .padding(5.dp)
             )
         }
     }
