@@ -204,7 +204,12 @@ fun intervalOption(
         OutlinedTextField(
             value = intervalNum.toString(),
             onValueChange = {
-                intervalNum = it.toInt()
+                if (it.isNotEmpty()) {
+                    intervalNum = it.toInt()
+                }
+                else {
+                    intervalNum = 0
+                }
             },
             label = { Text("") },
             colors = textFieldColors,
