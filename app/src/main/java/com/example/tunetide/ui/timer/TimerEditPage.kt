@@ -475,10 +475,10 @@ fun playlistSelectEdit(
                     ) {
                         options.forEach { option ->
                             DropdownMenuItem(
-                                text = { option.playlistName.toString() },
+                                text = { Text(text = option.playlistName!!)},
                                 onClick = {
                                     selectedOption = option
-                                    chosenOptionName = selectedOption.playlistName.toString()
+                                    chosenOptionName = selectedOption.playlistName!!
                                     if (state == "Flow") {
                                         onTimerValueChange(timerUIState.timerDetails.copy(spotifyFlowMusicPlaylistId = selectedOption.playlistId, mp3FlowMusicPlaylistId = -1))
                                     }
