@@ -10,6 +10,9 @@ import com.example.tunetide.database.StateType
 import com.example.tunetide.mp3player.MP3PlayerManager
 import com.example.tunetide.repository.MP3Repository
 import com.example.tunetide.repository.PlaybackRepository
+import com.example.tunetide.repository.SpotifyRepository
+import com.example.tunetide.spotify.SpotifyController
+import com.example.tunetide.ui.TuneTideApp
 import com.example.tunetide.ui.timer.TimerUIState
 import com.example.tunetide.ui.timer.toTimerDetails
 import kotlinx.coroutines.CoroutineScope
@@ -45,13 +48,16 @@ interface IHomePageViewModel {
 class HomePageViewModel (
     context: Context,
     private val playbackRepository: PlaybackRepository,
-    private val mP3Repository: MP3Repository
+    private val mP3Repository: MP3Repository,
+    private val spotifyRepository: SpotifyRepository
 ): ViewModel(), IHomePageViewModel {
+
 
     private var _timerId: Int = -1
         private set
 
     private var mp3PlayerManager: MP3PlayerManager = MP3PlayerManager(context)
+    private var spotifyController: SpotifyController = SpotifyController(context)
 
     private var finishedFlag: Boolean = false
 
@@ -116,18 +122,40 @@ class HomePageViewModel (
     }
 
     private fun observeCurrentSong() {
-        CoroutineScope(Dispatchers.IO).launch {
-            mp3PlayerManager.currentSongName.collect { songName ->
-                _currentSongName.value = songName
+        if (_timerId == -1) {
+        } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
+            CoroutineScope(Dispatchers.IO).launch {
+                mp3PlayerManager.currentSongName.collect { songName ->
+                    _currentSongName.value = songName
+                }
+            }
+        } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
+            CoroutineScope(Dispatchers.Main).launch {
+                _currentSongName.value = spotifyController.getCurrentTrackName()
             }
         }
     }
 
     private fun observeCurrentPlaylist(playlistId: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
-            mP3Repository.getMP3PlaylistById(playlistId).collect { playlist ->
-                if (playlist != null) {
-                    _currentPlaylistName.value = playlist.playlistName
+        if (_timerId == -1) {
+        } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
+            CoroutineScope(Dispatchers.IO).launch {
+                mP3Repository.getMP3PlaylistById(playlistId).collect { playlist ->
+                    if (playlist != null) {
+                        _currentPlaylistName.value = playlist.playlistName
+                    }
+                }
+            }
+        } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY)
+        {
+            CoroutineScope(Dispatchers.IO).launch {
+                spotifyRepository.getSpotifyPlaylistById(playlistId).collect { playlist ->
+                    if (playlist != null) {
+                        spotifyController.setPlaylistUrl(playlist.uriPath)
+                        if (playlist.playlistName != null) {
+                            _currentPlaylistName.value = playlist.playlistName
+                        }
+                    }
                 }
             }
         }
@@ -144,7 +172,7 @@ class HomePageViewModel (
                 mp3PlayerManager.play()
 
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
-                // TODO @ERICA
+                spotifyController.play()
             }
         }
     }
@@ -159,7 +187,7 @@ class HomePageViewModel (
                 mp3PlayerManager.pause()
 
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
-                // TODO @ERICA
+                spotifyController.pause()
             }
         }
     }
@@ -171,7 +199,7 @@ class HomePageViewModel (
                 mp3PlayerManager.skipToNextSong()
 
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
-                // TODO @ERICA
+                spotifyController.skipToNextSong()
             }
         }
     }
@@ -192,6 +220,15 @@ class HomePageViewModel (
                 observeCurrentPlaylist(playlistId)
                 val playlist = mP3Repository.getMP3FileByPlaylist(playlistId)
                 mp3PlayerManager.switchPlaylist(playlist)
+            } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
+                val playlistId = playbackRepository.getPlayingMusicPlaylistId()
+                observeCurrentPlaylist(playlistId)
+                spotifyRepository.getSpotifyPlaylistById(playlistId).collect {playlist ->
+                    if (playlist != null) {
+                        spotifyController.setPlaylistUrl(playlist.uriPath)
+                    }
+                }
+
             }
         }
     }
@@ -230,9 +267,13 @@ class HomePageViewModel (
     // same as cancelling a timer
     override fun finish() {
         CoroutineScope(Dispatchers.IO).launch {
-            // TODO @ERICA stop music
+            if (_timerId == -1) {
+            } else if (playbackRepository.getPlayingMusicSource()  == MusicType.MP3) {
+                mp3PlayerManager.stopMusic()
+            } else if (playbackRepository.getPlayingMusicSource()  == MusicType.SPOTIFY) {
+                spotifyController.pause()
+            }
             Log.d("HomePageTimer", "inside finish")
-            mp3PlayerManager.stopMusic()
             playbackRepository.invalidatePlayback()
             _isPlaying.value = false
             _currentTimerVal.value = 0
@@ -245,11 +286,15 @@ class HomePageViewModel (
             _isPlaying.value = true
             homeScreenTimer()
             // TODO @ERICA @KIANA restart music
+            // TODO is below how we want to restart??
+            getStartingMusic()
+            play()
         }
     }
 
     override fun onCleared() {
         mp3PlayerManager.releaseMediaPlayer()
+        spotifyController.disconnect()
         super.onCleared()
     }
 
