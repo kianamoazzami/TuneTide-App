@@ -44,6 +44,8 @@ interface IHomePageViewModel {
     fun finish()
     fun restart()
     fun onCleared()
+    fun toggleShuffle()
+    fun isShuffling() : Boolean
 }
 class HomePageViewModel (
     context: Context,
@@ -51,7 +53,6 @@ class HomePageViewModel (
     private val mP3Repository: MP3Repository,
     private val spotifyRepository: SpotifyRepository
 ): ViewModel(), IHomePageViewModel {
-
 
     private var _timerId: Int = -1
         private set
@@ -132,7 +133,10 @@ class HomePageViewModel (
             }
         } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
             CoroutineScope(Dispatchers.Main).launch {
-                _currentSongName.value = spotifyController.getCurrentTrackName()
+                spotifyController.currentTrack.title.collect {songName ->
+                    _currentSongName.value = songName
+                }
+
             }
         }
     }
@@ -171,6 +175,7 @@ class HomePageViewModel (
             if (_timerId == -1) {
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.MP3) {
                 mp3PlayerManager.play()
+                spotifyController.pause()
 
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
                 spotifyController.play()
@@ -203,6 +208,14 @@ class HomePageViewModel (
                 spotifyController.skipToNextSong()
             }
         }
+    }
+
+    override fun toggleShuffle() {
+        spotifyController.toggleShuffle()
+    }
+
+    override fun isShuffling(): Boolean {
+        return spotifyController.isShuffling
     }
 
     override suspend fun getStartingTimerValue() {
@@ -250,6 +263,9 @@ class HomePageViewModel (
                     getStartingTimerValue()
                     currentTimerVal.first { it == _currentTimerVal.value }
                     getStartingMusic()
+                    if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
+                        spotifyController.play()
+                    }
                     homeScreenTimer()
 
                     finishedFlag = true
@@ -259,6 +275,9 @@ class HomePageViewModel (
                     getStartingTimerValue()
                     currentTimerVal.first { it == _currentTimerVal.value }
                     getStartingMusic()
+                    if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
+                        spotifyController.play()
+                    }
                     homeScreenTimer()
                 }
             }
@@ -289,7 +308,9 @@ class HomePageViewModel (
             // TODO @ERICA @KIANA restart music
             // TODO is below how we want to restart??
             getStartingMusic()
-            play()
+            if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
+                spotifyController.resumePlayback()
+            }
         }
     }
 
