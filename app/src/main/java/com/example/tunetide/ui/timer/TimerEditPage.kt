@@ -26,8 +26,10 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,8 +41,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.R
+import com.example.tunetide.spotify.SpotifyPlaylistsViewModel
+import com.example.tunetide.database.MP3Playlist
 import com.example.tunetide.ui.TuneTideTopAppBar
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.TuneTideTopAppBarBack
@@ -64,6 +69,7 @@ fun TimerEditScreen(
     modifier: Modifier = Modifier,
     viewModel: TimerEditViewModel = viewModel(factory = AppViewModelProvider.Factory),
     localFilesViewModel: LocalFilesViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
@@ -83,7 +89,8 @@ fun TimerEditScreen(
             modifier = modifier,
             innerPadding,
             localFilesViewModel = localFilesViewModel,
-            viewModel = viewModel
+            viewModel = viewModel,
+            spotifyPlaylistsViewModel = spotifyPlaylistsViewModel
         )
     }
 }
@@ -96,15 +103,24 @@ fun TimerEditBody(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     localFilesViewModel: LocalFilesViewModel,
-    viewModel: TimerEditViewModel
+    viewModel: TimerEditViewModel,
+    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel
 ){
     Box(modifier = modifier) {
         Column(modifier = modifier) {
-            Row(modifier = modifier.padding(16.dp)) {
-                flowStateFormEdit(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
+            Row(modifier = modifier.padding(0.dp)) {
+                Text(
+                    text = "Press Enter on the keyboard upon entering input",
+                    fontSize = 16.sp,
+                    color = PurpleDark,
+                    modifier = Modifier
+                )
             }
             Row(modifier = modifier.padding(16.dp)) {
-                breakStateFormEdit(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
+                flowStateFormEdit(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
+            }
+            Row(modifier = modifier.padding(16.dp)) {
+                breakStateFormEdit(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
             }
             Row(modifier = modifier.padding(16.dp)) {
                 nameFieldEdit(timerUIState, modifier, onTimerValueChange)
@@ -113,7 +129,8 @@ fun TimerEditBody(
                 intervalOptionEdit(timerUIState, modifier, onTimerValueChange)
             }
             Row(modifier = modifier
-                .padding(16.dp)
+                .padding(bottom = 16.dp)
+                .padding(end = 16.dp)
                 .align(Alignment.End)) {
                 saveButtonEdit(timerUIState, onSaveClick, modifier)
             }
@@ -127,10 +144,11 @@ fun flowStateFormEdit(
     modifier: Modifier,
     localFilesViewModel: LocalFilesViewModel,
     onTimerValueChange: (TimerDetails) -> Unit,
-    viewModel: TimerEditViewModel
+    viewModel: TimerEditViewModel,
+    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel
 ){
     val state = "Flow"
-    stateOptionsEdit(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
+    stateOptionsEdit(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
 }
 
 @Composable
@@ -139,10 +157,11 @@ fun breakStateFormEdit(
     modifier: Modifier,
     localFilesViewModel: LocalFilesViewModel,
     onTimerValueChange: (TimerDetails) -> Unit,
-    viewModel: TimerEditViewModel
+    viewModel: TimerEditViewModel,
+    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel
 ){
     val state = "Break"
-    stateOptionsEdit(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
+    stateOptionsEdit(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
 }
 
 @Composable
@@ -184,11 +203,16 @@ fun intervalOptionEdit(
                     .padding(start = 26.dp),
             )
         }
-        var intervalNum by remember { mutableStateOf(0) }
+        var intervalNum by remember { mutableStateOf(timerUIState.timerDetails.numIntervals) }
         OutlinedTextField(
             value = intervalNum.toString(),
             onValueChange = {
-                intervalNum = it.toInt()
+                if (it.isNotEmpty() && (it.toIntOrNull() != null)) {
+                    intervalNum = it.toInt()
+                }
+                else {
+                    intervalNum = 0
+                }
             },
             label = { Text("") },
             colors = textFieldColors,
@@ -264,11 +288,12 @@ fun stateOptionsEdit(
     modifier: Modifier,
     localFilesViewModel : LocalFilesViewModel,
     onTimerValueChange: (TimerDetails) -> Unit,
-    viewModel: TimerEditViewModel
+    viewModel: TimerEditViewModel,
+    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel
 ){
     Column(modifier = modifier) {
         timeSelectEdit(state, timerUIState, modifier, onTimerValueChange, viewModel)
-        playlistSelectEdit(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
+        playlistSelectEdit(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
     }
 }
 
@@ -303,11 +328,23 @@ fun timeSelectEdit(
         )
         //HOURS
         Column() {
-            var timeVal by remember { mutableStateOf(0) }
+            var timeVal by remember {
+                mutableStateOf(0)
+            }
+
+            LaunchedEffect(state, timerUIState) {
+                timeVal = if (state == "Flow") {
+                    val totalSec = timerUIState.timerDetails.flowMusicDurationSeconds
+                    (totalSec / 3600)
+                } else {
+                    val totalSec = timerUIState.timerDetails.breakMusicDurationSeconds
+                    (totalSec / 3600)
+                }
+            }
             OutlinedTextField(
                 value = timeVal.toString(),
                 onValueChange = {
-                    if (it.isNotEmpty()) {
+                    if (it.isNotEmpty() && (it.toIntOrNull() != null)) {
                         timeVal = it.toInt()
                     }
                     else {
@@ -352,11 +389,24 @@ fun timeSelectEdit(
         )
         //MINUTES
         Column() {
-            var timeVal by remember { mutableStateOf(0) }
+            var timeVal by remember {
+                mutableStateOf(0)
+            }
+
+            LaunchedEffect(state, timerUIState) {
+                timeVal = if (state == "Flow") {
+                    val totalSec = timerUIState.timerDetails.flowMusicDurationSeconds
+                    (totalSec % 3600) / 60
+                } else {
+                    val totalSec = timerUIState.timerDetails.breakMusicDurationSeconds
+                    (totalSec % 3600) / 60
+                }
+            }
+
             OutlinedTextField(
                 value = timeVal.toString(),
                 onValueChange = {
-                    if (it.isNotEmpty()) {
+                    if (it.isNotEmpty() && (it.toIntOrNull() != null)) {
                         timeVal = it.toInt()
                     }
                     else {
@@ -406,7 +456,8 @@ fun playlistSelectEdit(
     modifier: Modifier,
     localFilesViewModel : LocalFilesViewModel,
     onTimerValueChange: (TimerDetails) -> Unit,
-    viewModel: TimerEditViewModel
+    viewModel: TimerEditViewModel,
+    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel
 ) {
     var spotify by remember { mutableStateOf(false) }
     Row(
@@ -430,7 +481,7 @@ fun playlistSelectEdit(
         if (spotify) {
             // SPOTIFY VIEW
             var expanded by remember { mutableStateOf(false) }
-            var options = viewModel.spotifyRepository.getSpotifyPlaylists().collectAsState(initial = emptyList()).value
+            var options = spotifyPlaylistsViewModel.spotifyPlaylistsUIState.collectAsState().value.spotifyPlaylists
             if (options.isEmpty()) {
                 Text(
                     text = "No Playlists Available",
@@ -467,10 +518,10 @@ fun playlistSelectEdit(
                     ) {
                         options.forEach { option ->
                             DropdownMenuItem(
-                                text = { option.playlistName.toString() },
+                                text = { Text(text = option.playlistName!!)},
                                 onClick = {
                                     selectedOption = option
-                                    chosenOptionName = selectedOption.playlistName.toString()
+                                    chosenOptionName = selectedOption.playlistName!!
                                     if (state == "Flow") {
                                         onTimerValueChange(timerUIState.timerDetails.copy(spotifyFlowMusicPlaylistId = selectedOption.playlistId, mp3FlowMusicPlaylistId = -1))
                                     }
@@ -499,6 +550,14 @@ fun playlistSelectEdit(
             else {
                 var selectedOption by remember { mutableStateOf(options[0]) }
                 var chosenOptionName by remember { mutableStateOf("Choose a Playlist") }
+                if (state == "Flow") {
+                    viewModel.currentMP3FlowPlaylistName(timerUIState.timerDetails.mp3FlowMusicPlaylistId)
+                    chosenOptionName = viewModel.currentMP3FlowPlaylistName
+                }
+                else {
+                    viewModel.currentMP3BreakPlaylistName(timerUIState.timerDetails.mp3BreakMusicPlaylistId)
+                    chosenOptionName = viewModel.currentMP3BreakPlaylistName
+                }
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = {
@@ -552,14 +611,14 @@ fun saveButtonEdit(timerUIState: TimerUIState, onSaveClick: () -> Unit, modifier
         Text(
             text = "Incomplete Input",
             color = Color.Red,
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(6.dp),
         )
     }
     Button(onClick = onSaveClick, colors = ButtonDefaults.buttonColors(PurpleDark)) {
         Text(
             text = "Save",
             color = PurpleBackground,
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(0.dp),
         )
     }
 
