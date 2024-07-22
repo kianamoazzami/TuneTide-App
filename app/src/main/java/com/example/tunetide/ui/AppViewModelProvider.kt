@@ -30,7 +30,8 @@ object AppViewModelProvider {
             TimerEditViewModel(
                 this.createSavedStateHandle(),
                 TuneTideApplication().container.timerRepository,
-                TuneTideApplication().container.spotifyRepository
+                TuneTideApplication().container.spotifyRepository,
+                TuneTideApplication().container.mp3Repository
             )
         }
 

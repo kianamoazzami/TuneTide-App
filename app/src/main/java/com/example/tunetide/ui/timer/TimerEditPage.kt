@@ -26,8 +26,10 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,6 +43,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.R
+import com.example.tunetide.database.MP3Playlist
 import com.example.tunetide.ui.TuneTideTopAppBar
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.TuneTideTopAppBarBack
@@ -184,11 +187,16 @@ fun intervalOptionEdit(
                     .padding(start = 26.dp),
             )
         }
-        var intervalNum by remember { mutableStateOf(0) }
+        var intervalNum by remember { mutableStateOf(timerUIState.timerDetails.numIntervals) }
         OutlinedTextField(
             value = intervalNum.toString(),
             onValueChange = {
-                intervalNum = it.toInt()
+                if (it.isNotEmpty()) {
+                    intervalNum = it.toInt()
+                }
+                else {
+                    intervalNum = 0
+                }
             },
             label = { Text("") },
             colors = textFieldColors,
@@ -303,7 +311,19 @@ fun timeSelectEdit(
         )
         //HOURS
         Column() {
-            var timeVal by remember { mutableStateOf(0) }
+            var timeVal by remember {
+                mutableStateOf(0)
+            }
+
+            LaunchedEffect(state, timerUIState) {
+                timeVal = if (state == "Flow") {
+                    val totalSec = timerUIState.timerDetails.flowMusicDurationSeconds
+                    (totalSec / 3600)
+                } else {
+                    val totalSec = timerUIState.timerDetails.breakMusicDurationSeconds
+                    (totalSec / 3600)
+                }
+            }
             OutlinedTextField(
                 value = timeVal.toString(),
                 onValueChange = {
@@ -352,7 +372,20 @@ fun timeSelectEdit(
         )
         //MINUTES
         Column() {
-            var timeVal by remember { mutableStateOf(0) }
+            var timeVal by remember {
+                mutableStateOf(0)
+            }
+
+            LaunchedEffect(state, timerUIState) {
+                timeVal = if (state == "Flow") {
+                    val totalSec = timerUIState.timerDetails.flowMusicDurationSeconds
+                    (totalSec % 3600) / 60
+                } else {
+                    val totalSec = timerUIState.timerDetails.breakMusicDurationSeconds
+                    (totalSec % 3600) / 60
+                }
+            }
+
             OutlinedTextField(
                 value = timeVal.toString(),
                 onValueChange = {
@@ -499,6 +532,14 @@ fun playlistSelectEdit(
             else {
                 var selectedOption by remember { mutableStateOf(options[0]) }
                 var chosenOptionName by remember { mutableStateOf("Choose a Playlist") }
+                if (state == "Flow") {
+                    viewModel.currentMP3FlowPlaylistName(timerUIState.timerDetails.mp3FlowMusicPlaylistId)
+                    chosenOptionName = viewModel.currentMP3FlowPlaylistName
+                }
+                else {
+                    viewModel.currentMP3BreakPlaylistName(timerUIState.timerDetails.mp3BreakMusicPlaylistId)
+                    chosenOptionName = viewModel.currentMP3BreakPlaylistName
+                }
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = {
