@@ -263,6 +263,9 @@ class HomePageViewModel (
                     getStartingTimerValue()
                     currentTimerVal.first { it == _currentTimerVal.value }
                     getStartingMusic()
+                    if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
+                        spotifyController.play()
+                    }
                     homeScreenTimer()
 
                     finishedFlag = true
@@ -272,6 +275,9 @@ class HomePageViewModel (
                     getStartingTimerValue()
                     currentTimerVal.first { it == _currentTimerVal.value }
                     getStartingMusic()
+                    if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
+                        spotifyController.play()
+                    }
                     homeScreenTimer()
                 }
             }
