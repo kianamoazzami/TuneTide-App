@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.R
+import com.example.tunetide.spotify.SpotifyPlaylistsViewModel
 import com.example.tunetide.ui.TuneTideTopAppBar
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.TuneTideTopAppBarBack
@@ -73,7 +74,8 @@ fun TimerEntryScreen(
     canNavigateBack: Boolean = true,
     modifier: Modifier = Modifier,
     viewModel: TimerEntryViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    localFilesViewModel: LocalFilesViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    localFilesViewModel: LocalFilesViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
@@ -93,7 +95,8 @@ fun TimerEntryScreen(
             modifier = modifier,
             innerPadding,
             localFilesViewModel = localFilesViewModel,
-            viewModel = viewModel
+            viewModel = viewModel,
+            spotifyPlaylistsViewModel = spotifyPlaylistsViewModel
         )
     }
 }
@@ -106,15 +109,16 @@ fun TimerEntryBody(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     localFilesViewModel: LocalFilesViewModel,
-    viewModel: TimerEntryViewModel
+    viewModel: TimerEntryViewModel,
+    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel
 ){
     Box(modifier = modifier) {
         Column(modifier = modifier) {
             Row(modifier = modifier.padding(16.dp)) {
-                flowStateForm(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
+                flowStateForm(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
             }
             Row(modifier = modifier.padding(16.dp)) {
-                breakStateForm(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
+                breakStateForm(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
             }
             Row(modifier = modifier.padding(16.dp)) {
                 nameField(timerUIState, modifier, onTimerValueChange)
@@ -137,10 +141,11 @@ fun flowStateForm(
     modifier: Modifier,
     localFilesViewModel: LocalFilesViewModel,
     onTimerValueChange: (TimerDetails) -> Unit,
-    viewModel: TimerEntryViewModel
+    viewModel: TimerEntryViewModel,
+    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel
 ){
     val state = "Flow"
-    stateOptions(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
+    stateOptions(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
 }
 
 @Composable
@@ -149,10 +154,11 @@ fun breakStateForm(
     modifier: Modifier,
     localFilesViewModel: LocalFilesViewModel,
     onTimerValueChange: (TimerDetails) -> Unit,
-    viewModel: TimerEntryViewModel
+    viewModel: TimerEntryViewModel,
+    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel
 ){
     val state = "Break"
-    stateOptions(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
+    stateOptions(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
 }
 
 @Composable
@@ -198,7 +204,12 @@ fun intervalOption(
         OutlinedTextField(
             value = intervalNum.toString(),
             onValueChange = {
-                intervalNum = it.toInt()
+                if (it.isNotEmpty()) {
+                    intervalNum = it.toInt()
+                }
+                else {
+                    intervalNum = 0
+                }
             },
             label = { Text("") },
             colors = textFieldColors,
@@ -274,11 +285,12 @@ fun stateOptions(
     modifier: Modifier,
     localFilesViewModel : LocalFilesViewModel,
     onTimerValueChange: (TimerDetails) -> Unit,
-    viewModel: TimerEntryViewModel
+    viewModel: TimerEntryViewModel,
+    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel
 ){
     Column(modifier = modifier) {
         timeSelect(state, timerUIState, modifier, onTimerValueChange, viewModel)
-        playlistSelect(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel)
+        playlistSelect(state, timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
     }
 }
 
@@ -416,7 +428,8 @@ fun playlistSelect(
     modifier: Modifier,
     localFilesViewModel : LocalFilesViewModel,
     onTimerValueChange: (TimerDetails) -> Unit,
-    viewModel: TimerEntryViewModel
+    viewModel: TimerEntryViewModel,
+    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel
 ) {
     var spotify by remember { mutableStateOf(false) }
     Row(
@@ -440,7 +453,7 @@ fun playlistSelect(
         if (spotify) {
             // SPOTIFY VIEW
             var expanded by remember { mutableStateOf(false) }
-            var options = viewModel.spotifyRepository.getSpotifyPlaylists().collectAsState(initial = emptyList()).value
+            var options = spotifyPlaylistsViewModel.spotifyPlaylistsUIState.collectAsState().value.spotifyPlaylists
             if (options.isEmpty()) {
                 Text(
                     text = "No Playlists Available",
@@ -477,10 +490,10 @@ fun playlistSelect(
                     ) {
                         options.forEach { option ->
                             DropdownMenuItem(
-                                text = { option.playlistName.toString() },
+                                text = { Text(text = option.playlistName!!)},
                                 onClick = {
                                     selectedOption = option
-                                    chosenOptionName = selectedOption.playlistName.toString()
+                                    chosenOptionName = selectedOption.playlistName!!
                                     if (state == "Flow") {
                                         onTimerValueChange(timerUIState.timerDetails.copy(spotifyFlowMusicPlaylistId = selectedOption.playlistId, mp3FlowMusicPlaylistId = -1))
                                     }

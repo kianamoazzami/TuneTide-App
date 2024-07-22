@@ -101,6 +101,7 @@ class HomePageViewModel (
                 _currentTimerVal.value -= 1
             }
             if (isPlaying.value && currentTimerVal.value <= 0) {
+                Log.d("TestingHomePage", "Next Interval: ${currentTimerVal.value}")
                 startNextInterval()
             }
         }

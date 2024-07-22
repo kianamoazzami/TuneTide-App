@@ -66,7 +66,7 @@ fun getFileName(context: Context, uri: Uri): String? {
 /* --- start page --- */
 @Composable
 fun MP3PlaylistEntryScreen(
-    navigateBack: () -> Unit, //TODO: can navigate back
+    navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MP3PlaylistEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -105,13 +105,13 @@ fun MP3PlaylistEntryBody(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp), // not sure if this is needed
+            .padding(16.dp),
         contentAlignment = Alignment.BottomEnd
     ) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(bottom = 64.dp), // not sure if this is needed
+                .padding(bottom = 64.dp),
             verticalArrangement = Arrangement.Center
         ) {
              MP3PlaylistInputForm(
@@ -127,7 +127,6 @@ fun MP3PlaylistEntryBody(
             onClick = onSaveClick,
             enabled = (mp3PlaylistUIState.isEntryValid && mp3FilesUIState.isEntryValid),
             modifier = Modifier
-                //.padding(16.dp)
                 .align(Alignment.BottomEnd)
         ) {
             Icon(
@@ -167,6 +166,7 @@ fun MP3PlaylistInputForm(
                     for (i in 0 until clipData.itemCount) {
                         val uri = clipData.getItemAt(i).uri
                         val fileName = getFileName(curContext, uri)
+                        curContext.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         mp3FileDetailsList.add(
                             MP3FileDetails(
                                 fileName = fileName,
@@ -177,6 +177,7 @@ fun MP3PlaylistInputForm(
                 } else {
                     result.data?.data?.let { uri ->
                         val fileName = getFileName(curContext, uri)
+                        curContext.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         mp3FileDetailsList.add(
                             MP3FileDetails(
                                 fileName = fileName,
