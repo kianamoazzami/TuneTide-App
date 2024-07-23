@@ -17,12 +17,16 @@ import androidx.compose.ui.unit.dp
 import com.example.tunetide.R
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import com.example.tunetide.ui.theme.PurpleAccent
+import com.example.tunetide.ui.theme.PurpleDark
+import com.example.tunetide.ui.theme.PurpleLight
+import com.example.tunetide.ui.theme.PurpleLight2
 
 data class BoxWithImageItem(
     val title: Int,
     val subTitle: Int,
     val onClick: () -> Unit,
-    val onEditClick: () -> Unit // Added onEditClick callback
+    val onEditClick: () -> Unit
 )
 
 @Composable
@@ -37,30 +41,30 @@ fun BoxWithImage(
             .fillMaxWidth()
             .padding(16.dp)
             .clip(shape = RoundedCornerShape(8.dp))
-            .background(Color.White)
-            .height(100.dp), // Adjust the height as needed
+            .background(PurpleLight2)
+            .height(100.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 16.dp), // Adjust padding as needed
+                .padding(start = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
                 modifier = Modifier
                     .padding(12.dp)
-                    .weight(1f) // Ensure the text column takes up available space
+                    .weight(1f)
             ) {
-                Text(text = title, fontWeight = FontWeight.Bold)
-                Text(text = subTitle, modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp))
+                Text(text = title, color = PurpleDark, fontWeight = FontWeight.Bold)
+                Text(text = subTitle, color = PurpleAccent, modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp))
             }
             Row {
                 Box(
                     modifier = Modifier
                         .padding(20.dp)
-                        .size(54.dp), // Adjust the size as needed
+                        .size(54.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
@@ -73,7 +77,8 @@ fun BoxWithImage(
                 }
                 IconButton(onClick = onEditClick) {
                     Icon(
-                        imageVector = Icons.Default.Edit, // Using Material Icon instead
+                        imageVector = Icons.Default.Edit,
+                        tint = PurpleAccent,
                         contentDescription = "Edit Button"
                     )
                 }
