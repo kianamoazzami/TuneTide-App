@@ -1,4 +1,4 @@
-package com.example.tunetide.spotify
+package com.example.tunetide.ui.spotify
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

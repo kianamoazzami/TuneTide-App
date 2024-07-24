@@ -215,7 +215,7 @@ class HomePageViewModel (
     }
 
     override fun isShuffling(): Boolean {
-        return spotifyController.isShuffling
+        return spotifyController.currentTrack.isShuffling
     }
 
     override suspend fun getStartingTimerValue() {

@@ -1,19 +1,15 @@
 package com.example.tunetide.ui.timer
 
-import android.util.Log
-import android.widget.NumberPicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
@@ -27,7 +23,6 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.RadioButton
 import androidx.compose.material.TextField
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
@@ -39,27 +34,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.R
-import com.example.tunetide.spotify.SpotifyPlaylistsViewModel
-import com.example.tunetide.ui.TuneTideTopAppBar
+import com.example.tunetide.ui.spotify.SpotifyPlaylistsViewModel
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.TuneTideTopAppBarBack
 import com.example.tunetide.ui.mp3.LocalFilesViewModel
 import com.example.tunetide.ui.navigation.NavigationDestination
-import com.example.tunetide.ui.theme.PurpleAccent
 import com.example.tunetide.ui.theme.PurpleBackground
 import com.example.tunetide.ui.theme.PurpleDark
 import com.example.tunetide.ui.theme.PurpleLight
-import com.example.tunetide.ui.theme.PurpleLight2
 import kotlinx.coroutines.launch
 
 object TimerEntryDestination : NavigationDestination {
