@@ -50,12 +50,19 @@ class SpotifyController(private val mainContext: Context) {
         var artist : MutableStateFlow<String> = MutableStateFlow<String>("No Song Playing")
         var imgURL : String = ""
         var paused : Boolean = true;
-        var isShuffling = false;
+        var isShuffling : Boolean = false;
         /* to add: track bar?*/
     }
 
     var currentTrack : NowPlaying = NowPlaying()
     private val errorCallback = { throwable: Throwable -> logError(throwable) }
+
+    private val playerStateEventCallback = Subscription.EventCallback<PlayerState> { playerState ->
+        currentTrack.title.value = playerState.track.name
+        currentTrack.artist.value = playerState.track.artist.name
+        currentTrack.paused = playerState.isPaused
+        currentTrack.isShuffling = playerState.playbackOptions.isShuffling
+    }
 
     init {
         connectPersist()
@@ -108,8 +115,7 @@ class SpotifyController(private val mainContext: Context) {
     // Can be used publicly to suspend and wait for spotify and/or check connection
     // may want private in future
     suspend fun waitForConnection() {
-       if (isSpotifyInstalled == true) {
-
+       if (isSpotifyInstalled) {
            var waited = 0;
            while (spotifyAppRemote == null && waited < 5) {
                delay(2000)
@@ -349,10 +355,6 @@ class SpotifyController(private val mainContext: Context) {
         }
     }
 
-    private val playerContextEventCallback = Subscription.EventCallback<PlayerContext> { playerContext ->
-       //TODO: fill in
-    }
-
     private fun onSubscribedToPlayerState() {
         playerStateSubscription = cancelAndResetSubscription(playerStateSubscription)
 
@@ -388,13 +390,6 @@ class SpotifyController(private val mainContext: Context) {
 
     }
 
-    private val playerStateEventCallback = Subscription.EventCallback<PlayerState> { playerState ->
-        currentTrack.title.value = playerState.track.name
-        currentTrack.artist.value = playerState.track.artist.name
-        currentTrack.paused = playerState.isPaused
-        currentTrack.isShuffling = playerState.playbackOptions.isShuffling
-    }
-
     private fun <T : Any?> cancelAndResetSubscription(subscription: Subscription<T>?): Subscription<T>? {
         return subscription?.let {
             if (!it.isCanceled) {
@@ -404,5 +399,4 @@ class SpotifyController(private val mainContext: Context) {
         }
     }
 
-    //TODO: Upload image
 }
