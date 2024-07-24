@@ -116,4 +116,5 @@
  | 07/21/24 | Bug fixes                           |           |           |           | 3.0       |           |
  | 07/21/24 | More Spotify Fixes and integration  |           |           | 6.0       |           |           |
  | 07/21/24 | Group Meeting                       |           | 0.5       | 0.5       | 0.5       | 0.5       |
+ | 07/23/24 | Work on D6                          |           |           |           |           | 4.0       |
  | 07/24/24 | Code refactoring and D6 update work |           |           | 2.0       |           |           |
