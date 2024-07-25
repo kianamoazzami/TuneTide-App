@@ -106,10 +106,12 @@
  | 07/17/24 | Spotify Database population + enviro|           |           | 2.0       |           |           |
  | 07/18/24 | D5 Design Pattern 3                 |           |           | 1.5       |           |           |
  | 07/18/24 | Navigation saved timer pages        |           |  4.0      |           |           |           |
+ | 07/18/24 | Work on D6                          | 4.0       |           |           |           |           |
  | 07/19/24 | Merge + Testing                     |           |           |           | 1.5       |           |
  | 07/19/24 | Trying to Fix Bugs, Adding Names    |           |           |           |           | 3.5       |
  | 07/19/24 |Fixing bugs on the app               |           |  4.5      |           |           |           |
  | 07/19/24 | Trying to get MP3 to play from files|           |           |           |           | 3.5       |
+ | 07/19/24 | Work on D6, D7                      | 2.0       |           |           |           |           |
  | 07/21/24 | Integrating Spotify Changes         |           |           | 4.0       |           |           |
  | 07/21/24 | Permission, Set Playback and Bug Fix|           |           |           |           | 5.0       |
  | 07/21/24 | Playing MP3 From FileSystem         |           |           |           |           | 1.5       |
@@ -119,3 +121,4 @@
  | 07/23/24 | Work on D6                          |           |           |           |           | 4.0       |
  | 07/24/24 | Code refactoring and D6 update work |           |           | 5.0       |           |           |
  | 07/24/24 | D6 Design Patterns                  |           |           |           |           | 3.0       |
+ | 07/25/24 | Work on D6                          | 2.0       |           |           |           |           |
