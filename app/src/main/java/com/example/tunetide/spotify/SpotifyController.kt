@@ -205,11 +205,10 @@ class SpotifyController(private val mainContext: Context) {
                 waitForConnection()
             }
             spotifyAppRemote?.let {
-
                 it.playerApi
                     .playerState
                     .setResultCallback { playerState ->
-                        if (playerState.isPaused) {
+                        if (playerState.isPaused && playerState.track.name == currentTrack.title.value) {
                             it.playerApi
                                 .resume()
                                 .setResultCallback { Log.d("Spotify Controller", "Resumed playback") }

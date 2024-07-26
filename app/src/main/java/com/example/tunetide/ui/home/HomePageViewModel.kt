@@ -178,7 +178,8 @@ class HomePageViewModel (
                 spotifyController.pause()
 
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
-                spotifyController.play()
+                spotifyController.resumePlayback()
+                mp3PlayerManager.pause()
             }
         }
     }
