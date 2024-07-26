@@ -167,7 +167,11 @@ fun BoxWithImageList(
         items(timers) { timer ->
             BoxWithImage(
                 title = timer.timerName,
-                subTitle = "${timer.numIntervals} intervals",
+                subTitle = if (timer.numIntervals != 1) {
+                                "${timer.numIntervals} intervals"
+                            } else {
+                                "${timer.numIntervals} interval"
+                            },
                 onClick = {
                     coroutineScope.launch {
                         viewModel.setPlayback(timer)
