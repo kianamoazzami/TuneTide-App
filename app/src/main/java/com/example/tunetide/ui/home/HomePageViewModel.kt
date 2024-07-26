@@ -44,6 +44,7 @@ interface IHomePageViewModel {
     fun finish()
     fun restart()
     fun onCleared()
+    fun stopMusic()
     fun toggleShuffle()
     fun isShuffling() : Boolean
 }
@@ -318,6 +319,10 @@ class HomePageViewModel (
         mp3PlayerManager.releaseMediaPlayer()
         spotifyController.disconnect()
         super.onCleared()
+    }
+
+    override fun stopMusic() {
+        mp3PlayerManager.stopMusic()
     }
 
     companion object {

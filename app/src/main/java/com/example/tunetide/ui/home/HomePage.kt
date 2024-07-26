@@ -22,6 +22,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -85,6 +86,11 @@ fun HomeScreen(
             playback = playback,
             timer = timer,
             innerPadding)
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stopMusic()
+        }
     }
 }
 
