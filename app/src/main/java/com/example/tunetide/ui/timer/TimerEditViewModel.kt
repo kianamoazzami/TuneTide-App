@@ -103,7 +103,7 @@ class TimerEditViewModel (
         CoroutineScope(Dispatchers.IO).launch {
             spotifyRepository.getSpotifyPlaylistById(playlistId).collect { playlist ->
                 if (playlist != null) {
-                    currentSpotifyFlowPlaylistName = playlist.playlistName!!
+                    currentSpotifyBreakPlaylistName = playlist.playlistName!!
                 }
             }
         }
