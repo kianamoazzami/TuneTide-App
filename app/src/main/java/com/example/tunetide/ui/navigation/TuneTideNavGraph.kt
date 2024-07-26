@@ -7,8 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.tunetide.ui.SettingsDestination
-import com.example.tunetide.ui.SettingsScreen
+import com.example.tunetide.ui.settings.SettingsDestination
+import com.example.tunetide.ui.settings.SettingsScreen
 import com.example.tunetide.ui.home.HomeDestination
 import com.example.tunetide.ui.home.HomeScreen
 import com.example.tunetide.ui.mp3.LocalFilesDestination
