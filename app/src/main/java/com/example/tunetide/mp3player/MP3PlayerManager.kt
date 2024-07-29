@@ -96,7 +96,7 @@ class MP3PlayerManager(private val context: Context) {
     }
 
     fun releaseMediaPlayer() {
-        isPlaying = false;
+        stopMusic()
         mediaPlayer.release()
     }
 }

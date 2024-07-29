@@ -65,7 +65,7 @@ object AppViewModelProvider {
         }
 
         initializer {
-            TimersListViewModel( // Added initializer
+            TimersListViewModel(
                 TuneTideApplication().container.timerRepository,
                 TuneTideApplication().container.playbackRepository
             )
@@ -77,9 +77,6 @@ object AppViewModelProvider {
             )
         }
 
-        // TODO @MIA parse ViewModels into good sections
-        // TODO @ERICA add all Spotify ViewModels required
-        // TODO @KIANA add all MP3 ViewModel required
     }
 }
 
