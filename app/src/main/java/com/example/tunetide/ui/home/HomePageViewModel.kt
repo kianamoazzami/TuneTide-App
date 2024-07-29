@@ -179,7 +179,8 @@ class HomePageViewModel (
                 spotifyController.pause()
 
             } else if (playbackRepository.getPlayingMusicSource() == MusicType.SPOTIFY) {
-                spotifyController.play()
+                spotifyController.resumePlayback()
+                mp3PlayerManager.pause()
             }
         }
     }
@@ -216,7 +217,7 @@ class HomePageViewModel (
     }
 
     override fun isShuffling(): Boolean {
-        return spotifyController.isShuffling
+        return spotifyController.currentTrack.isShuffling
     }
 
     override suspend fun getStartingTimerValue() {

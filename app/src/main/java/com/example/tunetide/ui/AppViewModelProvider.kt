@@ -6,7 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.tunetide.Application
-import com.example.tunetide.spotify.SpotifyPlaylistsViewModel
+import com.example.tunetide.ui.spotify.SpotifyPlaylistsViewModel
 import com.example.tunetide.ui.home.HomePageViewModel
 import com.example.tunetide.ui.mp3.LocalFilesViewModel
 import com.example.tunetide.ui.mp3.MP3PlaylistDetailsViewModel

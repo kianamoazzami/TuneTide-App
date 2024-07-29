@@ -42,15 +42,7 @@ class SpotifyController(private val mainContext: Context) {
     private var spotifyAppRemote: SpotifyAppRemote? = null
 
     private var isSpotifyInstalled = true;
-    var isShuffling = false;
-
     private var playerStateSubscription: Subscription<PlayerState>? = null
-    private var playerContextSubscription: Subscription<PlayerContext>? = null
-    private var capabilitiesSubscription: Subscription<Capabilities>? = null
-
-    val trackLock : Mutex = Mutex(false)
-
-
 
     class NowPlaying {
         var playlistUrl: MutableStateFlow<String> = MutableStateFlow<String>("No Playlist Selected")
@@ -58,11 +50,19 @@ class SpotifyController(private val mainContext: Context) {
         var artist : MutableStateFlow<String> = MutableStateFlow<String>("No Song Playing")
         var imgURL : String = ""
         var paused : Boolean = true;
+        var isShuffling : Boolean = false;
         /* to add: track bar?*/
     }
 
     var currentTrack : NowPlaying = NowPlaying()
     private val errorCallback = { throwable: Throwable -> logError(throwable) }
+
+    private val playerStateEventCallback = Subscription.EventCallback<PlayerState> { playerState ->
+        currentTrack.title.value = playerState.track.name
+        currentTrack.artist.value = playerState.track.artist.name
+        currentTrack.paused = playerState.isPaused
+        currentTrack.isShuffling = playerState.playbackOptions.isShuffling
+    }
 
     init {
         connectPersist()
@@ -115,8 +115,7 @@ class SpotifyController(private val mainContext: Context) {
     // Can be used publicly to suspend and wait for spotify and/or check connection
     // may want private in future
     suspend fun waitForConnection() {
-       if (isSpotifyInstalled == true) {
-
+       if (isSpotifyInstalled) {
            var waited = 0;
            while (spotifyAppRemote == null && waited < 5) {
                delay(2000)
@@ -206,11 +205,10 @@ class SpotifyController(private val mainContext: Context) {
                 waitForConnection()
             }
             spotifyAppRemote?.let {
-
                 it.playerApi
                     .playerState
                     .setResultCallback { playerState ->
-                        if (playerState.isPaused) {
+                        if (playerState.isPaused && playerState.track.name == currentTrack.title.value) {
                             it.playerApi
                                 .resume()
                                 .setResultCallback { Log.d("Spotify Controller", "Resumed playback") }
@@ -278,8 +276,6 @@ class SpotifyController(private val mainContext: Context) {
         return currentTrack.title.value
     }
 
-
-
     public fun disconnect() {
         spotifyAppRemote?.let {
             SpotifyAppRemote.disconnect(it)
@@ -329,33 +325,33 @@ class SpotifyController(private val mainContext: Context) {
                     val combined = ArrayList<ListItem>(50)
                     val listItems = loadRootRecommendations(it)
                     listItems?.apply {
+                        var added = 0;
                         for (i in items.indices) {
                             if (items[i].playable) {
                                 combined.add(items[i])
                             } else {
                                 val children: ListItems? = loadChildren(it, items[i])
                                 combined.addAll(convertToList(children))
-                                if (i < 21 && children != null && children.items[0].playable) {
-                                    val playlist: SpotifyPlaylist = SpotifyPlaylist(
-                                        i,
-                                        children.items[0].title,
-                                        children.items[0].uri,
-                                        children.items[0].imageUri.toString()
-                                    )
-
-                                    spotifyRepository.insertPlaylist(playlist)
+                                children?.apply{
+                                    for (checked in children.items.indices) {
+                                        if (children.items[checked].playable) {
+                                            val playlist: SpotifyPlaylist = SpotifyPlaylist(
+                                                added,
+                                                children.items[checked].title,
+                                                children.items[checked].uri,
+                                                children.items[checked].imageUri.toString()
+                                            )
+                                            spotifyRepository.insertPlaylist(playlist)
+                                            added++
+                                        }
+                                    }
                                 }
                             }
-
                         }
                     }
                 }
             }
         }
-    }
-
-    private val playerContextEventCallback = Subscription.EventCallback<PlayerContext> { playerContext ->
-       //TODO: fill in
     }
 
     private fun onSubscribedToPlayerState() {
@@ -393,13 +389,6 @@ class SpotifyController(private val mainContext: Context) {
 
     }
 
-    private val playerStateEventCallback = Subscription.EventCallback<PlayerState> { playerState ->
-        currentTrack.title.value = playerState.track.name
-        currentTrack.artist.value = playerState.track.artist.name
-        currentTrack.paused = playerState.isPaused
-        isShuffling = playerState.playbackOptions.isShuffling
-    }
-
     private fun <T : Any?> cancelAndResetSubscription(subscription: Subscription<T>?): Subscription<T>? {
         return subscription?.let {
             if (!it.isCanceled) {
@@ -407,19 +396,6 @@ class SpotifyController(private val mainContext: Context) {
             }
             null
         }
-    }
-
-    //TODO: Upload image:
-    private fun updateTrackCoverArt(playerState: PlayerState) {
-        // Get image from track
-        spotifyAppRemote
-            ?.imagesApi
-            ?.getImage(playerState.track.imageUri, Image.Dimension.LARGE)
-            ?.setResultCallback { bitmap ->
-                //binding.image.setImageBitmap(bitmap)
-                //binding.imageLabel.text = String.format(
-                  //  Locale.ENGLISH, "%d x %d", bitmap.width, bitmap.height)
-            }
     }
 
 }

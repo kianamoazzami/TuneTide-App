@@ -30,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,9 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tunetide.R
-import com.example.tunetide.spotify.SpotifyPlaylistsViewModel
-import com.example.tunetide.database.MP3Playlist
-import com.example.tunetide.ui.TuneTideTopAppBar
+import com.example.tunetide.ui.spotify.SpotifyPlaylistsViewModel
 import com.example.tunetide.ui.AppViewModelProvider
 import com.example.tunetide.ui.TuneTideTopAppBarBack
 import com.example.tunetide.ui.mp3.LocalFilesViewModel
