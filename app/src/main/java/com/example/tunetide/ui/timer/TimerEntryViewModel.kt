@@ -35,6 +35,11 @@ class TimerEntryViewModel(
      * View Model to host state
      */
 
+        var hoursFlow by mutableStateOf(0)
+        var minutesFlow by mutableStateOf(0)
+        var hoursBreak by mutableStateOf(0)
+        var minutesBreak by mutableStateOf(0)
+
         // holds current timer UI state
         var timerUIState by mutableStateOf(TimerUIState())
             private set
@@ -64,8 +69,8 @@ class TimerEntryViewModel(
                         numIntervals > 0 &&
                         (spotifyFlowMusicPlaylistId != -1 || mp3FlowMusicPlaylistId != -1) &&
                         (spotifyBreakMusicPlaylistId != -1 || mp3BreakMusicPlaylistId != -1) &&
-                        flowMusicDurationSeconds > 0 &&
-                        breakMusicDurationSeconds > 0
+                        (hoursFlow > 0 || minutesFlow > 0) &&
+                        (hoursBreak > 0 || minutesBreak > 0)
             }
         }
     }

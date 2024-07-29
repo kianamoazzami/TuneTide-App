@@ -83,15 +83,21 @@ fun TimerEditScreen(
             onTimerValueChange = viewModel::updateUIState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.updateTimer()
-                    navigateBack()
+                    viewModel.updateUIState(viewModel.timerUIState.timerDetails.copy(
+                        flowMusicDurationSeconds = (viewModel.hoursFlow + viewModel.minutesFlow),
+                        breakMusicDurationSeconds = (viewModel.hoursBreak + viewModel.minutesBreak)))
+                    if (viewModel.validateInput(viewModel.timerUIState.timerDetails)) {
+                        viewModel.updateTimer()
+                        navigateBack()
+                    }
                 }
             },
             modifier = modifier,
             innerPadding,
             localFilesViewModel = localFilesViewModel,
             viewModel = viewModel,
-            spotifyPlaylistsViewModel = spotifyPlaylistsViewModel
+            spotifyPlaylistsViewModel = spotifyPlaylistsViewModel,
+            navigateBack = navigateBack
         )
     }
 }
@@ -105,18 +111,11 @@ fun TimerEditBody(
     contentPadding: PaddingValues = PaddingValues(16.dp),
     localFilesViewModel: LocalFilesViewModel,
     viewModel: TimerEditViewModel,
-    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel
+    spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel,
+    navigateBack: () -> Unit
 ){
     Box(modifier = modifier) {
         Column(modifier = modifier) {
-            Row(modifier = modifier.padding(0.dp)) {
-                Text(
-                    text = "Press Enter on the keyboard upon entering input",
-                    fontSize = 16.sp,
-                    color = PurpleDark,
-                    modifier = Modifier
-                )
-            }
             Row(modifier = modifier.padding(16.dp)) {
                 flowStateFormEdit(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
             }
@@ -133,7 +132,7 @@ fun TimerEditBody(
                 .padding(bottom = 16.dp)
                 .padding(end = 16.dp)
                 .align(Alignment.End)) {
-                saveButtonEdit(timerUIState, onSaveClick, modifier)
+                saveButtonEdit(timerUIState, onSaveClick, navigateBack, viewModel)
             }
         }
     }
@@ -335,10 +334,10 @@ fun timeSelectEdit(
 
             LaunchedEffect(state, timerUIState) {
                 timeVal = if (state == "Flow") {
-                    val totalSec = timerUIState.timerDetails.flowMusicDurationSeconds
+                    val totalSec = viewModel.hoursFlow
                     (totalSec / 3600)
                 } else {
-                    val totalSec = timerUIState.timerDetails.breakMusicDurationSeconds
+                    val totalSec = viewModel.hoursBreak
                     (totalSec / 3600)
                 }
             }
@@ -350,6 +349,12 @@ fun timeSelectEdit(
                     }
                     else {
                         timeVal = 0
+                    }
+                    if (state == "Flow") {
+                        viewModel.hoursFlow = timeVal * 3600
+                    }
+                    else {
+                        viewModel.hoursBreak = timeVal * 3600
                     }
                 },
                 label = { Text("") },
@@ -366,14 +371,6 @@ fun timeSelectEdit(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus()
-                        if (state == "Flow") {
-                            onTimerValueChange(timerUIState.timerDetails.copy(
-                                flowMusicDurationSeconds = (timerUIState.timerDetails.flowMusicDurationSeconds % 3600) + (timeVal * 3600)))
-                        }
-                        else {
-                            onTimerValueChange(timerUIState.timerDetails.copy(
-                                breakMusicDurationSeconds = (timerUIState.timerDetails.breakMusicDurationSeconds % 3600) + (timeVal * 3600)))
-                        }
                     }
                 )
             )
@@ -396,10 +393,10 @@ fun timeSelectEdit(
 
             LaunchedEffect(state, timerUIState) {
                 timeVal = if (state == "Flow") {
-                    val totalSec = timerUIState.timerDetails.flowMusicDurationSeconds
+                    val totalSec = viewModel.minutesFlow
                     (totalSec % 3600) / 60
                 } else {
-                    val totalSec = timerUIState.timerDetails.breakMusicDurationSeconds
+                    val totalSec = viewModel.minutesBreak
                     (totalSec % 3600) / 60
                 }
             }
@@ -412,6 +409,12 @@ fun timeSelectEdit(
                     }
                     else {
                         timeVal = 0
+                    }
+                    if (state == "Flow") {
+                        viewModel.minutesFlow = timeVal * 60
+                    }
+                    else {
+                        viewModel.minutesBreak = timeVal * 60
                     }
                 },
                 label = { Text("") },
@@ -428,14 +431,6 @@ fun timeSelectEdit(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus()
-                        if (state == "Flow") {
-                            onTimerValueChange(timerUIState.timerDetails.copy(
-                                flowMusicDurationSeconds = (timerUIState.timerDetails.flowMusicDurationSeconds / 3600 ) * 3600 + (timeVal * 60)))
-                        }
-                        else {
-                            onTimerValueChange(timerUIState.timerDetails.copy(
-                                breakMusicDurationSeconds = (timerUIState.timerDetails.breakMusicDurationSeconds / 3600 ) * 3600 + (timeVal * 60)))
-                        }
                     }
                 )
             )
@@ -631,7 +626,20 @@ fun playlistSelectEdit(
 }
 
 @Composable
-fun saveButtonEdit(timerUIState: TimerUIState, onSaveClick: () -> Unit, modifier: Modifier) {
+fun saveButtonEdit(timerUIState: TimerUIState,
+                   onSaveClick: () -> Unit,
+                   navigateBack: () -> Unit,
+                   viewModel: TimerEditViewModel) {
+    Button(onClick = {
+        viewModel.deleteTimer()
+        navigateBack()
+    }, modifier = Modifier.padding(end=30.dp), colors = ButtonDefaults.buttonColors(PurpleDark)) {
+        Text(
+            text = "Delete",
+            color = PurpleBackground,
+            modifier = Modifier.padding(0.dp),
+        )
+    }
     if (!timerUIState.isValidEntry) {
         Text(
             text = "Incomplete Input",
