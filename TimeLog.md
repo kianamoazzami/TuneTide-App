@@ -3,15 +3,15 @@
  | 05/13/24 | Brainstorming                       | 1.0       | 1.0       | 1.0       | 1.0       | 1.0       |   
  | 05/15/24 | Project Idea and Deliverable 1      | 2.0       | 2.0       | 2.0       | 2.0       | 2.0       |  
  | 05/15/24 | Work on D1                          | 3.0       | 2.0       |           | 2.0       |           |
- | 05/18/24 | Work on D1                          |           |  0.5      |           |           | 2.0       |
+ | 05/18/24 | Work on D1                          |           | 0.5       |           |           | 2.0       |
  | 05/16/24 | Work on D1                          |           |           | 2.0       |           |           |
  | 05/22/24 | Presentation, Mockups, D1           | 2.0       | 2.0       | 2.0       | 2.0       | 2.0       |  
  | 05/25/24 | Creating Mockup                     |           | 1.0       |           | 1.0       | 2.5       |
  | 05/27/24 | Creating Prototype                  | 4.0       | 4.0       |           |           |           |
  | 05/30/24 | Work on D1                          |           |           |           |           | 1.0       |
  | 06/03/24 | Brainstorming and Android Studio    | 1.0       | 1.0       | 1.0       | 1.0       | 1.0       | 
- | 06/03/24 | Learning Kotlin                     | 1.0       |  2.0      | 2.0       |           |           |
- | 06/04/24 | Learning Kotlin                     |           |  1.0      |           |           | 1.0       |
+ | 06/03/24 | Learning Kotlin                     | 1.0       | 2.0       | 2.0       |           |           |
+ | 06/04/24 | Learning Kotlin                     |           | 1.0       |           |           | 1.0       |
  | 06/04/24 | Editing Prototype                   |           |           |           |           | 4.0       |
  | 06/05/24 | UML/DB Diagrams                     | 1.5       |           |           |           |           |
  | 06/05/24 | Learning Kotlin                     | 3.0       |           |           |           |           |
@@ -63,8 +63,8 @@
  | 07/05/24 | Homepage Restructuring              |           |           |           | 4.0       |           |
  | 07/05/24 | Local Music Files Page              |           |           |           |           | 1.0       |
  | 07/06/24 | Local Files + Top App Bar 2         |           |           |           |           | 2.0       |
- | 07/06/24 | Fixing the issue on Android Studio  |           |   2.5     |           |           |           |
- | 07/06/24 | Updating the setting page           |           |   6.0     |           |           |           |
+ | 07/06/24 | Fixing the issue on Android Studio  |           | 2.5       |           |           |           |
+ | 07/06/24 | Updating the setting page           |           | 6.0       |           |           |           |
  | 07/08/24 | Meeting                             | 0.75      |           | 0.75      | 0.75      |           | 
  | 07/08/24 | Bug Fix, updates to viewmodels      | 3.0       |           |           |           |           | 
  | 07/08/24 | Spotify and Coroutines              |           |           | 4.0       |           |           | 
@@ -87,7 +87,7 @@
  | 07/13/24 | Opening File Explorer + Get URI     |           |           |           |           | 4.0       |
  | 07/14/24 | Spotify Controller                  |           |           | 1.0       |           |           |
  | 07/14/24 | Homepage Work                       |           |           |           | 2.0       |           |
- | 07/14/24 | Saved timer page                    |           |  4.0      |           |           |           |
+ | 07/14/24 | Saved timer page                    |           | 4.5       |           |           |           |
  | 07/15/24 | Adding Songs to MP3File Table       |           |           |           |           | 3.0       |
  | 07/15/24 | Meeting                             | 1.0       | 1.0       | 1.0       | 1.0       | 1.0       |
  | 07/15/24 | Work on Parsing D6, D7              | 0.75      |           |           |           |           | 
@@ -105,11 +105,11 @@
  | 07/17/24 | Navigation + Edit Timer + Spotify   |           |           |           | 3.0       |           |
  | 07/17/24 | Spotify Database population + enviro|           |           | 2.0       |           |           |
  | 07/18/24 | D5 Design Pattern 3                 |           |           | 1.5       |           |           |
- | 07/18/24 | Navigation saved timer pages        |           |  4.0      |           |           |           |
+ | 07/18/24 | Navigation saved timer pages        |           | 4.0       |           |           |           |
  | 07/18/24 | Work on D6                          | 4.0       |           |           |           |           |
  | 07/19/24 | Merge + Testing                     |           |           |           | 1.5       |           |
  | 07/19/24 | Trying to Fix Bugs, Adding Names    |           |           |           |           | 3.5       |
- | 07/19/24 |Fixing bugs on the app               |           |  4.5      |           |           |           |
+ | 07/19/24 |Fixing bugs on the app               |           | 4.5       |           |           |           |
  | 07/19/24 | Trying to get MP3 to play from files|           |           |           |           | 3.5       |
  | 07/19/24 | Work on D6, D7                      | 2.0       |           |           |           |           |
  | 07/21/24 | Integrating Spotify Changes         |           |           | 4.0       |           |           |
@@ -125,4 +125,4 @@
  | 07/25/24 | Work on D6                          |           | 3.0       | 2.0       | 3.0       |           |
  | 07/26/24 | Work on D6                          | 6.0       |           |           |           |           |
  | 07/26/24 | Music Stop Home Page Exits          |           |           |           |           | 0.5       |
- | 07/27/24 | Worked on D7                        |           |  1.0      |           |           |
+ | 07/27/24 | Worked on D7                        |           | 1.0       |           |           |
