@@ -122,5 +122,6 @@
  | 07/24/24 | Code refactoring and D6 update work |           |           | 5.0       |           |           |
  | 07/24/24 | D6 Design Patterns                  |           |           |           |           | 3.0       |
  | 07/25/24 | Work on D6                          | 2.0       |           |           |           |           |
- | 07/25/24 | Work on D6                          |           |           | 2.0       |           |           |
+ | 07/25/24 | Work on D6                          |           | 3.0       | 2.0       | 3.0       |           |
  | 07/26/24 | Work on D6                          | 6.0       |           |           |           |           |
+ | 07/26/24 | Music Stop Home Page Exits          |           |           |           |           | 0.5       |
