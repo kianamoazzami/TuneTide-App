@@ -1,5 +1,6 @@
 package com.example.tunetide.ui.timer
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -459,7 +460,17 @@ fun playlistSelectEdit(
     viewModel: TimerEditViewModel,
     spotifyPlaylistsViewModel: SpotifyPlaylistsViewModel
 ) {
-    var spotify by remember { mutableStateOf(false) }
+    var spotify by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(state, timerUIState) {
+        spotify = if (state == "Flow") {
+            timerUIState.timerDetails.spotifyFlowMusicPlaylistId != -1
+        } else {
+            timerUIState.timerDetails.spotifyBreakMusicPlaylistId != -1
+        }
+    }
     Row(
         modifier = Modifier
             .padding(vertical = 8.dp)
@@ -492,6 +503,17 @@ fun playlistSelectEdit(
             else {
                 var selectedOption by remember { mutableStateOf(options[0]) }
                 var chosenOptionName by remember { mutableStateOf("Choose a Playlist") }
+                if (state == "Flow") {
+                    viewModel.currentSpotifyFlowPlaylistName(timerUIState.timerDetails.spotifyFlowMusicPlaylistId)
+                    chosenOptionName = viewModel.currentSpotifyFlowPlaylistName
+                }
+                else {
+                    viewModel.currentSpotifyBreakPlaylistName(timerUIState.timerDetails.spotifyBreakMusicPlaylistId)
+                    chosenOptionName = viewModel.currentSpotifyBreakPlaylistName
+                }
+                if (chosenOptionName == "") {
+                    chosenOptionName = "Choose a Playlist"
+                }
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = {
@@ -557,6 +579,9 @@ fun playlistSelectEdit(
                 else {
                     viewModel.currentMP3BreakPlaylistName(timerUIState.timerDetails.mp3BreakMusicPlaylistId)
                     chosenOptionName = viewModel.currentMP3BreakPlaylistName
+                }
+                if (chosenOptionName == "") {
+                    chosenOptionName = "Choose a Playlist"
                 }
                 ExposedDropdownMenuBox(
                     expanded = expanded,
