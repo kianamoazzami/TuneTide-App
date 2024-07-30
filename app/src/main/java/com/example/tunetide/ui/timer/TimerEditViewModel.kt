@@ -22,6 +22,7 @@ import kotlinx.coroutines.withContext
 
 interface ITimerEditViewModel {
 
+    fun deleteTimer()
     fun currentMP3FlowPlaylistName(playlistId: Int)
     fun currentMP3BreakPlaylistName(playlistId: Int)
     fun currentSpotifyFlowPlaylistName(playlistId: Int)
@@ -56,6 +57,11 @@ class TimerEditViewModel (
 
     private val timerId: Int = checkNotNull(savedStateHandle[TimerEditDestination.timerIdArg])
 
+    var hoursFlow by mutableStateOf(0)
+    var minutesFlow by mutableStateOf(0)
+    var hoursBreak by mutableStateOf(0)
+    var minutesBreak by mutableStateOf(0)
+
     init {
         CoroutineScope(Dispatchers.IO).launch {
              val timer = timerRepository.getTimerById(timerId)
@@ -66,6 +72,16 @@ class TimerEditViewModel (
             withContext(Dispatchers.Main) {
                 timerUIState = timer
             }
+            hoursFlow = (timerUIState.timerDetails.flowMusicDurationSeconds / 3600) * 3600
+            minutesFlow = (timerUIState.timerDetails.flowMusicDurationSeconds % 3600)
+            hoursBreak = (timerUIState.timerDetails.breakMusicDurationSeconds / 3600) * 3600
+            minutesBreak = (timerUIState.timerDetails.breakMusicDurationSeconds % 3600)
+        }
+    }
+
+    override fun deleteTimer() {
+        CoroutineScope(Dispatchers.IO).launch {
+            timerRepository.deleteTimer(timerUIState.timerDetails.toTimer())
         }
     }
 
@@ -111,9 +127,7 @@ class TimerEditViewModel (
 
     // updates item UI
     override fun updateUIState(timerDetails: TimerDetails) {
-        viewModelScope.launch(Dispatchers.Main) {
             timerUIState = TimerUIState(timerDetails = timerDetails, isValidEntry = validateInput(timerDetails))
-        }
     }
 
     override suspend fun updateTimer() {
@@ -129,8 +143,8 @@ class TimerEditViewModel (
                     numIntervals > 0 &&
                     (spotifyFlowMusicPlaylistId != -1 || mp3FlowMusicPlaylistId != -1) &&
                     (spotifyBreakMusicPlaylistId != -1 || mp3BreakMusicPlaylistId != -1) &&
-                    flowMusicDurationSeconds > 0 &&
-                    breakMusicDurationSeconds > 0
+                    (hoursFlow > 0 || minutesFlow > 0) &&
+                    (hoursBreak > 0 || minutesBreak > 0)
         }
     }
 }

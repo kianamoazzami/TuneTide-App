@@ -77,8 +77,13 @@ fun TimerEntryScreen(
             onTimerValueChange = viewModel::updateUIState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.insertTimer()
-                    navigateBack()
+                    viewModel.updateUIState(viewModel.timerUIState.timerDetails.copy(
+                        flowMusicDurationSeconds = (viewModel.hoursFlow + viewModel.minutesFlow),
+                        breakMusicDurationSeconds = (viewModel.hoursBreak + viewModel.minutesBreak)))
+                    if (viewModel.validateInput(viewModel.timerUIState.timerDetails)) {
+                        viewModel.insertTimer()
+                        navigateBack()
+                    }
                 }
             },
             modifier = modifier,
@@ -103,15 +108,7 @@ fun TimerEntryBody(
 ){
     Box(modifier = modifier) {
         Column(modifier = modifier) {
-            Row(modifier = modifier.padding(0.dp)) {
-                Text(
-                    text = "Press Enter on the keyboard upon entering input",
-                    fontSize = 16.sp,
-                    color = PurpleDark,
-                    modifier = Modifier
-                )
-            }
-            Row(modifier = modifier.padding(bottom = 16.dp)) {
+            Row(modifier = modifier.padding(16.dp)) {
                 flowStateForm(timerUIState, modifier, localFilesViewModel, onTimerValueChange, viewModel, spotifyPlaylistsViewModel)
             }
             Row(modifier = modifier.padding(16.dp)) {
@@ -333,6 +330,13 @@ fun timeSelect(
                     else {
                         timeVal = 0
                     }
+
+                    if (state == "Flow") {
+                        viewModel.hoursFlow = timeVal * 3600
+                    }
+                    else {
+                        viewModel.hoursBreak = timeVal * 3600
+                    }
                 },
                 label = { Text("") },
                 colors = textFieldColors,
@@ -348,14 +352,6 @@ fun timeSelect(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus()
-                        if (state == "Flow") {
-                            onTimerValueChange(timerUIState.timerDetails.copy(
-                                flowMusicDurationSeconds = (timerUIState.timerDetails.flowMusicDurationSeconds % 3600) + (timeVal * 3600)))
-                        }
-                        else {
-                            onTimerValueChange(timerUIState.timerDetails.copy(
-                                breakMusicDurationSeconds = (timerUIState.timerDetails.breakMusicDurationSeconds % 3600) + (timeVal * 3600)))
-                        }
                     }
                 )
             )
@@ -382,6 +378,12 @@ fun timeSelect(
                     else {
                         timeVal = 0
                     }
+                    if (state == "Flow") {
+                        viewModel.minutesFlow = timeVal * 60
+                    }
+                    else {
+                        viewModel.minutesBreak = timeVal * 60
+                    }
                 },
                 label = { Text("") },
                 colors = textFieldColors,
@@ -397,14 +399,6 @@ fun timeSelect(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus()
-                        if (state == "Flow") {
-                            onTimerValueChange(timerUIState.timerDetails.copy(
-                                flowMusicDurationSeconds = (timerUIState.timerDetails.flowMusicDurationSeconds / 3600 ) * 3600 + (timeVal * 60)))
-                        }
-                        else {
-                            onTimerValueChange(timerUIState.timerDetails.copy(
-                                breakMusicDurationSeconds = (timerUIState.timerDetails.breakMusicDurationSeconds / 3600 ) * 3600 + (timeVal * 60)))
-                        }
                     }
                 )
             )
